@@ -1,0 +1,11 @@
+{
+  "title": "kpautomobil",
+  "description": "Streamline your workflow with an intuitive task manager designed to boost productivity and keep projects organized for teams and individuals.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
