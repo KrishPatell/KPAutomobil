@@ -21,7 +21,6 @@ import imgCloseUpOfRearSideOfDarkBlueSportsCarShowingTailLightsFuelCapAndRearWhe
 import imgInteriorOfABmwCarFeaturingASteeringWheelManualGearShiftAndCenterConsoleControls from "./de439103269ce958393319bce63b692fd60aee76.png";
 import imgWhiteCarSideWithTintedWindowsReflectingASunsetAndGoldAlloyWheelsParkedNearBlueContainers from "./9cf14738416f54228a34181bb0507ee5cead70fd.png";
 import img6A107E6E22Ca80Fdc6B2B83883D89E8B3B7B9244470885D1B16Bf003Mobilux20WhiteP500Png from "./24ed8e8f4a95fbb5c4f06897ff147bdb17cebe3a.png";
-import img6A147246C90A7Fff31Dd4D93Smiling20Young20ManWebp from "./4f73ac7f81a2311b198e5b1bf3d484fd319452e5.png";
 import imgCloseUpOfACarCoveredInSoapSudsDuringAWashShowingTheFrontWheelAndHeadlight from "./b0dbc67926d1b7dec8dbf022de6c88d247379473.png";
 import imgTwoMenWashingABlackSuvCoveredInSoapInADrivewayOutsideAWhiteHouseWithDarkGarageDoors from "./811faab3c13b37aea88551032b0114c4d81cbbdf.png";
 import imgManWearingACapPolishingABlackCarDoorWithAHandheldRotaryBuffer from "./725fd0e465f7930441518fdd559b36d375f46467.png";
@@ -29,6 +28,7 @@ import imgContainer1 from "./a22e277837b0a41985dd651f2b83233b102b1a98.png";
 import imgContainer2 from "./fb6138b1b853802e1ac2794f5e21bb84eb99643d.png";
 import img6A2Bfe351800063Ce0601B2692F836A3A2B20E1Db26Efc3541A825E6Gomobil20TeamP500Webp from "./b65589fcfc62318e930bfacec46ffe0ea82cefc6.png";
 import img6A2C0Ef809344Eb19Bd6B08A91918084536B8Aa411Db21A0215Ad215ChatGpt20Image20Jun20122C2020262C2009513920PmP500Webp from "./7327b4207c1f47f4a0aa23eb13421062ae4dcfea.png";
+import CommitmentsMobile from "../../sections/CommitmentsMobile";
 
 function MaskGroup() {
   return <div className="absolute content-stretch flex flex-col items-start left-[-9806px] size-px top-[16004.89px]" data-name="Mask Group" />;
@@ -4987,269 +4987,6 @@ function Section5() {
   );
 }
 
-function Component6A230Fee8C3A9A96E07F5878A3Cf225288F25Ad6571Da17409FddaddSquareFillSvg13() {
-  return (
-    <div className="relative shrink-0 size-[14.39px]" data-name="6a230fee8c3a9a96e07f5878_a3cf225288f25ad6571da17409fddadd_square-fill.svg">
-      <svg className="absolute block inset-0 size-full" fill="none" height="14.39" preserveAspectRatio="none" viewBox="0 0 14.39 14.39" width="14.39">
-        <g id="6a230fee8c3a9a96e07f5878_a3cf225288f25ad6571da17409fddadd_square-fill.svg">
-          <path d={svgPaths.p719480} fill="#FD5303" id="Vector" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function Component6A230Fee8C3A9A96E07F5878A3Cf225288F25Ad6571Da17409FddaddSquareFillSvg12() {
-  return (
-    <div className="content-stretch flex flex-col items-center justify-center overflow-clip relative shrink-0 size-[14.39px]" data-name="6a230fee8c3a9a96e07f5878_a3cf225288f25ad6571da17409fddadd_square-fill.svg">
-      <Component6A230Fee8C3A9A96E07F5878A3Cf225288F25Ad6571Da17409FddaddSquareFillSvg13 />
-    </div>
-  );
-}
-
-function Container303() {
-  return (
-    <div className="content-stretch flex items-center justify-center relative shrink-0" data-name="Container">
-      <Component6A230Fee8C3A9A96E07F5878A3Cf225288F25Ad6571Da17409FddaddSquareFillSvg12 />
-    </div>
-  );
-}
-
-function Container305() {
-  return (
-    <div className="absolute content-stretch flex flex-col items-center left-0 pb-[0.63px] top-[-1px]" data-name="Container">
-      <div className="[word-break:break-word] flex flex-col font-['Geist_Mono:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[12.8px] text-center text-white tracking-[-0.5px] uppercase whitespace-nowrap">
-        <p className="leading-[16.64px]">Reviews</p>
-      </div>
-    </div>
-  );
-}
-
-function Container304() {
-  return (
-    <div className="h-[16.63px] relative shrink-0 w-[50.25px]" data-name="Container">
-      <Container305 />
-    </div>
-  );
-}
-
-function Container302() {
-  return (
-    <div className="content-stretch flex gap-[8px] items-center relative shrink-0" data-name="Container">
-      <Container303 />
-      <Container304 />
-    </div>
-  );
-}
-
-function Container306() {
-  return (
-    <div className="content-stretch flex items-start justify-center overflow-clip relative shrink-0" data-name="Container">
-      <div className="[word-break:break-word] flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[32px] text-center text-white tracking-[-1px] whitespace-nowrap">
-        <p className="leading-[35.2px]">Loved</p>
-      </div>
-    </div>
-  );
-}
-
-function Container307() {
-  return (
-    <div className="content-stretch flex items-start justify-center overflow-clip relative shrink-0" data-name="Container">
-      <div className="[word-break:break-word] flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[32px] text-center text-white tracking-[-1px] whitespace-nowrap">
-        <p className="leading-[35.2px]">By</p>
-      </div>
-    </div>
-  );
-}
-
-function Container308() {
-  return (
-    <div className="content-stretch flex items-start justify-center overflow-clip relative shrink-0" data-name="Container">
-      <div className="[word-break:break-word] flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[32px] text-center text-white tracking-[-1px] whitespace-nowrap">
-        <p className="leading-[35.2px]">Car</p>
-      </div>
-    </div>
-  );
-}
-
-function Container309() {
-  return (
-    <div className="content-stretch flex items-start justify-center overflow-clip relative shrink-0" data-name="Container">
-      <div className="[word-break:break-word] flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[32px] text-center text-white tracking-[-1px] whitespace-nowrap">
-        <p className="leading-[35.2px]">Owners.</p>
-      </div>
-    </div>
-  );
-}
-
-function LovedByCarOwnersHeading() {
-  return (
-    <div className="content-stretch flex gap-[7px] items-start justify-center relative shrink-0" data-name="Loved By Car Owners. → Heading 2">
-      <Container306 />
-      <Container307 />
-      <Container308 />
-      <Container309 />
-    </div>
-  );
-}
-
-function Container301() {
-  return (
-    <div className="content-stretch flex flex-col gap-[19.5px] items-start relative shrink-0 w-full" data-name="Container">
-      <Container302 />
-      <LovedByCarOwnersHeading />
-    </div>
-  );
-}
-
-function Container311() {
-  return (
-    <div className="content-stretch flex flex-col items-start pb-[0.51px] relative shrink-0 w-full" data-name="Container">
-      <div className="[word-break:break-word] flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[17.6px] text-white tracking-[-0.5px] w-full">
-        <p className="leading-[22.88px] mb-0">{`"Outstanding service and incredible`}</p>
-        <p className="leading-[22.88px] mb-0">attention to detail. My car looked better</p>
-        <p className="leading-[22.88px] mb-0">than new when they finished. The</p>
-        <p className="leading-[22.88px] mb-0">convenience of having everything done at</p>
-        <p className="leading-[22.88px] mb-0">my home made the experience even</p>
-        <p className="leading-[22.88px]">{`better."`}</p>
-      </div>
-    </div>
-  );
-}
-
-function Paragraph3() {
-  return (
-    <div className="[word-break:break-word] content-stretch flex flex-[1_0_0] flex-col gap-[2.25px] items-start leading-[0] min-w-px pb-[0.63px] relative tracking-[-0.5px] whitespace-nowrap" data-name="Paragraph">
-      <div className="flex flex-col font-['Geist:Medium',sans-serif] font-medium justify-center relative shrink-0 text-[#fd5303] text-[17.6px]">
-        <p className="leading-[22.88px]">Michael R.</p>
-      </div>
-      <div className="flex flex-col font-['Geist_Mono:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[12.8px] text-white">
-        <p className="leading-[16.64px]">Premium Detail Customer</p>
-      </div>
-    </div>
-  );
-}
-
-function Component6A147246C90A7Fff31Dd4D93Smiling20Young20ManWebp() {
-  return (
-    <div className="flex-[1_0_0] min-h-px relative w-full" data-name="6a147246c90a7fff31dd4d93_Smiling%20Young%20Man.webp">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <img alt="" className="absolute h-[133.33%] left-0 max-w-none top-[-16.67%] w-full" src={img6A147246C90A7Fff31Dd4D93Smiling20Young20ManWebp} />
-      </div>
-    </div>
-  );
-}
-
-function Container313() {
-  return (
-    <div className="content-stretch flex flex-col items-start justify-center overflow-clip relative rounded-[4px] shrink-0 size-[56px]" data-name="Container">
-      <Component6A147246C90A7Fff31Dd4D93Smiling20Young20ManWebp />
-    </div>
-  );
-}
-
-function Container312() {
-  return (
-    <div className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full" data-name="Container">
-      <Paragraph3 />
-      <Container313 />
-    </div>
-  );
-}
-
-function Group1Of1() {
-  return (
-    <div className="absolute content-stretch flex flex-col h-[344px] items-start justify-between left-0 pb-[28px] pt-[18.65px] px-[20px] rounded-[8px] top-0 w-[358.8px]" style={{ backgroundImage: "linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.25) 100%), linear-gradient(90deg, rgb(27, 27, 27) 0%, rgb(27, 27, 27) 100%)" }} data-name="Group - 1 of 6">
-      <Container311 />
-      <Container312 />
-    </div>
-  );
-}
-
-function Container310() {
-  return (
-    <div className="h-[344px] relative shrink-0 w-[358.8px]" data-name="Container">
-      <Group1Of1 />
-      <div className="absolute h-[344px] left-[370.49px] rounded-[8px] top-0 w-[358.8px]" style={{ backgroundImage: "linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.25) 100%), linear-gradient(90deg, rgb(27, 27, 27) 0%, rgb(27, 27, 27) 100%)" }} data-name="Group - 2 of 6" />
-    </div>
-  );
-}
-
-function Component6A27E8D8E649E743C8802Ee0651B8568C9E7C4F607F3D13E453Ae9A6CaretLeftSvg3() {
-  return (
-    <div className="relative shrink-0 size-[18.39px]" data-name="6a27e8d8e649e743c8802ee0_651b8568c9e7c4f607f3d13e453ae9a6_caret-left.svg">
-      <svg className="absolute block inset-0 size-full" fill="none" height="18.39" preserveAspectRatio="none" viewBox="0 0 18.39 18.39" width="18.39">
-        <g id="6a27e8d8e649e743c8802ee0_651b8568c9e7c4f607f3d13e453ae9a6_caret-left.svg">
-          <path d={svgPaths.p33516900} fill="#FD5303" id="Vector" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function Component6A27E8D8E649E743C8802Ee0651B8568C9E7C4F607F3D13E453Ae9A6CaretLeftSvg2() {
-  return (
-    <div className="content-stretch flex flex-col items-center justify-center max-w-[36px] overflow-clip relative shrink-0 size-[18.39px]" data-name="6a27e8d8e649e743c8802ee0_651b8568c9e7c4f607f3d13e453ae9a6_caret-left.svg">
-      <Component6A27E8D8E649E743C8802Ee0651B8568C9E7C4F607F3D13E453Ae9A6CaretLeftSvg3 />
-    </div>
-  );
-}
-
-function ButtonPreviousSlide1() {
-  return (
-    <div className="absolute bg-[#1b1b1b] content-stretch flex inset-[93.28%_51.54%_0_39.23%] items-center justify-center overflow-clip rounded-[4px]" data-name="Button - previous slide">
-      <Component6A27E8D8E649E743C8802Ee0651B8568C9E7C4F607F3D13E453Ae9A6CaretLeftSvg2 />
-    </div>
-  );
-}
-
-function Component6A27E8D9F6D0A54F5D2Aa6Ee168492Fcee82195A3A1B0865Aa765E93CaretRightSvg3() {
-  return (
-    <div className="relative shrink-0 size-[18.39px]" data-name="6a27e8d9f6d0a54f5d2aa6ee_168492fcee82195a3a1b0865aa765e93_caret-right.svg">
-      <svg className="absolute block inset-0 size-full" fill="none" height="18.39" preserveAspectRatio="none" viewBox="0 0 18.39 18.39" width="18.39">
-        <g id="6a27e8d9f6d0a54f5d2aa6ee_168492fcee82195a3a1b0865aa765e93_caret-right.svg">
-          <path d={svgPaths.p255293f0} fill="#FD5303" id="Vector" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function Component6A27E8D9F6D0A54F5D2Aa6Ee168492Fcee82195A3A1B0865Aa765E93CaretRightSvg2() {
-  return (
-    <div className="content-stretch flex flex-col items-center justify-center max-w-[36px] overflow-clip relative shrink-0 size-[18.39px]" data-name="6a27e8d9f6d0a54f5d2aa6ee_168492fcee82195a3a1b0865aa765e93_caret-right.svg">
-      <Component6A27E8D9F6D0A54F5D2Aa6Ee168492Fcee82195A3A1B0865Aa765E93CaretRightSvg3 />
-    </div>
-  );
-}
-
-function ButtonNextSlide1() {
-  return (
-    <div className="absolute bg-[#1b1b1b] content-stretch flex inset-[93.28%_39.23%_0_51.54%] items-center justify-center overflow-clip rounded-[4px]" data-name="Button - next slide">
-      <Component6A27E8D9F6D0A54F5D2Aa6Ee168492Fcee82195A3A1B0865Aa765E93CaretRightSvg2 />
-    </div>
-  );
-}
-
-function RegionCarousel1() {
-  return (
-    <div className="content-stretch flex flex-col gap-[48px] h-[536px] items-start overflow-clip pl-[15.59px] pr-[15.6px] relative shrink-0 w-full" data-name="Region - carousel">
-      <Container301 />
-      <Container310 />
-      <ButtonPreviousSlide1 />
-      <ButtonNextSlide1 />
-    </div>
-  );
-}
-
-function Section6() {
-  return (
-    <div className="absolute bg-[#010101] content-stretch flex flex-col items-start left-0 py-[64px] right-0 top-[12081.28px]" data-name="Section">
-      <RegionCarousel1 />
-    </div>
-  );
-}
-
 function Component6A230Fee8C3A9A96E07F5878A3Cf225288F25Ad6571Da17409FddaddSquareFillSvg15() {
   return (
     <div className="relative shrink-0 size-[14.39px]" data-name="6a230fee8c3a9a96e07f5878_a3cf225288f25ad6571da17409fddadd_square-fill.svg">
@@ -7553,7 +7290,7 @@ function Main() {
       <Section3 />
       <Section4 />
       <Section5 />
-      <Section6 />
+      <CommitmentsMobile />
       <Section7 />
       <Section8 />
       <Section9 />

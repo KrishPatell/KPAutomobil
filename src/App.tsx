@@ -47,15 +47,6 @@ const copyMap: Record<string, string> = {
   "Personalized Care": "Price in writing",
   "Premium Products": "No card fees",
   "Quality Over Speed": "No driveway upsell",
-  "The entire process was seamless from booking to completion, and the results exceeded my expectations.": "We’re new. So here’s what we can promise: the price you approve is the price we keep.",
-  "Professional, convenient, and worth every dollar.": "Your $50 deposit comes off the final bill. Cancel 24+ hours ahead and it is fully refundable.",
-  "The best mobile detailing experience I've had. The team arrived on time, worked efficiently, and left my vehicle looking absolutely incredible.": "If pet hair or set-in stains change the work, you get the revised price in writing before we arrive.",
-  "Daniel C.": "Kunj",
-  "Sarah T.": "KP Automobil",
-  "Michael R.": "The promise",
-  "Interior Detail Customer": "Owner-operated service",
-  "Premium Detail Customer": "Clear deposit terms",
-  "Ceramic Coating Customer": "No surprise charges",
   "Frequently Asked Questions.": "Questions, answered plainly.",
   "Fill out the form and our team will reach out shortly to confirm your appointment.": "Start with your vehicle, then upload four photos to see your real price before paying the deposit.",
   "Message": "Vehicle notes",
@@ -156,9 +147,11 @@ export default function App() {
     const metric = all().find((p) => p.textContent?.trim() === "4");
     metric?.closest('[data-name="Paragraph"]')?.classList.add("kp-quote-metric");
 
-    // 5. Stats card: relabel the ambiguous "Reviews" stat only (not the section eyebrow).
+    // 5. Stats card: relabel the ambiguous "Reviews" stat. Since the testimonials section was
+    // extracted, "Reviews" is the stat label and nothing else, so no class guard is needed —
+    // the old 18.72px guard silently skipped the mobile frame, which uses 20.8px.
     all().forEach((p) => {
-      if (p.textContent?.trim() === "Reviews" && p.className.includes("18.72")) p.textContent = "Card fee";
+      if (p.textContent?.trim() === "Reviews") p.textContent = "Card fee";
     });
 
     // 6. Working package tabs + corrected hierarchy content.
@@ -300,9 +293,13 @@ export default function App() {
   function scrollToLabel(label: string) {
     const root = pageRef.current;
     if (!root) return;
-    const target = Array.from(root.querySelectorAll("p")).find(
-      (element) => element.textContent?.trim() === label,
-    );
+    // Extracted sections are addressed by id ("#promise"). Sections still living in the
+    // generated frame have no ids, so they fall back to matching their heading text.
+    const target = label.startsWith("#")
+      ? root.querySelector(label)
+      : Array.from(root.querySelectorAll("p")).find(
+          (element) => element.textContent?.trim() === label,
+        );
     target?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 

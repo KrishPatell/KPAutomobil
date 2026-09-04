@@ -1,0 +1,32 @@
+// KP Automobil has no customers yet, so this slot carries commitments instead of reviews.
+// Content brief §3c: if we fill it, every word must be true and attributable.
+// Every claim below is one of the brief's confirmed facts. Do not add a quote here.
+
+export type Commitment = {
+  /** Who or what is speaking — rendered in orange. */
+  label: string;
+  /** Supporting line under the label. */
+  sublabel: string;
+  body: string;
+};
+
+export const commitmentsEyebrow = "The promise";
+export const commitmentsHeading = "No reviews yet.";
+
+export const commitments: Commitment[] = [
+  {
+    label: "Kunj",
+    sublabel: "Owner, KP Automobil",
+    body: "KP Automobil is new. There are no customer reviews to show yet, and we are not going to borrow anyone else's. Here is what you get instead.",
+  },
+  {
+    label: "The price",
+    sublabel: "Agreed before we arrive",
+    body: "You see the price on screen and approve it before you book. If your photos show pet hair or set-in stains that change the work, the new price comes to you in writing. We never raise it standing at your car.",
+  },
+  {
+    label: "The deposit",
+    sublabel: "$50, fully refundable",
+    body: "The $50 deposit comes off your final bill. Cancel 24 or more hours ahead and you get all of it back. Card, Zelle or cash cost the same — the card fee is ours, not yours.",
+  },
+];

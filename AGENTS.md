@@ -53,12 +53,18 @@ top-to-bottom order.
 | 6 | `Section3` | Before & After slider |
 | 7 | `Section4` | Recent Work |
 | 8 | `Section5` | Why Choose |
-| 9 | `Section6` | Testimonials |
+| 9 | — | **Extracted** → `src/sections/Commitments.tsx` |
 | 10 | `Section7` | FAQ |
 | 11 | `Section8` | Book Now form |
 
 `Banner` (template nav), `Section11` (promo strip) and `Footer` are hidden at runtime and replaced
 by `src/components/KpNav.tsx` and the `SiteFooter` in `App.tsx`.
+
+Extracted sections carry an `id` and are linked from the nav by anchor (`#promise`). Sections still
+in the generated frame have no ids, so `scrollToLabel` in `App.tsx` falls back to matching their
+heading text — convert one more link to an anchor with each extraction.
+
+There is no testimonials section. The slot it occupied now holds **commitments** — see below.
 
 ## Where things go
 
@@ -77,6 +83,9 @@ by `src/components/KpNav.tsx` and the `SiteFooter` in `App.tsx`.
 
 - **Never invent a review, rating, star count, or statistic.** KP Automobil is new and has none.
   Every number and quote on the page must be true on day one and attributable.
+- The old testimonials carousel is gone. `src/content/commitments.ts` replaces it, and it is named
+  for what it holds so nobody drops a quote back into it. When real reviews exist they get their own
+  file and their own section — they do not go in there.
 - Prices are still TBC. Do not fill in a number that nobody confirmed.
   (`docs/mpg-detailing-price-list-reference.xlsx` is a *competitor's* list, kept for reference only —
   it is not KP's pricing.)

@@ -6,7 +6,7 @@ type KpNavProps = {
 const links: Array<{ label: string; target: string }> = [
   { label: "Packages", target: "Designed" },
   { label: "Results", target: "Difference." },
-  { label: "Reviews", target: "Loved" },
+  { label: "Promise", target: "#promise" },
   { label: "FAQ", target: "Frequently" },
 ];
 
