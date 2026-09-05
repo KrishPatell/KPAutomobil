@@ -28,6 +28,13 @@
   font-weight: 500;
 }
 
+/* The content column every extracted section shares: 1440 minus the frame's 28.8px gutters,
+   so at 1440 the rebuilt sections line up exactly with the ones still in the frame, and past
+   1440 they stop stretching instead of following the viewport. */
+:root {
+  --kp-measure: 1382.4px;
+}
+
 html,
 body,
 #root {
@@ -37,19 +44,6 @@ body,
 html,
 body {
   overflow-x: hidden;
-}
-
-.kp-automobil__mobile {
-  display: none;
-}
-
-.kp-automobil__desktop {
-  width: 1440px;
-}
-
-.kp-imported-footer,
-.kp-hide-imported {
-  display: none !important;
 }
 
 /* Floating navigation ---------------------------------------------------- */
@@ -123,56 +117,971 @@ body {
   background: rgba(255, 255, 255, 0.06);
   color: #fff;
 }
-.kp-nav__cta {
-  align-items: center;
-  background: #f4f4f2;
-  border: 0;
-  border-radius: 5px;
-  color: #010101;
-  cursor: pointer;
-  display: flex;
-  font-family: "Geist:Medium", sans-serif;
-  font-size: 14px;
-  gap: 9px;
-  padding: 10px 16px;
-  transition: background 180ms ease, transform 180ms ease;
-}
-.kp-nav__cta span { color: #fd5303; }
-.kp-nav__cta:hover { background: #fff; transform: translateY(-1px); }
 @media (max-width: 720px) {
   .kp-nav { padding: 12px 14px 0; }
   .kp-nav__links { display: none; }
   .kp-nav__pill { gap: 12px; padding: 8px 8px 8px 14px; }
 }
 
-/* Package tabs: hierarchy + active state --------------------------------- */
-[data-name="Tab"] { transition: background 220ms ease, border-color 220ms ease; }
-[data-name="Tab"]:hover { background: rgba(253, 83, 3, 0.08); }
-.kp-tab--active { background: #1b1b1b !important; }
-.kp-tab--active [class*="text-[#aaa]"] { color: #fd5303 !important; }
-[data-name="Tabpanel"] [class*="text-[24.5px]"] {
-  font-family: "Geist:Medium", sans-serif !important;
-  font-size: 31px !important;
-  letter-spacing: -0.8px !important;
+/* Buttons ---------------------------------------------------------------
+   See src/components/KpButton.tsx. Height is fixed per size so a CTA is the same
+   height whether it sits in the nav, the hero or the footer. */
+.kp-btn {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-family: "Geist:Medium", sans-serif;
+  font-weight: 500;
+  justify-content: center;
+  letter-spacing: -0.1px;
+  line-height: 1;
+  text-decoration: none;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  white-space: nowrap;
 }
-[data-name="Tabpanel"] [class*="text-[28.8px]"] {
-  color: #fd5303 !important;
-  font-family: "Geist Mono:Regular", monospace !important;
-  font-size: 12px !important;
-  letter-spacing: 0.14em !important;
-  text-transform: uppercase !important;
+.kp-btn__arrow { color: #fd5303; font-size: 1.15em; line-height: 0; transition: transform 220ms cubic-bezier(.16, 1, .3, 1); }
+.kp-btn:hover { transform: translateY(-1px); }
+.kp-btn:hover .kp-btn__arrow { transform: translateX(3px); }
+.kp-btn:active { transform: translateY(0); }
+.kp-btn:focus-visible { outline: 2px solid #fd5303; outline-offset: 3px; }
+.kp-btn[disabled] { cursor: not-allowed; opacity: .55; transform: none; }
+
+.kp-btn--sm { font-size: 14px; gap: 9px; height: 38px; padding: 0 16px; }
+.kp-btn--md { font-size: 15px; gap: 11px; height: 46px; padding: 0 20px; }
+
+.kp-btn--light { background: #f4f4f2; color: #010101; }
+.kp-btn--light:hover { background: #fff; }
+.kp-btn--dark { background: #010101; color: #f7f7f4; }
+.kp-btn--dark:hover { background: #1b1b1b; }
+.kp-btn--dark .kp-btn__arrow { color: #fd5303; }
+.kp-btn--ghost { background: transparent; border-color: rgba(255, 255, 255, .2); color: #f4f4f2; }
+.kp-btn--ghost:hover { background: rgba(255, 255, 255, .07); border-color: rgba(255, 255, 255, .34); }
+
+/* Hero ------------------------------------------------------------------
+   src/sections/Hero.tsx. The first section out of the generated frame, so it is also the
+   first that is genuinely responsive rather than a 1440px canvas scaled with zoom. */
+.kp-hero {
+  align-items: flex-end;
+  background: #1b1b1b;
+  box-sizing: border-box;
+  display: flex;
+  min-height: clamp(560px, 100svh, 900px);
+  overflow: hidden;
+  padding: 120px clamp(18px, 2vw, 28.8px) clamp(28px, 4.9vh, 44px);
+  position: relative;
+  width: 100%;
 }
-.kp-tab-swap { animation: kp-fade-swap 420ms cubic-bezier(.16, 1, .3, 1); }
+.kp-hero__image {
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  object-position: center 42%;
+  position: absolute;
+  width: 100%;
+}
+/* The frame ships a global img:hover scale; the backdrop must not take part in it. */
+.kp-hero__image:hover { filter: none; transform: none; }
+
+/* One 0.42 wash instead of 0.4 stacked on 0.75, which between them left the photo unreadable,
+   plus a gradient so the copy at the bottom keeps its contrast. */
+.kp-hero__wash {
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, .82) 0%, rgba(0, 0, 0, .34) 42%, rgba(0, 0, 0, .12) 72%),
+    rgba(0, 0, 0, .42);
+  inset: 0;
+  position: absolute;
+}
+
+.kp-hero__inner {
+  align-items: flex-end;
+  display: flex;
+  gap: 32px;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: var(--kp-measure);
+  position: relative;
+  width: 100%;
+}
+.kp-hero__copy { max-width: 680px; }
+
+.kp-hero__pill {
+  align-items: center;
+  backdrop-filter: blur(8px);
+  background: rgba(1, 1, 1, .22);
+  border-radius: 360px;
+  color: #fff;
+  display: inline-flex;
+  font-family: "Geist Mono:Regular", monospace;
+  font-size: 13px;
+  gap: 7px;
+  letter-spacing: .216px;
+  margin: 0;
+  padding: 5px 12px 5px 10px;
+  text-transform: uppercase;
+}
+.kp-hero__pill svg { color: #fd5303; height: 15px; width: 15px; }
+
+.kp-hero__headline {
+  color: #fff;
+  font-family: "Geist:Regular", sans-serif;
+  font-size: clamp(32px, 4.05vw, 50.4px);
+  font-weight: 400;
+  letter-spacing: -.015em;
+  line-height: 1.1;
+  margin: 17px 0 0;
+  text-wrap: balance;
+}
+.kp-hero__subline {
+  color: #d6d6d2;
+  font-family: "Geist:Regular", sans-serif;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.5;
+  margin: 14px 0 0;
+  max-width: 44ch;
+}
+.kp-hero__actions { margin-top: 28px; }
+
+/* Proof card. Replaces the template's five-star Google panel: KP has no rating, so this
+   states how the price is arrived at instead. */
+.kp-hero__proof {
+  background: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #010101;
+  flex-shrink: 0;
+  min-width: 291px;
+  padding: 12px 14px 14px;
+}
+.kp-hero__proof-eyebrow {
+  border-bottom: 1px solid #d8d8d4;
+  color: #6a6a6a;
+  font-family: "Geist Mono:Regular", monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  margin: 0;
+  padding-bottom: 9px;
+  text-transform: uppercase;
+}
+.kp-hero__proof-body { align-items: center; display: flex; gap: 14px; padding-top: 12px; }
+.kp-hero__proof-figure {
+  align-items: baseline;
+  display: flex;
+  font-family: "Geist:Regular", sans-serif;
+  font-size: 28.8px;
+  gap: 4px;
+  letter-spacing: -.432px;
+  line-height: 1;
+  margin: 0;
+}
+.kp-hero__proof-figure span { font-size: 14.4px; letter-spacing: .216px; }
+.kp-hero__proof-text { display: grid; gap: 2px; margin-left: auto; text-align: right; }
+.kp-hero__proof-text b { font-family: "Geist:Medium", sans-serif; font-size: 14.4px; font-weight: 500; }
+.kp-hero__proof-text span { font-size: 14.4px; }
+
+@media (max-width: 860px) {
+  .kp-hero__inner { align-items: flex-start; flex-direction: column; gap: 26px; }
+  .kp-hero__proof { min-width: 0; width: 100%; }
+}
+
+/* Section shell ---------------------------------------------------------
+   Shared chrome for extracted sections. The frame gives every section 115.19px of vertical
+   padding and 28.8px of horizontal padding on a canvas that is always 1440px wide; here the
+   same numbers are the upper end of a clamp, so the section breathes less on a phone and the
+   content stays centred past 1440px instead of stretching. */
+.kp-section {
+  box-sizing: border-box;
+  padding: clamp(56px, 8vw, 115.19px) clamp(18px, 2vw, 28.8px);
+  position: relative;
+  width: 100%;
+}
+.kp-section__inner { margin: 0 auto; max-width: var(--kp-measure); }
+
+.kp-eyebrow {
+  align-items: center;
+  display: flex;
+  font-family: "Geist Mono:Medium", monospace;
+  font-size: 13px;
+  font-weight: 500;
+  gap: 7.19px;
+  letter-spacing: .216px;
+  margin: 0;
+  text-transform: uppercase;
+}
+.kp-eyebrow svg { flex-shrink: 0; }
+
+/* Real text in a real heading. In the frame every heading is a run of fixed-width
+   overflow-clip boxes sized to Figma's cached font metrics, which is what cropped them. */
+.kp-section__title {
+  font-family: "Geist:Regular", sans-serif;
+  font-size: clamp(28px, 3vw, 43.2px);
+  font-weight: 400;
+  letter-spacing: -.015em;
+  line-height: 1.1;
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* About ------------------------------------------------------------------
+   src/sections/About.tsx */
+.kp-about { background: #e5e5e5; color: #010101; }
+
+.kp-about__head {
+  align-items: start;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  margin-bottom: clamp(36px, 5vw, 72px);
+}
+.kp-about__head > .kp-reveal { padding-top: 7.2px; }
+
+/* items: stretch, not end. The frame bottom-anchored the white card in a 532.8px row while
+   giving it a 432px height, so it hung 100px below the two photos next to it. */
+.kp-about__grid {
+  align-items: stretch;
+  display: grid;
+  gap: 21.6px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* The row sets the height and the photos crop into it. Left to itself the portrait shot is
+     1600x2133, so at a 446px column it would grow the row to 595px and drag 250px of empty
+     white out of the text card beside it. minmax so the card can still win if it needs more. */
+  grid-template-rows: minmax(clamp(340px, 30vw, 432px), auto);
+}
+
+.kp-about__media {
+  border-radius: 7.2px;
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+}
+.kp-about__media img {
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  position: absolute;
+  width: 100%;
+}
+.kp-about__media::after {
+  background: rgba(0, 0, 0, .18);
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.kp-about__card {
+  background: #fff;
+  border-radius: 7.2px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 28.8px;
+  justify-content: space-between;
+  padding: 28.8px;
+}
+.kp-about__body { display: grid; gap: 14px; }
+.kp-about__body p {
+  font-family: "Geist:Regular", sans-serif;
+  font-size: clamp(15px, 1.2vw, 17.3px);
+  letter-spacing: .216px;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.kp-about__stats { display: flex; gap: 21.6px; margin: 0; }
+.kp-about__stat {
+  border-left: 2px solid #fd5303;
+  flex: 1 1 0;
+  min-width: 0;
+  padding-left: 18px;
+}
+.kp-about__stat dt {
+  font-family: "Geist:Regular", sans-serif;
+  font-size: clamp(30px, 2.6vw, 43.2px);
+  letter-spacing: -.015em;
+  line-height: 1.1;
+}
+.kp-about__stat dd {
+  font-family: "Geist:Regular", sans-serif;
+  font-size: 14.4px;
+  letter-spacing: .216px;
+  line-height: 1.3;
+  margin: 7.18px 0 0;
+}
+
+@media (max-width: 1000px) {
+  .kp-about__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; }
+  .kp-about__media { aspect-ratio: 4 / 3; }
+  .kp-about__card { grid-column: 1 / -1; }
+}
+@media (max-width: 860px) {
+  .kp-about__head { grid-template-columns: minmax(0, 1fr); }
+  .kp-about__head > .kp-reveal { padding-top: 0; }
+}
+@media (max-width: 620px) {
+  .kp-about__grid { grid-template-columns: minmax(0, 1fr); }
+  .kp-about__media { aspect-ratio: 16 / 10; }
+  .kp-about__stats { gap: 18px; }
+}
+
+/* Services: package tabs ------------------------------------------------- */
+.kp-services { background: #010101; color: #fff; }
+.kp-services__head { display: grid; gap: 14.39px; justify-items: center; margin-bottom: clamp(40px, 5vw, 72px); text-align: center; }
+/* text-wrap: balance minimises the longest line, and the hyphen in "add-ons" is a legal break
+   point, so it split the word across two lines. `pretty` fills greedily and keeps it whole; 24ch
+   is just wide enough for the first sentence and too narrow for the next word, so the line breaks
+   between the two sentences at every size (ch scales with the clamped font, so this holds). */
+.kp-services .kp-section__title { max-width: 24ch; text-wrap: pretty; }
+.kp-services__intro { color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: clamp(14px, 1.15vw, 15.5px); letter-spacing: .216px; line-height: 1.35; margin: 0; max-width: 62ch; }
+
+/* The frame split this into two absolutely-positioned panes (a tablist ending at 23.75% and a
+   panel starting at 561.59px) inside a 494.16px box, so nothing could reflow and a long
+   inclusion list had nowhere to go. A grid, and the whole thing stacks under 900px. */
+.kp-services__body { align-items: start; display: grid; gap: clamp(24px, 3vw, 57.6px); grid-template-columns: minmax(240px, 320px) minmax(0, 1fr); }
+
+.kp-services__tabs { display: flex; flex-direction: column; gap: 3.6px; }
+.kp-tab {
+  align-items: center; appearance: none; background: transparent; border: 0;
+  border-bottom: 1px solid #1b1b1b; border-radius: 7.2px; box-sizing: border-box;
+  color: #aaa; cursor: pointer; display: flex; gap: 14.39px; padding: 18px 21.6px;
+  text-align: left; transition: background 220ms ease, color 220ms ease; width: 100%;
+}
+.kp-tab__num { font-family: "Geist Mono:Regular", monospace; font-size: 17.3px; letter-spacing: .216px; }
+.kp-tab__name { flex: 1 1 auto; font-family: "Geist:Medium", sans-serif; font-size: 17.3px; letter-spacing: .216px; }
+.kp-tab__badge { border: 1px solid currentcolor; border-radius: 999px; font-family: "Geist Mono:Regular", monospace; font-size: 10px; letter-spacing: .08em; opacity: .75; padding: 2px 7px; text-transform: uppercase; }
+.kp-tab:hover { background: rgba(253, 83, 3, .08); color: #f4f4f2; }
+.kp-tab:focus-visible { outline: 2px solid #fd5303; outline-offset: -2px; }
+.kp-tab--on, .kp-tab--on:hover { background: #1b1b1b; color: #fd5303; }
+
+.kp-services__panel {
+  animation: kp-fade-swap 420ms cubic-bezier(.16, 1, .3, 1);
+  background: #1b1b1b; border-radius: 7.2px; box-sizing: border-box;
+  display: grid; gap: 28.8px; padding: 21.6px 21.6px 28.8px;
+}
+.kp-services__panel:focus-visible { outline: 2px solid #fd5303; outline-offset: 3px; }
 @keyframes kp-fade-swap { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
 
-/* Before / after slider -------------------------------------------------- */
-.kp-ba { cursor: ew-resize; touch-action: none; }
-.kp-ba [data-name="Vertical Divider"] { cursor: ew-resize; }
-.kp-ba [data-name="Vertical Divider"]:focus-visible { outline: 2px solid #fd5303; outline-offset: 3px; }
+/* items: start, and the summary column no longer carries a fixed 245.8px height with
+   justify-between — that is what parked the price and the CTA at the bottom of the box with a
+   hole above them whenever the description was short. */
+.kp-services__top { border-bottom: 1px solid #333; display: grid; gap: clamp(21.6px, 3vw, 43.2px); grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr); padding-bottom: 28.8px; }
+.kp-services__summary { align-items: start; display: flex; flex-direction: column; gap: 12px; }
+.kp-services__title { font-family: "Geist:Medium", sans-serif; font-size: clamp(24px, 2.1vw, 31px); font-weight: 500; letter-spacing: -.8px; line-height: 1.15; margin: 0; }
+.kp-services__desc { color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: 14.4px; letter-spacing: .216px; line-height: 1.3; margin: 0; max-width: 46ch; }
+.kp-services__price { color: #fd5303; font-family: "Geist Mono:Regular", monospace; font-size: 12px; letter-spacing: .14em; margin: 6px 0 6px; text-transform: uppercase; }
+.kp-services__media { border-radius: 7.2px; margin: 0; min-height: 232px; overflow: hidden; position: relative; }
+.kp-services__media img { display: block; height: 100%; inset: 0; object-fit: cover; position: absolute; width: 100%; }
 
-/* Recent Work restyle ---------------------------------------------------- */
-.kp-recent img { transition: transform 700ms cubic-bezier(.16, 1, .3, 1), filter 500ms ease; }
-.kp-recent [class*="rounded"]:hover img { filter: brightness(1.05) saturate(1.05); }
+.kp-services__included { display: grid; gap: 14.39px; }
+.kp-services__included-label { color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: 14.4px; letter-spacing: .216px; margin: 0; }
+/* auto-fit, so four items spread across the row instead of leaving a dead column. */
+.kp-services__list { display: grid; gap: 10.5px 21.6px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); list-style: none; margin: 0; padding: 0; }
+.kp-services__list li { align-items: center; display: flex; font-family: "Geist:Regular", sans-serif; font-size: 14.4px; gap: 10.79px; letter-spacing: .216px; line-height: 1.3; }
+.kp-services__plus { flex-shrink: 0; }
+
+@media (max-width: 900px) {
+  .kp-services__body { grid-template-columns: minmax(0, 1fr); }
+  /* The tab column becomes a scrolling row of pills, which is the only shape that fits five. */
+  /* scroll-padding matters: the snapport defaults to the padding box, so tab 01 snapped to
+     scrollLeft 18 and sat flush against the screen edge instead of lining up with the panel. */
+  .kp-services__tabs { -webkit-overflow-scrolling: touch; flex-direction: row; margin: 0 -18px; overflow-x: auto; padding: 0 18px 4px; scroll-padding: 0 18px; scroll-snap-type: x proximity; scrollbar-width: none; }
+  .kp-services__tabs::-webkit-scrollbar { display: none; }
+  .kp-tab { border: 1px solid #1b1b1b; flex: 0 0 auto; padding: 12px 16px; scroll-snap-align: start; width: auto; }
+  .kp-tab__name { flex: 0 0 auto; font-size: 15px; }
+  .kp-tab__badge { display: none; }
+}
+@media (max-width: 700px) {
+  .kp-services__top { grid-template-columns: minmax(0, 1fr); }
+  /* min-height plus aspect-ratio makes the figure's automatic minimum size 232 x 1.6 = 371px
+     wide, which is wider than the column it sits in — 21px of the section hung off the right
+     edge at 390. The ratio sets the height here, so the minimum is not needed. */
+  .kp-services__media { aspect-ratio: 16 / 10; min-height: 0; order: -1; }
+}
+
+/* Vehicles: the four price tiers ----------------------------------------- */
+.kp-vehicles { background: #e5e5e5; color: #010101; }
+.kp-vehicles__head { display: grid; gap: 14.39px; justify-items: center; margin-bottom: clamp(36px, 4vw, 57.6px); text-align: center; }
+.kp-vehicles .kp-section__title { max-width: 26ch; }
+.kp-vehicles__intro { color: #555; font-family: "Geist:Regular", sans-serif; font-size: clamp(14px, 1.15vw, 15.5px); letter-spacing: .216px; line-height: 1.35; margin: 0; max-width: 62ch; }
+
+/* Four across, then two, then one. The frame hardcoded a 1036.8px 3x2 grid with 179.52px rows,
+   so the tiles could neither reflow nor grow when their copy did. */
+.kp-vehicles__sizes { display: grid; gap: 14.39px; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
+.kp-vehicles__sizes > li { display: flex; }
+
+.kp-size {
+  align-items: stretch; appearance: none; background: #fff; border: 1px solid #d5d5d5;
+  border-radius: 10.8px; box-sizing: border-box; color: inherit; cursor: pointer;
+  display: flex; flex-direction: column; gap: 9px; padding: 21.6px; text-align: left;
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease; width: 100%;
+}
+.kp-size:hover { border-color: #fd5303; box-shadow: 0 10px 28px rgba(0, 0, 0, .08); transform: translateY(-3px); }
+.kp-size:focus-visible { outline: 2px solid #fd5303; outline-offset: 2px; }
+.kp-size__top { align-items: center; display: flex; gap: 12px; justify-content: space-between; }
+.kp-size__name { font-family: "Geist:Medium", sans-serif; font-size: clamp(19px, 1.6vw, 23px); font-weight: 500; letter-spacing: -.3px; }
+.kp-size__pips { display: flex; gap: 3px; }
+.kp-size__pip { background: #d5d5d5; border-radius: 1px; display: block; height: 4px; width: 9px; }
+.kp-size__pip--on { background: #fd5303; }
+.kp-size__fits { font-family: "Geist:Medium", sans-serif; font-size: 14.4px; font-weight: 500; letter-spacing: .216px; line-height: 1.3; }
+.kp-size__why { color: #555; font-family: "Geist:Regular", sans-serif; font-size: 13.5px; letter-spacing: .216px; line-height: 1.35; }
+.kp-size__examples { color: #7a7a7a; font-family: "Geist Mono:Regular", monospace; font-size: 11.5px; letter-spacing: .04em; line-height: 1.5; }
+/* margin-top auto so the CTA pins to the bottom no matter how the copy above wraps — the tiles
+   stay a matched set without any of them being given a fixed height. */
+.kp-size__cta { align-items: center; color: #fd5303; display: flex; font-family: "Geist Mono:Medium", monospace; font-size: 11.5px; gap: 7px; letter-spacing: .12em; margin-top: auto; padding-top: 7px; text-transform: uppercase; }
+.kp-size:hover .kp-size__cta span { transform: translateX(3px); }
+.kp-size__cta span { transition: transform 200ms ease; }
+
+.kp-vehicles__rail-head { display: grid; gap: 6px; margin: clamp(40px, 4.5vw, 64px) 0 18px; }
+.kp-vehicles__rail-head h3 { font-family: "Geist Mono:Medium", monospace; font-size: 13px; font-weight: 500; letter-spacing: .216px; margin: 0; text-transform: uppercase; }
+.kp-vehicles__rail-head p { color: #555; font-family: "Geist:Regular", sans-serif; font-size: 14.4px; letter-spacing: .216px; line-height: 1.35; margin: 0; max-width: 62ch; }
+
+.kp-vehicles__rail { display: grid; gap: 14.39px; grid-template-columns: repeat(6, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
+.kp-body {
+  appearance: none; background: #fff; border: 1px solid #d5d5d5; border-radius: 10.8px;
+  box-sizing: border-box; color: inherit; cursor: pointer; display: grid; gap: 2px;
+  padding: 14.39px; text-align: left; transition: border-color 200ms ease, transform 200ms ease;
+  width: 100%;
+}
+.kp-body:hover { border-color: #fd5303; transform: translateY(-3px); }
+.kp-body:focus-visible { outline: 2px solid #fd5303; outline-offset: 2px; }
+/* The frame gave these images no object-fit, so the cutouts stretched to whatever box they
+   landed in. `contain` keeps a car the shape it was photographed. */
+.kp-body__img { aspect-ratio: 16 / 9; display: block; margin-bottom: 6px; object-fit: contain; width: 100%; }
+.kp-body__name { font-family: "Geist:Medium", sans-serif; font-size: 15px; font-weight: 500; letter-spacing: .216px; }
+.kp-body__size { color: #7a7a7a; font-family: "Geist Mono:Regular", monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; }
+
+@media (max-width: 1100px) {
+  .kp-vehicles__sizes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kp-vehicles__rail { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .kp-vehicles__sizes { grid-template-columns: minmax(0, 1fr); }
+  /* Six cutouts will not fit two-up legibly, so the rail becomes the same edge-to-edge snapping
+     scroller as the package tabs. scroll-padding keeps card one aligned with the section. */
+  .kp-vehicles__rail {
+    -webkit-overflow-scrolling: touch; display: flex; margin: 0 -18px; overflow-x: auto;
+    padding: 0 18px 4px; scroll-padding: 0 18px; scroll-snap-type: x proximity; scrollbar-width: none;
+  }
+  .kp-vehicles__rail::-webkit-scrollbar { display: none; }
+  .kp-vehicles__rail > li { flex: 0 0 62%; scroll-snap-align: start; }
+}
+/* How it works ----------------------------------------------------------
+   src/sections/Process.tsx
+
+   Full-bleed on purpose, so this section does not use .kp-section: the photo panel runs to the
+   left edge of the window the way the frame had it, and .kp-section's gutter would pull it in. */
+.kp-process { background: #fff; color: #010101; }
+.kp-process__grid {
+  align-items: start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+/* 100vh, not the frame's flat 900px. On a laptop shorter than 900px the frame's panel parked
+   its own closing paragraph below the fold and left it there for the whole scroll, which is the
+   one thing a sticky panel must not do. */
+.kp-process__panel {
+  color: #fff;
+  height: 100vh;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+}
+.kp-process__panel-img { height: 100%; left: 0; object-fit: cover; position: absolute; top: 0; width: 100%; }
+/* A gradient, not the frame's flat rgba(0,0,0,.4): the flat wash had to be dark enough for the
+   heading at the top, which left the middle of the photo muddier than it needed to be. This puts
+   the weight where the two blocks of text are and lets the van show through between them. */
+.kp-process__shade {
+  background: linear-gradient(180deg, rgba(0, 0, 0, .74) 0%, rgba(0, 0, 0, .3) 42%, rgba(0, 0, 0, .8) 100%);
+  inset: 0;
+  position: absolute;
+}
+/* 96px of head room clears the floating nav pill, which ends at 76px. The frame started this
+   column at 57.59px, so the eyebrow sat behind the nav. */
+.kp-process__panel-body {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  height: 100%;
+  justify-content: space-between;
+  padding: 96px clamp(18px, 2vw, 28.8px) clamp(36px, 4vw, 57.6px);
+  position: relative;
+}
+.kp-process__head { display: grid; gap: 18px; }
+/* The frame boxed this eyebrow at 95.86px, which is narrower than "HOW IT WORKS" renders, so it
+   wrapped onto two lines under the nav. Real text in a flex row cannot wrap at any width. */
+.kp-process .kp-eyebrow { color: #fff; white-space: nowrap; }
+.kp-process .kp-section__title { color: #fff; max-width: 17ch; }
+.kp-process__foot { display: grid; gap: 21.6px; justify-items: start; max-width: 48ch; }
+.kp-process__intro {
+  color: rgba(255, 255, 255, .82); font-family: "Geist:Regular", sans-serif;
+  font-size: clamp(14px, 1.15vw, 15.5px); letter-spacing: .216px; line-height: 1.45; margin: 0;
+}
+
+.kp-process__steps {
+  display: grid;
+  gap: 25.2px;
+  list-style: none;
+  margin: 0;
+  padding: clamp(56px, 8vw, 115.19px) clamp(18px, 2vw, 28.8px);
+}
+.kp-step {
+  background: #1b1b1b; border-radius: 10.8px; color: #fff; display: grid;
+  gap: 21.59px; margin: 0 auto; max-width: 596.16px; padding: 21.6px 21.6px 25.2px; width: 100%;
+}
+.kp-step__shot { aspect-ratio: 46 / 30; border-radius: 7.2px; overflow: hidden; position: relative; }
+.kp-step__shot img { height: 100%; left: 0; object-fit: cover; position: absolute; top: 0; width: 100%; }
+.kp-step__body { display: grid; gap: 10.8px; }
+.kp-step__title {
+  align-items: baseline; display: flex; flex-wrap: wrap; font-size: 17.3px; font-weight: 400;
+  gap: 10.79px; letter-spacing: .216px; line-height: 1.3; margin: 0;
+}
+.kp-step__n { color: #fd5303; font-family: "Geist Mono:Medium", monospace; font-weight: 500; }
+.kp-step__name { font-family: "Geist:Regular", sans-serif; text-transform: uppercase; }
+/* The frame pinned this copy inside h-[37.44px] — exactly two lines at 1440 with no slack — so
+   any rewrite one line longer than the template's was clipped rather than pushing the card down. */
+.kp-step__text {
+  color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: 14.4px;
+  letter-spacing: .216px; line-height: 1.4; margin: 0;
+}
+.kp-step__chip {
+  border-top: 1px solid rgba(255, 255, 255, .09); color: #fd5303;
+  font-family: "Geist Mono:Regular", monospace; font-size: 11.5px; letter-spacing: .08em;
+  margin: 0; padding-top: 12px; text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .kp-process__grid { grid-template-columns: minmax(0, 1fr); }
+  /* Stacked, the panel stops sticking. A full-height panel pinned above the steps would hold the
+     whole screen for the entire section and the cards would never get to be next to it.
+     `relative`, not `static`: the photo and its gradient are absolutely positioned, so a static
+     panel hands them to the nearest positioned ancestor and the photo covers the whole page. */
+  .kp-process__panel { height: auto; position: relative; }
+  .kp-process__panel-body { min-height: min(72vh, 560px); padding-bottom: clamp(36px, 8vw, 57.6px); }
+  .kp-process .kp-section__title { max-width: 20ch; }
+}
+
+/* Before / after ---------------------------------------------------------
+   src/sections/Results.tsx */
+.kp-results { background: #010101; color: #fff; }
+/* Everything in the header shares one centred column. The frame gave the eyebrow, the heading and
+   the caption three different widths and centred each on its own, so none of their edges lined up. */
+.kp-results__head {
+  display: grid;
+  gap: 13.74px;
+  justify-items: center;
+  margin-bottom: clamp(40px, 5vw, 72px);
+  text-align: center;
+}
+.kp-results__head > .kp-reveal:first-child { margin-bottom: 4.26px; }
+.kp-results .kp-section__title { max-width: 22ch; }
+/* The frame set this copy `whitespace-nowrap` inside a 432px box, so the two lines ran out past
+   both edges of their own container. Plain wrapping text in a measure that fits. */
+.kp-results__intro {
+  color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: clamp(14px, 1.15vw, 15.5px);
+  letter-spacing: .216px; line-height: 1.45; margin: 0; max-width: 62ch;
+}
+
+.kp-results__figure { margin: 0 auto; max-width: 972px; }
+.kp-compare {
+  aspect-ratio: 3 / 2;
+  border-radius: 7.2px;
+  cursor: ew-resize;
+  overflow: hidden;
+  position: relative;
+  /* Without this a drag on a touchscreen scrolls the page instead of moving the divider. */
+  touch-action: none;
+  user-select: none;
+}
+.kp-compare__img { height: 100%; left: 0; object-fit: cover; position: absolute; top: 0; width: 100%; }
+.kp-compare__img--before { pointer-events: none; }
+
+.kp-compare__tag {
+  background: rgba(0, 0, 0, .58); backdrop-filter: blur(6px); border-radius: 4px; color: #fff;
+  font-family: "Geist Mono:Medium", monospace; font-size: 11.5px; letter-spacing: .12em;
+  padding: 6px 10px; pointer-events: none; position: absolute; text-transform: uppercase;
+  top: 14.39px; transition: opacity 180ms ease;
+}
+.kp-compare__tag--before { left: 14.39px; }
+.kp-compare__tag--after { right: 14.39px; }
+
+.kp-compare__handle {
+  align-items: center;
+  background: #fff;
+  border-radius: 50%;
+  color: #010101;
+  display: flex;
+  font-size: 17px;
+  height: 43.19px;
+  justify-content: center;
+  margin-left: -21.6px;
+  position: absolute;
+  top: calc(50% - 21.6px);
+  width: 43.19px;
+}
+/* The vertical rule is drawn by the handle rather than by a second element, so it can never end
+   up a pixel out of step with it. */
+.kp-compare__handle::before {
+  background: #fff;
+  bottom: -50vh;
+  content: "";
+  left: calc(50% - 1px);
+  position: absolute;
+  top: -50vh;
+  width: 2px;
+}
+.kp-compare__handle:focus-visible { outline: 2px solid #fd5303; outline-offset: 3px; }
+
+.kp-results__caption {
+  align-items: baseline; display: flex; flex-wrap: wrap; gap: 6px 14.39px;
+  justify-content: space-between; margin: 14.39px 0 0;
+}
+.kp-results__caption-line {
+  color: #ddd; font-family: "Geist:Regular", sans-serif; font-size: 14.4px; letter-spacing: .216px;
+}
+.kp-results__note {
+  color: #777; font-family: "Geist Mono:Regular", monospace; font-size: 11.5px; letter-spacing: .04em;
+}
+
+.kp-results__controls { align-items: center; display: flex; gap: 14.39px; justify-content: center; margin-top: 25.2px; }
+.kp-results__arrow {
+  align-items: center; background: #1b1b1b; border: 0; border-radius: 4px; color: #fd5303;
+  cursor: pointer; display: flex; font-size: 20px; height: 36px; justify-content: center;
+  transition: background 180ms ease; width: 36px;
+}
+.kp-results__arrow:hover { background: #262626; }
+.kp-results__arrow:focus-visible { outline: 2px solid #fd5303; outline-offset: 2px; }
+.kp-results__count { color: #777; font-family: "Geist Mono:Regular", monospace; font-size: 12px; letter-spacing: .08em; }
+
+@media (max-width: 620px) {
+  .kp-compare { aspect-ratio: 4 / 3; }
+  .kp-compare__handle { height: 36px; margin-left: -18px; top: calc(50% - 18px); width: 36px; }
+  .kp-results__caption { justify-content: flex-start; }
+}
+
+/* The work rail ----------------------------------------------------------
+   src/sections/Work.tsx
+
+   The frame built this as three flex rows with hand-tuned gaps: row 1 was `items-end` with one
+   card carrying pb-[115.19px], row 3 was `items-center`, and the five cards had four different
+   heights. Nothing lined up because nothing was ever on one baseline. One row, one card size, one
+   scroll container. */
+.kp-work { background: #010101; color: #fff; }
+.kp-work__head {
+  align-items: end;
+  display: flex;
+  gap: 28.8px;
+  justify-content: space-between;
+  margin-bottom: clamp(32px, 4vw, 57.6px);
+}
+.kp-work__intro { display: grid; gap: 14.39px; max-width: 46ch; }
+.kp-work .kp-section__title { max-width: 24ch; }
+.kp-work__lede {
+  color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: clamp(14px, 1.15vw, 15.5px);
+  letter-spacing: .216px; line-height: 1.45; margin: 0;
+}
+
+.kp-work__controls { display: flex; flex-shrink: 0; gap: 10.8px; }
+.kp-work__arrow {
+  align-items: center; background: transparent; border: 1px solid rgba(255,255,255,.22);
+  border-radius: 999px; color: #fff; cursor: pointer; display: flex; font-size: 16px;
+  height: 43.19px; justify-content: center; transition: background 200ms ease, border-color 200ms ease, opacity 200ms ease;
+  width: 43.19px;
+}
+.kp-work__arrow:hover:not(:disabled) { background: #fd5303; border-color: #fd5303; }
+.kp-work__arrow:disabled { cursor: default; opacity: .3; }
+.kp-work__arrow:focus-visible { outline: 2px solid #fd5303; outline-offset: 2px; }
+
+/* The rail. `scroll-padding-left` rather than padding on the list: a snapport defaults to the
+   padding box, so `scroll-snap-align: start` on card 1 would otherwise cancel the left gutter and
+   park the first card against the window edge. */
+.kp-work__rail {
+  display: flex;
+  gap: 21.6px;
+  list-style: none;
+  margin: 0;
+  overflow-x: auto;
+  padding: 0 0 18px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+.kp-work__item {
+  display: flex;
+  flex: 0 0 clamp(280px, 38vw, 546px);
+  margin: 0;
+  scroll-snap-align: start;
+}
+/* `1fr` on the bar row, and the card stretched by the flex row above it: a card whose note runs to
+   one line instead of two would otherwise sit 11px shorter than its neighbours, which is the
+   ragged-bottom problem this section was rebuilt to get rid of. */
+.kp-work__card {
+  background: #1b1b1b; border: 0; border-radius: 10.8px; color: inherit; cursor: pointer;
+  display: grid; flex: 1; font: inherit; gap: 0; grid-template-rows: auto 1fr; overflow: hidden;
+  padding: 0; text-align: left; width: 100%;
+}
+.kp-work__card:focus-visible { outline: 2px solid #fd5303; outline-offset: 3px; }
+.kp-work__shot { aspect-ratio: 16 / 9; display: block; overflow: hidden; position: relative; }
+.kp-work__shot img {
+  height: 100%; left: 0; object-fit: cover; position: absolute; top: 0;
+  transition: transform 700ms cubic-bezier(.16, 1, .3, 1); width: 100%;
+}
+.kp-work__card:hover .kp-work__shot img { transform: scale(1.04); }
+
+/* The caption bar is a fixed row rather than a stack, so five cards with five different notes all
+   end at the same height and the rail keeps one baseline. */
+.kp-work__bar {
+  align-items: center; display: flex; gap: 18px; justify-content: space-between;
+  min-height: 93.6px; padding: 18px 21.6px;
+}
+.kp-work__meta { display: grid; gap: 5.4px; min-width: 0; }
+.kp-work__name {
+  font-family: "Geist:Regular", sans-serif; font-size: 17.3px; letter-spacing: .216px;
+  text-transform: uppercase;
+}
+.kp-work__note {
+  color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: 13.4px;
+  letter-spacing: .216px; line-height: 1.4;
+}
+.kp-work__go {
+  color: #fd5303; flex-shrink: 0; font-family: "Geist Mono:Regular", monospace; font-size: 11.5px;
+  letter-spacing: .08em; opacity: 0; text-transform: uppercase; transition: opacity 200ms ease;
+}
+.kp-work__card:hover .kp-work__go, .kp-work__card:focus-visible .kp-work__go { opacity: 1; }
+
+.kp-work__reference {
+  color: #777; font-family: "Geist Mono:Regular", monospace; font-size: 11.5px;
+  letter-spacing: .06em; margin: 25.2px 0 0;
+}
+
+@media (max-width: 720px) {
+  .kp-work__head { align-items: start; flex-direction: column; }
+  /* Touch scrolls the rail; the arrows would only take space from the cards. */
+  .kp-work__controls { display: none; }
+  .kp-work__item { flex-basis: min(82vw, 400px); }
+  .kp-work__go { opacity: 1; }
+}
+
+/* Why choose ------------------------------------------------------------
+   src/sections/WhyChoose.tsx
+
+   A table, not three columns of floating text. The frame drew the feature names, the ticks and the
+   crosses as three separate stacks with their own spacing, so a row only appeared to line up at
+   1440 and stopped doing so at every other width. */
+.kp-why { background: #e5e5e5; color: #010101; }
+.kp-why__head { display: grid; gap: 14.39px; margin-bottom: clamp(32px, 4vw, 57.6px); max-width: 52ch; }
+.kp-why .kp-section__title { max-width: 22ch; }
+.kp-why__intro {
+  color: #4a4a4a; font-family: "Geist:Regular", sans-serif; font-size: clamp(14px, 1.15vw, 15.5px);
+  letter-spacing: .216px; line-height: 1.45; margin: 0;
+}
+
+/* The table keeps its three columns down to the narrowest phone by scrolling sideways inside its
+   own box, so the page itself never scrolls horizontally. */
+.kp-why__scroll { overflow-x: auto; }
+.kp-why__table {
+  border-collapse: collapse;
+  font-family: "Geist:Regular", sans-serif;
+  min-width: 640px;
+  text-align: left;
+  width: 100%;
+}
+.kp-why__table th, .kp-why__table td {
+  border-bottom: 1px solid rgba(1, 1, 1, .1);
+  font-weight: 400;
+  padding: 16.2px 21.6px 16.2px 0;
+  vertical-align: top;
+}
+.kp-why__table thead th {
+  color: #6a6a6a; font-family: "Geist Mono:Regular", monospace; font-size: 11.5px;
+  letter-spacing: .08em; padding-bottom: 12.6px; text-transform: uppercase;
+}
+.kp-why__table tbody th {
+  font-size: 15.5px; letter-spacing: .216px; padding-right: 28.8px; width: 30%;
+}
+.kp-why__table td {
+  color: #4a4a4a; font-size: 14.4px; letter-spacing: .216px; line-height: 1.4;
+}
+/* A flex row inside the cell rather than on it: `display: flex` on a <td> takes the cell out of
+   table layout and the columns stop lining up. And the text must not be an inline-block — one that
+   is wider than the space left beside the icon moves to the next line whole, which put every tick
+   on a line of its own. */
+.kp-why__cell { align-items: center; display: flex; gap: 9px; }
+.kp-compare-mark { flex-shrink: 0; }
+.kp-compare-mark--yes { color: #fd5303; }
+.kp-compare-mark--no { color: #b4b4b4; }
+
+/* The KP column is tinted the whole height of the table so the eye can follow one side down it. */
+.kp-why__col--kp { background: rgba(253, 83, 3, .06); color: #010101; padding-left: 18px; }
+.kp-why__table thead .kp-why__col--kp { color: #010101; }
+
+@media (max-width: 620px) {
+  .kp-why__table { min-width: 560px; }
+  .kp-why__table tbody th { width: 34%; }
+}
+
+/* Screen-reader-only text. Used for the table caption, which repeats the heading for anyone
+   arriving at the table out of context. */
+.kp-visually-hidden {
+  clip: rect(0 0 0 0); clip-path: inset(50%); height: 1px; overflow: hidden; position: absolute;
+  white-space: nowrap; width: 1px;
+}
+
+/* The promise rail -------------------------------------------------------
+   src/sections/Commitments.tsx
+
+   Three cards in a fixed 360px-tall flex row became five in a scroll rail. The frame had two
+   copies of this — a desktop one and a 390px one with its own card size — and neither had any
+   controls, which is why Kunj could only ever see three of them. */
+.kp-promise { background: #010101; color: #fff; }
+.kp-promise__head {
+  align-items: end; display: flex; gap: 28.8px; justify-content: space-between;
+  margin-bottom: clamp(32px, 4vw, 57.6px);
+}
+.kp-promise__intro { display: grid; gap: 14.39px; max-width: 52ch; }
+.kp-promise .kp-section__title { max-width: 26ch; }
+.kp-promise__lede {
+  color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: clamp(14px, 1.15vw, 15.5px);
+  letter-spacing: .216px; line-height: 1.45; margin: 0;
+}
+.kp-promise__controls { display: flex; flex-shrink: 0; gap: 10.8px; }
+.kp-promise__arrow {
+  align-items: center; background: transparent; border: 1px solid rgba(255,255,255,.22);
+  border-radius: 999px; color: #fff; cursor: pointer; display: flex; font-size: 16px; height: 43.19px;
+  justify-content: center; transition: background 200ms ease, border-color 200ms ease, opacity 200ms ease;
+  width: 43.19px;
+}
+.kp-promise__arrow:hover:not(:disabled) { background: #fd5303; border-color: #fd5303; }
+.kp-promise__arrow:disabled { cursor: default; opacity: .3; }
+.kp-promise__arrow:focus-visible { outline: 2px solid #fd5303; outline-offset: 2px; }
+
+.kp-promise__rail {
+  display: flex; gap: 14.39px; list-style: none; margin: 0; overflow-x: auto; padding: 0 0 18px;
+  scroll-snap-type: x mandatory; scrollbar-width: thin;
+}
+.kp-promise__item { display: flex; flex: 0 0 clamp(272px, 27vw, 380px); margin: 0; scroll-snap-align: start; }
+.kp-promise__card {
+  border-radius: 7.2px; box-sizing: border-box; display: flex; flex: 1; flex-direction: column;
+  gap: 28.8px; justify-content: space-between; min-height: 360px; padding: 21px 21.6px 21.6px;
+}
+.kp-promise__body {
+  font-family: "Geist:Regular", sans-serif; font-size: 17.3px; letter-spacing: .216px;
+  line-height: 1.3; margin: 0;
+}
+.kp-promise__meta { display: grid; gap: 1.11px; }
+.kp-promise__label {
+  color: #fd5303; font-family: "Geist:Medium", sans-serif; font-size: 17.3px; font-weight: 500;
+  letter-spacing: .216px; margin: 0;
+}
+.kp-promise__sub {
+  font-family: "Geist Mono:Regular", monospace; font-size: 13px; letter-spacing: .216px; margin: 0;
+}
+
+.kp-promise__dots { display: flex; gap: 7.2px; margin-top: 21.6px; }
+.kp-promise__dot {
+  background: rgba(255,255,255,.24); border: 0; border-radius: 999px; cursor: pointer; height: 6px;
+  padding: 0; transition: background 200ms ease, width 200ms ease; width: 18px;
+}
+.kp-promise__dot--on { background: #fd5303; width: 36px; }
+.kp-promise__dot:focus-visible { outline: 2px solid #fd5303; outline-offset: 3px; }
+
+@media (max-width: 720px) {
+  .kp-promise__head { align-items: start; flex-direction: column; }
+  .kp-promise__controls { display: none; }
+  .kp-promise__item { flex-basis: min(80vw, 340px); }
+}
+
+/* Book now ---------------------------------------------------------------
+   src/sections/Book.tsx */
+.kp-book { background: #010101; color: #fff; }
+.kp-book__grid {
+  align-items: start; display: grid; gap: clamp(32px, 4vw, 72px);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+}
+.kp-book__head { display: grid; gap: 14.39px; position: sticky; top: 96px; }
+.kp-book .kp-section__title { max-width: 18ch; }
+.kp-book__lede {
+  color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: clamp(14px, 1.15vw, 15.5px);
+  letter-spacing: .216px; line-height: 1.45; margin: 0; max-width: 46ch;
+}
+
+.kp-book__next { display: grid; gap: 10.8px; margin-top: 14.39px; }
+.kp-book__next h3 {
+  color: #fd5303; font-family: "Geist Mono:Regular", monospace; font-size: 11.5px; font-weight: 400;
+  letter-spacing: .08em; margin: 0; text-transform: uppercase;
+}
+.kp-book__next ol {
+  counter-reset: kp-next; display: grid; gap: 10.8px; list-style: none; margin: 0; padding: 0;
+}
+.kp-book__next li {
+  color: #aaa; counter-increment: kp-next; font-family: "Geist:Regular", sans-serif;
+  font-size: 14.4px; letter-spacing: .216px; line-height: 1.45; padding-left: 28.8px;
+  position: relative;
+}
+.kp-book__next li::before {
+  color: #555; content: counter(kp-next); font-family: "Geist Mono:Regular", monospace;
+  font-size: 11.5px; left: 0; position: absolute; top: 2px;
+}
+
+.kp-book__panel { background: #1b1b1b; border-radius: 10.8px; padding: clamp(21.6px, 3vw, 36px); }
+.kp-book__form { display: grid; gap: 21.6px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* align-content: start matters. A .kp-field is a grid item stretched to its row height, and a
+   grid container's default align-content distributes leftover space across its auto rows — so a
+   field with no hint underneath (Vehicle size, Time of day) grew its <select> to 60px while the
+   inputs beside it stayed 49px, and the controls stopped lining up across the row. */
+.kp-field { align-content: start; display: grid; gap: 7.2px; min-width: 0; }
+.kp-field--wide { grid-column: 1 / -1; }
+.kp-field__label {
+  font-family: "Geist Mono:Regular", monospace; font-size: 11.5px; letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.kp-field__hint { color: #777; font-family: "Geist:Regular", sans-serif; font-size: 12.2px; line-height: 1.35; }
+.kp-field input, .kp-field select, .kp-field textarea {
+  background: #010101; border: 1px solid rgba(255,255,255,.14); border-radius: 7.2px; color: #fff;
+  font-family: "Geist:Regular", sans-serif; font-size: 14.4px; letter-spacing: .216px;
+  padding: 12.6px 14.39px; transition: border-color 200ms ease; width: 100%;
+}
+/* Inputs are border-box so a 100%-wide field plus its own padding cannot overflow the column. */
+.kp-field input, .kp-field select, .kp-field textarea { box-sizing: border-box; }
+.kp-field input, .kp-field select { height: 48.6px; }
+.kp-field textarea { line-height: 1.45; resize: vertical; }
+.kp-field input::placeholder, .kp-field textarea::placeholder { color: #6a6a6a; }
+.kp-field input:focus, .kp-field select:focus, .kp-field textarea:focus {
+  border-color: #fd5303; outline: none;
+}
+/* Only after the browser has decided the value is wrong, and never on an untouched field. */
+.kp-field input:user-invalid, .kp-field select:user-invalid { border-color: #ff6b3d; }
+/* The dark colour scheme makes the native date picker and select arrow legible on #010101. */
+.kp-field input[type="date"], .kp-field select { color-scheme: dark; }
+
+.kp-book__actions { grid-column: 1 / -1; }
+
+.kp-book__done { animation: kp-rise 380ms both ease-out; display: grid; gap: 14.39px; }
+.kp-book__done h3 {
+  font-family: "Geist:Regular", sans-serif; font-size: 21.6px; font-weight: 400;
+  letter-spacing: .216px; margin: 0;
+}
+.kp-book__done p {
+  color: #aaa; font-family: "Geist:Regular", sans-serif; font-size: 14.4px; letter-spacing: .216px;
+  line-height: 1.5; margin: 0; max-width: 58ch;
+}
+.kp-book__pending {
+  border-left: 2px solid #fd5303; color: #777 !important; font-family: "Geist Mono:Regular", monospace;
+  font-size: 11.5px !important; letter-spacing: .06em; padding-left: 14.39px;
+}
+
+@media (max-width: 860px) {
+  .kp-book__grid { grid-template-columns: minmax(0, 1fr); }
+  .kp-book__head { position: static; }
+}
+@media (max-width: 560px) {
+  .kp-book__form { grid-template-columns: minmax(0, 1fr); }
+}
 
 /* Hero proof card -------------------------------------------------------- */
 .kp-quote-metric {
@@ -188,45 +1097,108 @@ body {
   width: auto !important;
 }
 
-/* FAQ accordion ---------------------------------------------------------- */
-.kp-faq-row { overflow: hidden; transition: height 400ms cubic-bezier(.16, 1, .3, 1); }
-.kp-faq-row [data-name="Button menu"] [data-name*="plus"] { transition: transform 300ms cubic-bezier(.16, 1, .3, 1); }
-.kp-faq--open [data-name="Button menu"] [data-name*="plus"] { transform: rotate(45deg); }
-.kp-faq-answer {
-  opacity: 0 !important;
-  transform: translateY(6px);
-  transition: opacity 380ms ease, transform 380ms ease;
+/* FAQ --------------------------------------------------------------------
+   src/sections/Faq.tsx */
+.kp-faq { background: #e5e5e5; color: #010101; }
+.kp-faq__grid {
+  align-items: start;
+  display: grid;
+  gap: clamp(32px, 4vw, 72px);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
 }
-.kp-faq-answer * { white-space: normal !important; }
-.kp-faq--open .kp-faq-answer { opacity: 1 !important; transform: none; }
+.kp-faq__head { display: grid; gap: 14.39px; position: sticky; top: 96px; }
+.kp-faq .kp-section__title { max-width: 18ch; }
+.kp-faq__lede {
+  color: #4a4a4a; font-family: "Geist:Regular", sans-serif; font-size: clamp(14px, 1.15vw, 15.5px);
+  letter-spacing: .216px; line-height: 1.45; margin: 0; max-width: 46ch;
+}
+
+.kp-faq__list { display: grid; }
+.kp-faq__row { border-bottom: 1px solid rgba(1, 1, 1, .12); }
+.kp-faq__row:first-child { border-top: 1px solid rgba(1, 1, 1, .12); }
+.kp-faq__q { margin: 0; }
+.kp-faq__button {
+  align-items: center; background: none; border: 0; color: inherit; cursor: pointer; display: flex;
+  font-family: "Geist:Medium", sans-serif; font-size: 17.3px; font-weight: 500; gap: 21.6px;
+  justify-content: space-between; letter-spacing: .216px; line-height: 1.3; padding: 21.6px 0;
+  text-align: left; width: 100%;
+}
+.kp-faq__button:hover { color: #fd5303; }
+.kp-faq__button:focus-visible { outline: 2px solid #fd5303; outline-offset: 3px; }
+.kp-faq__plus {
+  color: #fd5303; flex-shrink: 0; font-size: 21.6px; line-height: 1;
+  transition: transform 300ms cubic-bezier(.16, 1, .3, 1);
+}
+.kp-faq__row--open .kp-faq__plus { transform: rotate(45deg); }
+
+/* 0fr → 1fr animates the panel to whatever height its own text needs. No measuring, so a wrapped
+   answer can never end up taller than the box that was sized for it. */
+.kp-faq__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 360ms cubic-bezier(.16, 1, .3, 1);
+}
+.kp-faq__row--open .kp-faq__panel { grid-template-rows: 1fr; }
+.kp-faq__panel-inner { overflow: hidden; }
+.kp-faq__panel-inner p {
+  color: #4a4a4a; font-family: "Geist:Regular", sans-serif; font-size: 14.4px; letter-spacing: .216px;
+  line-height: 1.5; margin: 0; max-width: 62ch; opacity: 0; padding-bottom: 21.6px;
+  transition: opacity 260ms ease 60ms;
+}
+.kp-faq__row--open .kp-faq__panel-inner p { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kp-faq__panel, .kp-faq__panel-inner p, .kp-faq__plus { transition: none; }
+}
+
+@media (max-width: 860px) {
+  .kp-faq__grid { grid-template-columns: minmax(0, 1fr); }
+  .kp-faq__head { position: static; }
+}
+
+/* Logo slot: used by the nav and the footer once site.logo.src is set. Until then both
+   render the text lockup and these rules match nothing. */
+.kp-brand-logo { display: block; height: 26px; object-fit: contain; width: auto; }
+.kp-brand-logo:hover { filter: none; transform: none; }
+.kp-site-footer__mark .kp-brand-logo { height: 44px; }
 
 .kp-site-footer {
   background: #010101;
   box-sizing: border-box;
   color: #f7f7f4;
   font-family: "Geist:Regular", sans-serif;
-  padding: 76px 70px 24px;
-  width: 1440px;
+  padding: clamp(52px, 5.3vw, 76px) clamp(24px, 4.9vw, 70px) 24px;
+  width: 100%;
 }
-
 .kp-site-footer__grid {
   display: grid;
-  gap: 48px;
-  grid-template-columns: minmax(360px, 2fr) minmax(150px, 1fr) minmax(220px, 1fr);
+  gap: clamp(32px, 3.3vw, 48px);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.15fr);
+  margin: 0 auto;
+  max-width: var(--kp-measure);
 }
+.kp-site-footer__bottom-wrap { margin: 0 auto; max-width: var(--kp-measure); }
 
 .kp-site-footer__brand { display: flex; flex-direction: column; align-items: flex-start; }
 .kp-site-footer__mark { animation: kp-footer-type 760ms both cubic-bezier(.16, 1, .3, 1); font-family: "Geist:Medium", sans-serif; font-size: 37px; font-weight: 500; letter-spacing: -2.4px; line-height: .85; }
 .kp-site-footer__mark span { display: block; color: #ff5a16; font-family: "Geist Mono:Regular", monospace; font-size: 10px; letter-spacing: .22em; margin: 9px 0 0 2px; text-transform: uppercase; }
 .kp-site-footer__brand > p { animation: kp-footer-type 760ms 80ms both cubic-bezier(.16, 1, .3, 1); color: #a7a7a7; font-size: 17px; letter-spacing: -.35px; line-height: 1.45; margin: 44px 0 22px; max-width: 300px; }
-.kp-site-footer__brand > button { background: #f4f4f2; border: 0; border-radius: 2px; color: #010101; cursor: pointer; display: flex; font-family: "Geist:Medium", sans-serif; font-size: 14px; gap: 28px; padding: 13px 16px; }
-.kp-site-footer__brand > button span { color: #ff5a16; font-size: 18px; line-height: 12px; }
 .kp-site-footer__contact { display: grid; gap: 11px; margin-top: 48px; }
 .kp-site-footer strong { color: #858585; font-family: "Geist Mono:Regular", monospace; font-size: 10px; font-weight: 400; letter-spacing: .14em; margin-bottom: 8px; text-transform: uppercase; }
 .kp-site-footer a { color: #d4d4d4; font-size: 14px; text-decoration: none; transition: color 180ms ease; }
 .kp-site-footer a:hover { color: #ff5a16; }
 .kp-site-footer__column { animation: kp-footer-type 760ms 180ms both cubic-bezier(.16, 1, .3, 1); display: flex; flex-direction: column; gap: 15px; padding-top: 7px; }
 .kp-site-footer__column:nth-child(3) { animation-delay: 250ms; }
+
+/* Hold the three footer animations at their first frame until the footer is actually on screen.
+   `animation-fill-mode: both` above means a paused animation sits at its from-state, so this
+   retimes the existing motion rather than replacing it. useReveal adds the --in class. */
+.kp-motion .kp-site-footer__mark,
+.kp-motion .kp-site-footer__brand > p,
+.kp-motion .kp-site-footer__column { animation-play-state: paused; }
+.kp-motion .kp-site-footer.kp-reveal--in .kp-site-footer__mark,
+.kp-motion .kp-site-footer.kp-reveal--in .kp-site-footer__brand > p,
+.kp-motion .kp-site-footer.kp-reveal--in .kp-site-footer__column { animation-play-state: running; }
 .kp-site-footer__services-info { border-top: 1px solid #292929; display: flex; flex-direction: column; gap: 13px; margin-top: 18px; padding-top: 24px; }
 .kp-site-footer__map { align-items: center; background: #171717; border: 1px solid #2a2a2a; display: flex; gap: 12px; margin-top: 11px; padding: 14px; }
 .kp-site-footer__map svg { color: #ff5a16; flex: 0 0 auto; height: 22px; width: 22px; }
@@ -262,41 +1234,49 @@ body {
   transform: translateY(0) scale(.98);
 }
 
-.kp-booking { align-items: center; display: flex; inset: 0; justify-content: center; position: fixed; z-index: 101; }
-.kp-booking__scrim { background: rgba(0, 0, 0, .76); border: 0; inset: 0; position: absolute; width: 100%; }
-.kp-booking__panel { animation: kp-pop 420ms both cubic-bezier(.16, 1, .3, 1); background: #f4f3ef; box-shadow: 0 30px 90px rgba(0,0,0,.45); box-sizing: border-box; color: #010101; max-width: 460px; padding: 42px; position: relative; width: calc(100% - 32px); }
-.kp-booking__close { background: transparent; border: 0; cursor: pointer; font-size: 28px; line-height: 1; position: absolute; right: 18px; top: 15px; }
-.kp-booking__eyebrow { color: #fd5303; font-family: "Geist Mono:Regular", monospace; font-size: 11px; letter-spacing: .12em; margin: 0 0 18px; }
-.kp-booking h2 { font-family: "Geist:Regular", sans-serif; font-size: 38px; font-weight: 400; letter-spacing: -2px; line-height: 1; margin: 0 0 30px; }
-.kp-booking form { display: grid; gap: 17px; }
-.kp-booking label { color: #555; display: grid; font-family: "Geist Mono:Regular", monospace; font-size: 10px; gap: 7px; letter-spacing: .08em; text-transform: uppercase; }
-.kp-booking input, .kp-booking select { background: transparent; border: 0; border-bottom: 1px solid #bdbdb9; border-radius: 0; color: #010101; font-family: "Geist:Regular", sans-serif; font-size: 16px; outline: none; padding: 9px 0; }
-.kp-booking input:focus, .kp-booking select:focus { border-color: #fd5303; }
-.kp-booking form button { background: #010101; border: 0; color: #fff; cursor: pointer; display: flex; font-family: "Geist:Medium", sans-serif; justify-content: space-between; margin-top: 12px; padding: 15px 17px; }
-.kp-booking__success { animation: kp-rise 380ms both ease-out; border-top: 1px solid #bdbdb9; display: grid; font-family: "Geist:Regular", sans-serif; gap: 8px; padding-top: 22px; }
-.kp-booking__success strong { font-size: 22px; font-weight: 400; }
-.kp-booking__success span { color: #777; }
-
 @keyframes kp-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes kp-pop { from { opacity: 0; transform: translateY(24px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes kp-footer-type { from { letter-spacing: .08em; opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Scroll reveal — see src/lib/useReveal.ts.
+   Scoped to .kp-motion (set on <html> by that module) so nothing hides if the bundle never runs. */
+.kp-motion .kp-reveal {
+  opacity: 0;
+  transform: translate3d(var(--kp-reveal-x, 0px), var(--kp-reveal-y, 20px), 0) scale(var(--kp-reveal-scale, 1));
+  transition:
+    opacity 720ms cubic-bezier(.16, 1, .3, 1) var(--kp-delay, 0ms),
+    transform 720ms cubic-bezier(.16, 1, .3, 1) var(--kp-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+/* A revealed container carries its children with it, so one observer covers a whole section. */
+.kp-motion .kp-reveal--in,
+.kp-motion .kp-reveal--in .kp-reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* Drop the compositor hint once the element has landed. */
+.kp-motion .kp-reveal--in { will-change: auto; }
 
 @media (prefers-reduced-motion: reduce) {
   .kp-automobil *, .kp-automobil *::before, .kp-automobil *::after { animation-duration: 1ms !important; scroll-behavior: auto !important; transition-duration: 1ms !important; }
+
+  /* The 1ms rule above is not enough on its own: a .kp-reveal that never gets --in would sit at
+     opacity 0 forever. Reduced motion means no movement, not no content. */
+  .kp-motion .kp-reveal,
+  .kp-motion .kp-reveal--in,
+  .kp-motion .kp-reveal--in .kp-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .kp-motion .kp-site-footer__mark,
+  .kp-motion .kp-site-footer__brand > p,
+  .kp-motion .kp-site-footer__column { animation-play-state: running !important; }
 }
 
 @media (max-width: 767px) {
-  .kp-automobil__desktop {
-    display: none;
-  }
-
-  .kp-automobil__mobile {
-    display: block;
-    width: 390px;
-  }
-
-  .kp-booking__panel { padding: 34px 27px; }
-
   .kp-site-footer { padding: 52px 24px 22px; width: 100%; }
   .kp-site-footer__grid { gap: 40px 24px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .kp-site-footer__brand { grid-column: 1 / -1; }
@@ -305,18 +1285,200 @@ body {
   .kp-site-footer__bottom { align-items: flex-start; flex-direction: column; gap: 14px; line-height: 1.5; margin-top: 42px; }
 }
 
-@media (min-width: 768px) {
-  .kp-automobil__desktop {
-    zoom: calc(100vw / 1440px);
-  }
+/* ==========================================================================
+   /book/ — the instant-quote flow (src/routes/book/)
+   ==========================================================================
+   Its own page, not a section, so it sets its own background rather than
+   inheriting one. Everything here reuses .kp-field and .kp-btn from above:
+   the flow must not look like a different website from the one that sent
+   the visitor into it. */
 
-  .kp-site-footer {
-    zoom: calc(100vw / 1440px);
-  }
+.kp-flow {
+  background: #010101;
+  box-sizing: border-box;
+  color: #f7f7f4;
+  display: flex;
+  flex-direction: column;
+  font-family: "Geist:Regular", sans-serif;
+  min-height: 100svh;
+}
+.kp-flow__bar {
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 18px clamp(18px, 4vw, 48px);
+}
+.kp-flow__brand {
+  color: #f7f7f4; font-family: "Geist:Medium", sans-serif; font-size: 19px;
+  font-weight: 500; letter-spacing: -.01em; text-decoration: none;
+}
+.kp-flow__brand span { font-family: "Geist:Regular", sans-serif; font-weight: 400; opacity: .72; }
+.kp-flow__exit {
+  color: #a5a5a0; font-size: 13.5px; text-decoration: none;
+  transition: color 180ms ease;
+}
+.kp-flow__exit:hover { color: #fd5303; }
+
+.kp-flow__body {
+  box-sizing: border-box;
+  display: grid;
+  gap: clamp(28px, 4vw, 56px);
+  grid-template-columns: 220px minmax(0, 1fr);
+  margin: 0 auto;
+  max-width: 1040px;
+  padding: clamp(28px, 4.4vw, 56px) clamp(18px, 4vw, 48px) 72px;
+  width: 100%;
+}
+.kp-flow__count {
+  color: #7d7d78; font-family: "Geist Mono:Regular", monospace; font-size: 11.5px;
+  letter-spacing: .08em; margin: 0 0 14px; text-transform: uppercase;
+}
+.kp-flow__steps ol { display: grid; gap: 2px; list-style: none; margin: 0; padding: 0; }
+.kp-flow__step button {
+  align-items: center; background: none; border: 0; border-radius: 6px; color: #86867f;
+  cursor: pointer; display: flex; font-family: inherit; font-size: 14px; gap: 10px;
+  padding: 8px 10px; text-align: left; transition: color 180ms ease, background 180ms ease;
+  width: 100%;
+}
+.kp-flow__step button:disabled { cursor: default; opacity: .38; }
+.kp-flow__step button:not(:disabled):hover { background: rgba(255, 255, 255, .05); color: #f7f7f4; }
+.kp-flow__pip {
+  align-items: center; border: 1px solid rgba(255, 255, 255, .2); border-radius: 50%;
+  display: flex; flex: 0 0 auto; font-family: "Geist Mono:Regular", monospace; font-size: 11px;
+  height: 22px; justify-content: center; width: 22px;
+}
+.kp-flow__step.is-current button { background: rgba(253, 83, 3, .1); color: #f7f7f4; }
+.kp-flow__step.is-current .kp-flow__pip { background: #fd5303; border-color: #fd5303; color: #fff; }
+.kp-flow__step.is-done button { color: #cfcfc8; }
+.kp-flow__step.is-done .kp-flow__pip { border-color: rgba(253, 83, 3, .55); color: #fd5303; }
+
+.kp-step { animation: kp-rise 340ms both ease-out; }
+.kp-step__heading {
+  font-family: "Geist:Medium", sans-serif; font-size: clamp(26px, 3.2vw, 34px); font-weight: 500;
+  letter-spacing: -.015em; line-height: 1.15; margin: 0 0 10px;
+}
+.kp-step__lede { color: #a5a5a0; font-size: 15px; line-height: 1.55; margin: 0 0 26px; max-width: 56ch; }
+.kp-step__note {
+  background: rgba(253, 83, 3, .08); border-left: 2px solid #fd5303; border-radius: 0 6px 6px 0;
+  color: #d8d8d2; font-size: 13.5px; line-height: 1.55; margin: 0 0 22px; padding: 12px 14px;
 }
 
-@media (max-width: 389px) {
-  .kp-automobil__mobile {
-    zoom: calc(100vw / 390px);
-  }
+.kp-step__choices {
+  display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  list-style: none; margin: 0 0 30px; padding: 0;
+}
+.kp-step__choices--wide { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.kp-choice {
+  background: #0c0c0c; border: 1px solid rgba(255, 255, 255, .12); border-radius: 10px;
+  color: inherit; cursor: pointer; display: grid; font-family: inherit; gap: 6px; height: 100%;
+  padding: 18px; text-align: left; transition: border-color 180ms ease, background 180ms ease;
+  width: 100%;
+}
+.kp-choice:hover { border-color: rgba(255, 255, 255, .28); }
+.kp-choice.is-on { background: rgba(253, 83, 3, .07); border-color: #fd5303; }
+.kp-choice b { font-family: "Geist:Medium", sans-serif; font-size: 16px; font-weight: 500; }
+.kp-choice span { color: #a5a5a0; font-size: 13.5px; line-height: 1.5; }
+.kp-choice small { color: #77776f; font-size: 12.2px; line-height: 1.45; }
+.kp-choice__price {
+  color: #fd5303; font-family: "Geist Mono:Regular", monospace; font-size: 12px;
+  font-style: normal; letter-spacing: .04em;
+}
+
+/* Each slot is its own row: thumbnail, then what the shot is meant to show. */
+.kp-shots { display: grid; gap: 12px; list-style: none; margin: 0 0 30px; padding: 0; }
+.kp-shot {
+  align-items: center; background: #0c0c0c; border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px; display: grid; gap: 16px; grid-template-columns: 96px minmax(0, 1fr);
+  padding: 14px;
+}
+.kp-shot.is-filled { border-color: rgba(253, 83, 3, .45); }
+.kp-shot__frame {
+  align-items: center; aspect-ratio: 4 / 3; background: #000; border-radius: 7px;
+  color: #4a4a46; display: flex; justify-content: center; overflow: hidden;
+}
+.kp-shot__frame svg { height: 26px; width: 26px; }
+.kp-shot__frame img { height: 100%; object-fit: cover; width: 100%; }
+.kp-shot__meta { display: grid; gap: 4px; min-width: 0; }
+.kp-shot__meta b { font-family: "Geist:Medium", sans-serif; font-size: 14.5px; font-weight: 500; }
+.kp-shot__meta small { color: #86867f; font-size: 12.5px; line-height: 1.45; }
+.kp-shot__error { color: #ff6b3d; font-size: 12.5px; font-style: normal; }
+.kp-shot__actions { display: flex; gap: 14px; padding-top: 4px; }
+.kp-shot__pick, .kp-shot__drop {
+  background: none; border: 0; color: #fd5303; cursor: pointer; font-family: inherit;
+  font-size: 13px; padding: 0; text-decoration: underline; text-underline-offset: 3px;
+}
+.kp-shot__drop { color: #86867f; }
+
+.kp-step__form { display: grid; gap: 18px 20px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.kp-summary { display: grid; gap: 0; margin: 0 0 26px; }
+.kp-summary__row {
+  align-items: baseline; border-bottom: 1px solid rgba(255, 255, 255, .08); display: grid;
+  gap: 14px; grid-template-columns: 130px minmax(0, 1fr) auto; padding: 13px 0;
+}
+.kp-summary__row dt {
+  color: #7d7d78; font-family: "Geist Mono:Regular", monospace; font-size: 11.5px;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.kp-summary__row dd { font-size: 14.5px; margin: 0; overflow-wrap: anywhere; }
+.kp-summary__row button {
+  background: none; border: 0; color: #fd5303; cursor: pointer; font-family: inherit;
+  font-size: 13px; padding: 0; text-decoration: underline; text-underline-offset: 3px;
+}
+
+.kp-total {
+  background: #0c0c0c; border: 1px solid rgba(255, 255, 255, .12); border-radius: 10px;
+  margin: 0 0 30px; padding: 20px;
+}
+.kp-total__lines { display: grid; gap: 9px; list-style: none; margin: 0; padding: 0; }
+.kp-total__lines li { display: flex; font-size: 14.5px; gap: 16px; justify-content: space-between; }
+.kp-total__lines b { color: #cfcfc8; font-family: "Geist:Regular", sans-serif; font-weight: 400; }
+.kp-total__figure {
+  align-items: baseline; border-top: 1px solid rgba(255, 255, 255, .12); display: flex; gap: 16px;
+  justify-content: space-between; margin: 16px 0 0; padding-top: 16px;
+}
+.kp-total__figure span {
+  color: #7d7d78; font-family: "Geist Mono:Regular", monospace; font-size: 11.5px;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.kp-total__figure b { font-family: "Geist:Medium", sans-serif; font-size: 18px; font-weight: 500; }
+.kp-total__note { color: #86867f; font-size: 13px; line-height: 1.55; margin: 14px 0 0; }
+
+.kp-deposit {
+  background: #0c0c0c; border: 1px solid rgba(255, 255, 255, .12); border-radius: 10px;
+  margin: 0 0 30px; padding: 20px;
+}
+.kp-deposit__figure {
+  align-items: baseline; display: flex; gap: 16px; justify-content: space-between; margin: 0;
+}
+.kp-deposit__figure span { font-size: 14.5px; }
+.kp-deposit__figure b { font-family: "Geist:Medium", sans-serif; font-size: 26px; font-weight: 500; }
+.kp-deposit__note { color: #86867f; font-size: 13px; line-height: 1.55; margin: 14px 0 0; }
+
+.kp-step__done { animation: kp-rise 380ms both ease-out; }
+.kp-step__actions { align-items: center; display: flex; flex-wrap: wrap; gap: 18px; }
+.kp-step__actions--form { grid-column: 1 / -1; }
+.kp-step__back {
+  background: none; border: 0; color: #86867f; cursor: pointer; font-family: inherit;
+  font-size: 14px; padding: 0; text-decoration: none; transition: color 180ms ease;
+}
+.kp-step__back:hover { color: #f7f7f4; }
+.kp-step__counter { color: #7d7d78; font-size: 13px; margin-left: auto; }
+
+@media (max-width: 860px) {
+  .kp-flow__body { grid-template-columns: minmax(0, 1fr); }
+  /* The rail becomes a scrollable strip of pips rather than a column that eats a third of a
+     phone screen. */
+  .kp-flow__steps ol { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .kp-flow__steps ol::-webkit-scrollbar { display: none; }
+  .kp-flow__step button { padding: 6px 8px; white-space: nowrap; }
+  .kp-step__form { grid-template-columns: minmax(0, 1fr); }
+  .kp-summary__row { grid-template-columns: minmax(0, 1fr) auto; }
+  .kp-summary__row dt { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+  .kp-shot { grid-template-columns: 72px minmax(0, 1fr); }
+  .kp-step__counter { margin-left: 0; width: 100%; }
 }
