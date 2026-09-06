@@ -23,3 +23,4 @@ logs/
 codebase.zip
 
 # Reference PDFs are large; tracked deliberately in docs/ — see AGENTS.md
+.vercel
