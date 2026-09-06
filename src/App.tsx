@@ -984,6 +984,10 @@ function App() {
     if (!loopWidth) return
     rail.scrollLeft = ((position % loopWidth) + loopWidth) % loopWidth
   }
+  const clearReviewDrag = () => {
+    reviewDragRef.current.active = false
+    reviewRailRef.current?.classList.remove("is-dragging")
+  }
   useEffect(() => {
     if (bookingPath.startsWith("/book")) return
     const rail = reviewRailRef.current
@@ -995,11 +999,17 @@ function App() {
       const elapsed = Math.min(now - lastFrame, 50)
       lastFrame = now
       if (!reviewDragRef.current.active)
-        setReviewLoopPosition(rail, rail.scrollLeft + elapsed * 0.035)
+        setReviewLoopPosition(rail, rail.scrollLeft + elapsed * 0.06)
       frame = window.requestAnimationFrame(move)
     }
+    window.addEventListener("pointerup", clearReviewDrag)
+    window.addEventListener("blur", clearReviewDrag)
     frame = window.requestAnimationFrame(move)
-    return () => window.cancelAnimationFrame(frame)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener("pointerup", clearReviewDrag)
+      window.removeEventListener("blur", clearReviewDrag)
+    }
   }, [bookingPath])
   const moveReviewRail = (direction: number) => {
     const rail = reviewRailRef.current
@@ -1033,8 +1043,7 @@ function App() {
   const endReviewDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
     const rail = reviewRailRef.current
     if (!rail || reviewDragRef.current.pointerId !== event.pointerId) return
-    reviewDragRef.current.active = false
-    rail.classList.remove("is-dragging")
+    clearReviewDrag()
     if (rail.hasPointerCapture(event.pointerId))
       rail.releasePointerCapture(event.pointerId)
   }
@@ -1480,6 +1489,7 @@ function App() {
           onPointerDown={startReviewDrag}
           onPointerMove={moveReviewDrag}
           onPointerUp={endReviewDrag}
+          onLostPointerCapture={endReviewDrag}
           onWheel={scrollReviewWithWheel}
           ref={reviewRailRef}
         >
