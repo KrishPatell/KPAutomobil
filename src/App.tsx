@@ -988,29 +988,6 @@ function App() {
     reviewDragRef.current.active = false
     reviewRailRef.current?.classList.remove("is-dragging")
   }
-  useEffect(() => {
-    if (bookingPath.startsWith("/book")) return
-    const rail = reviewRailRef.current
-    if (!rail || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      return
-    let frame = 0
-    let lastFrame = window.performance.now()
-    const move = (now: number) => {
-      const elapsed = Math.min(now - lastFrame, 50)
-      lastFrame = now
-      if (!reviewDragRef.current.active)
-        setReviewLoopPosition(rail, rail.scrollLeft + elapsed * 0.06)
-      frame = window.requestAnimationFrame(move)
-    }
-    window.addEventListener("pointerup", clearReviewDrag)
-    window.addEventListener("blur", clearReviewDrag)
-    frame = window.requestAnimationFrame(move)
-    return () => {
-      window.cancelAnimationFrame(frame)
-      window.removeEventListener("pointerup", clearReviewDrag)
-      window.removeEventListener("blur", clearReviewDrag)
-    }
-  }, [bookingPath])
   const moveReviewRail = (direction: number) => {
     const rail = reviewRailRef.current
     if (!rail) return
@@ -1253,17 +1230,6 @@ function App() {
             </p>
           </Reveal>
         </div>
-        <div className="driveway-head">
-          <Reveal>
-            <h3>Whatever is on the driveway</h3>
-          </Reveal>
-          <Reveal className="delay-1">
-            <p>
-              Match the closest footprint below. Pricing follows the space the
-              vehicle takes, not the badge on its grille.
-            </p>
-          </Reveal>
-        </div>
         <div className="driveway-grid">
           {bodyStyles.map((item, index) => (
             <Reveal
@@ -1298,25 +1264,27 @@ function App() {
             />
             <div className="process-shade" />
             <div className="process-panel__content">
-              <Reveal>
-                <Eyebrow>How it works</Eyebrow>
-              </Reveal>
-              <Reveal className="delay-1">
-                <h2>
-                  Three steps, and the price is settled before anyone touches
-                  the car.
-                </h2>
-              </Reveal>
-              <Reveal className="delay-2">
-                <p>
-                  Four photos and about a minute of your time. That is the whole
-                  booking — no site visit, no phone tag, and no new figure once
-                  we are standing in your driveway.
-                </p>
-              </Reveal>
-              <Reveal className="delay-3">
-                <Button onClick={() => openBooking()}>Start booking</Button>
-              </Reveal>
+              <div className="process-panel__cluster">
+                <Reveal>
+                  <Eyebrow>How it works</Eyebrow>
+                </Reveal>
+                <Reveal className="delay-1">
+                  <h2>
+                    Three steps, and the price is settled before anyone touches
+                    the car.
+                  </h2>
+                </Reveal>
+                <Reveal className="delay-2">
+                  <p>
+                    Four photos and about a minute of your time. That is the
+                    whole booking — no site visit, no phone tag, and no new
+                    figure once we are standing in your driveway.
+                  </p>
+                </Reveal>
+                <Reveal className="delay-3">
+                  <Button onClick={() => openBooking()}>Start booking</Button>
+                </Reveal>
+              </div>
             </div>
           </div>
           <ol className="process-cards">
@@ -1453,15 +1421,15 @@ function App() {
         <div className="promise-head">
           <div>
             <Reveal>
-              <Eyebrow>Recent work &amp; reviews</Eyebrow>
+              <Eyebrow>Recent work</Eyebrow>
             </Reveal>
             <Reveal className="delay-1">
-              <h2>Polished cars now. Real customer words next.</h2>
+              <h2>Polished cars. The standard you can expect.</h2>
             </Reveal>
             <Reveal className="delay-2">
               <p className="promise-intro">
-                Reference finishes show the standard. Verified customer reviews
-                will replace the review slots as the first bookings come in.
+                Every image is a finish reference. Customer reviews will appear
+                here only when they are real and verified.
               </p>
             </Reveal>
           </div>
@@ -1483,7 +1451,7 @@ function App() {
           </div>
         </div>
         <div
-          aria-label="Recent work and review slots moving right to left"
+          aria-label="Recent work moving continuously right to left"
           className="review-marquee"
           onPointerCancel={endReviewDrag}
           onPointerDown={startReviewDrag}
@@ -1545,17 +1513,14 @@ function App() {
         <div className="promise-grid">
           {promiseCards.map(([label, sublabel, body, image], index) => (
             <Reveal className={`promise-card delay-${index + 1}`} key={label}>
-              <div
-                aria-hidden="true"
-                className="promise-card__backdrop"
-                style={{ backgroundImage: `url("${image}")` }}
-              />
               <img alt="" className="promise-card__image" src={image} />
               <div className="promise-card__shade" />
               <div className="promise-card__content">
+                <div className="promise-card__heading">
+                  <b>{label}</b>
+                  <small>{sublabel}</small>
+                </div>
                 <p>{body}</p>
-                <b>{label}</b>
-                <small>{sublabel}</small>
               </div>
             </Reveal>
           ))}

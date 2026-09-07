@@ -274,6 +274,63 @@ a { color: inherit; }
 @media (max-width: 900px) { .footer-shell { grid-template-columns: 1fr 1fr; }.footer-brand { grid-column: 1 / -1; } }
 @media (max-width: 560px) { .footer { padding-left: 18px; padding-right: 18px; }.footer-shell { gap: 42px 24px; }.footer-bottom { align-items: start; grid-template-columns: 1fr; line-height: 1.5; }.footer-bottom > span:last-child { text-align: left; }.footer-bottom nav { flex-wrap: wrap; gap: 12px 18px; } }
 
+/* Homepage refinements — keep every service panel stable and each interaction clear. */
+.services-layout { gap: 28px; grid-template-columns: 1fr; }
+.service-tabs { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.service-tabs button { background: #111; border: 1px solid #363636; border-radius: 6px; display: flex; flex-direction: column; gap: 8px; justify-content: center; min-height: 92px; padding: 14px 16px; }
+.service-tabs button:hover, .service-tabs button.active { background: #1c130e; border-color: var(--orange); padding-left: 16px; }
+.service-tabs button b { font-size: 17px; line-height: 1.15; }
+.service-tabs button small { align-self: flex-start; }
+.service-panel { display: grid; grid-template-rows: auto 1fr; min-height: 628px; }
+.service-panel__top { align-items: stretch; min-height: 307px; }
+.service-panel__top > div { display: flex; flex-direction: column; }
+.service-panel__top .button { align-self: flex-start; margin-top: auto; }
+.included { align-self: start; min-height: 178px; }
+
+.process-panel__content { justify-content: center; }
+.process-panel__cluster { display: grid; gap: 20px; max-width: 520px; }
+.process-panel__cluster h2 { margin: 0; }
+.process-panel__cluster p { color: rgba(255,255,255,.82); font-size: 15px; line-height: 1.5; margin: 0; max-width: 48ch; }
+.process-panel__cluster .button { margin-top: 6px; }
+
+.review-track { animation: review-ticker 62s linear infinite; gap: 0; will-change: transform; }
+.review-track__group { padding-right: 16px; }
+.review-marquee.is-dragging .review-track { animation-play-state: paused; }
+@keyframes review-ticker { to { transform: translateX(-50%); } }
+
+.promise-card { aspect-ratio: 16 / 11; background: #191919; border: 0; box-shadow: none; min-height: 0; }
+.promise-card__image { object-fit: cover; }
+.promise-card__content { justify-content: flex-end; padding: 24px; }
+.promise-card__heading { display: grid; gap: 5px; transition: transform .35s cubic-bezier(.16,1,.3,1); }
+.promise-card__content p { margin: 0; max-height: 0; opacity: 0; overflow: hidden; transform: translateY(16px); transition: max-height .4s ease, opacity .25s ease, transform .4s cubic-bezier(.16,1,.3,1); }
+.promise-card:hover, .promise-card:focus-within { box-shadow: none; transform: translateY(-4px); }
+.promise-card:hover .promise-card__content p, .promise-card:focus-within .promise-card__content p { margin-bottom: 13px; max-height: 9em; opacity: 1; transform: translateY(0); }
+.promise-card:hover .promise-card__heading, .promise-card:focus-within .promise-card__heading { transform: translateY(0); }
+
+.footer-links > a:not(.footer-service-area), .footer-links > button { font-size: 16.1px; }
+.footer-service-area b { font-size: 18.4px; }
+.footer-service-area small { font-size: 13.8px; }
+.footer-bottom { font-size: 11.5px; }
+
+@media (max-width: 900px) {
+  .service-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+  .service-tabs button { flex: 0 0 184px; min-width: 0; }
+  .service-panel { min-height: 792px; }
+  .service-panel__top { min-height: 0; }
+  .included { min-height: 168px; }
+}
+
+@media (max-width: 560px) {
+  .service-tabs button { flex-basis: 170px; min-height: 82px; }
+  .service-panel { min-height: 904px; }
+  .review-track { animation-duration: 48s; }
+  .promise-card { aspect-ratio: 4 / 3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review-track { animation: none; }
+}
+
 .booking-page { background: #050505; color: #f5f5f2; min-height: 100svh; }
 .booking-header { align-items: center; border-bottom: 1px solid #202020; display: flex; justify-content: space-between; min-height: 76px; padding: 18px max(28px, 4vw); }
 .booking-header a { text-decoration: none; }.booking-header .mark small { color: #d8d8d4; font-family: "Geist", sans-serif; font-size: 17px; font-weight: 400; letter-spacing: -.055em; text-transform: none; }.booking-header button { background: transparent; border: 0; color: #aaa; font-size: 14px; padding: 8px 0; }.booking-header button:hover { color: #fff; }
