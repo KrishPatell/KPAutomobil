@@ -244,8 +244,7 @@ a { color: inherit; }
 .review-gallery::-webkit-scrollbar-thumb { background: var(--orange); }
 .review-gallery::-webkit-scrollbar-track { background: #2a2a2a; }
 .promise-card { min-height: 340px; overflow: hidden; position: relative; transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease; }
-.promise-card__backdrop, .promise-card__image, .promise-card__shade { inset: 0; position: absolute; }
-.promise-card__backdrop { background-position: center; background-size: cover; filter: blur(18px) brightness(.72); transform: scale(1.1); }
+.promise-card__image, .promise-card__shade { inset: 0; position: absolute; }
 .promise-card__image { height: 100%; object-fit: contain; object-position: center; transition: filter .6s ease, transform .8s cubic-bezier(.16,1,.3,1); width: 100%; }
 .promise-card__shade { background: linear-gradient(180deg, rgba(0,0,0,.08) 15%, rgba(0,0,0,.68) 100%); }
 .promise-card__content { display: flex; flex-direction: column; height: 100%; position: relative; z-index: 1; }
