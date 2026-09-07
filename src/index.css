@@ -298,6 +298,18 @@ a { color: inherit; }
 .review-marquee.is-dragging .review-track { animation-play-state: paused; }
 @keyframes review-ticker { to { transform: translateX(-50%); } }
 
+.review-commitments { border-top: 1px solid #2a2a2a; display: grid; gap: 32px; grid-template-columns: minmax(220px, .72fr) minmax(0, 1.28fr); margin: 72px auto 0; max-width: var(--max); padding-top: 44px; }
+.review-commitments__head h3 { color: #fff; font-size: clamp(25px, 2.3vw, 36px); font-weight: 500; letter-spacing: -.045em; line-height: 1.05; margin: 15px 0; max-width: 12ch; }
+.review-commitments__head p { color: #aaa; font-size: 14px; line-height: 1.5; margin: 0; max-width: 34ch; }
+.testimonial-grid { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
+.testimonial-card { background: #171717; border: 1px solid #292929; display: flex; flex-direction: column; justify-content: space-between; min-height: 264px; padding: 22px; }
+.testimonial-card > p { color: #e9e9e5; font-size: 15px; line-height: 1.5; margin: 0; }
+.testimonial-card__person { align-items: center; display: flex; gap: 11px; margin-top: 22px; }
+.testimonial-card__person > span { align-items: center; background: var(--orange); border-radius: 50%; color: #111; display: flex; font: 11px "Geist Mono", monospace; height: 34px; justify-content: center; width: 34px; }
+.testimonial-card__person div { display: grid; gap: 3px; }
+.testimonial-card__person b { color: #fff; font-size: 14px; font-weight: 500; }
+.testimonial-card__person small { color: #aaa; font: 10px "Geist Mono", monospace; line-height: 1.3; }
+
 .promise-card { aspect-ratio: 16 / 11; background: #191919; border: 0; box-shadow: none; min-height: 0; }
 .promise-card__image { object-fit: cover; }
 .promise-card__content { justify-content: flex-end; padding: 24px; }
@@ -318,6 +330,7 @@ a { color: inherit; }
   .service-panel { min-height: 792px; }
   .service-panel__top { min-height: 0; }
   .included { min-height: 168px; }
+  .review-commitments { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
@@ -325,6 +338,9 @@ a { color: inherit; }
   .service-panel { min-height: 904px; }
   .review-track { animation-duration: 48s; }
   .promise-card { aspect-ratio: 4 / 3; }
+  .review-commitments { margin-top: 54px; }
+  .testimonial-grid { grid-template-columns: 1fr; }
+  .testimonial-card { min-height: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

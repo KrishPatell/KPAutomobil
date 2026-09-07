@@ -44,6 +44,7 @@ import bmwHeavyDirtyImage from "./assets/results/bmw-heavy-dirty-v3.jpg"
 import porscheHeavyDirtyImage from "./assets/results/porsche-heavy-dirty-v3.jpg"
 import suvHeavyDirtyImage from "./assets/results/suv-heavy-dirty-v3.jpg"
 import fullDetailPorscheImage from "./assets/porsche-full-detail-user-v2.jpg"
+import { commitments } from "./content/commitments"
 
 type Package = {
   name: string
@@ -1497,6 +1498,39 @@ function App() {
               </div>
             ))}
           </div>
+        </div>
+        <div className="review-commitments">
+          <div className="review-commitments__head">
+            <Reveal>
+              <Eyebrow>Customer feedback</Eyebrow>
+            </Reveal>
+            <Reveal className="delay-1">
+              <h3>No reviews yet. The commitments stay in writing.</h3>
+            </Reveal>
+            <Reveal className="delay-2">
+              <p>
+                KP Automobil is new. Real customer names and feedback will be
+                published here only after customers choose to share them.
+              </p>
+            </Reveal>
+          </div>
+          <ul className="testimonial-grid">
+            {commitments.map((commitment, index) => (
+              <Reveal
+                className={`testimonial-card delay-${index + 1}`}
+                key={commitment.label}
+              >
+                <p>{commitment.body}</p>
+                <div className="testimonial-card__person">
+                  <span aria-hidden="true">{index === 0 ? "K" : "KP"}</span>
+                  <div>
+                    <b>{index === 0 ? "Kunj" : "KP Automobil"}</b>
+                    <small>{commitment.sublabel}</small>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </section>
       <section className="section promise" id="promise">
