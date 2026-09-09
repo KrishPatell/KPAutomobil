@@ -15,7 +15,7 @@ export const commitmentsHeading = "No reviews yet."
 
 export const commitments: Commitment[] = [
   {
-    label: "V",
+    label: "Kunj",
     sublabel: "Owner, KP Automobil",
     body: "KP Automobil is new. There are no customer reviews to show yet, and we are not going to borrow anyone else's. Here is what you get instead.",
   },

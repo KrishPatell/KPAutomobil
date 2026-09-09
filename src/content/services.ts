@@ -1,123 +1,264 @@
-// The services section: five tabs, and what is behind each one.
+// The three packages, plus the two add-ons that are big enough to have their own panel.
 //
-// Two things here are deliberate and worth not "fixing" back:
-//
-// 1. **No prices.** docs/content-brief.md is explicit that nothing is confirmed, so every package
-//    carries `price: null` and the panel renders `priceNote` instead. The template shipped
-//    "Starting at $79", which was a made-up number for a business that has not set one.
-// 2. **Five tabs for three packages.** Brief §3d: Interior Refresh, Full Detail and Deep
-//    Restoration are the real packages; Ceramic Coating and Hand Wax are add-ons promoted to
-//    headline slots because both are real and both are priced separately. `addOn` marks them so
-//    the panel can say so rather than passing them off as full packages.
-//
-// The inclusion lists came over from the template with the wrong package: the first tab was
-// "Express Wash" and kept its all-exterior checklist after it was renamed to Interior Refresh, so
-// a package called Interior Refresh was advertising "Exterior Drying". They are ordinary
-// detailing tasks, redistributed to the package whose name they match — **Kunj still needs to
-// confirm the final list per package**, and the Deep Restoration entries are the ones the brief
-// names outright (carpet and seat shampoo with hot-water extraction, steam, leather conditioning).
+// Prices are not in here — they live in pricing.ts, keyed by package name and size tier, because
+// the same package costs four different amounts. `priceNote` is what shows wherever a number is
+// not yet confirmed.
 
-import imgInteriorRefresh from "../imports/1440WLight/2c0b095cbd13138aaabd6eedbf692c1f026269a3.png";
-import imgFullDetail from "../imports/1440WLight/2b131945f24866466367159fe580c38e0b007519.png";
-import imgDeepRestoration from "../imports/1440WLight/fb6138b1b853802e1ac2794f5e21bb84eb99643d.png";
-import imgCeramic from "../imports/1440WLight/8f9b949be2c84db8c6782760daa08368225b5f25.png";
-import imgHandWax from "../imports/1440WLight/858ac59c533de617e6ed18ec8031fc4a07c0835f.png";
+import { media } from "./media"
+
+export type Package = {
+  name: string
+  description: string
+  items: string[]
+  image: string
+  /** True for the two that are extras rather than standalone bookings. */
+  addOn?: boolean
+  /** URL slug, for /book/?package=<slug>. */
+  slug: string
+  /** One line for the finished-work grid on the homepage. Says what the result looks like. */
+  showcaseNote?: string
+}
+
+export const packages: Package[] = [
+  {
+    name: "Interior Refresh",
+    slug: "interior-refresh",
+    description: "Inside only, for the everyday car that needs a proper reset.",
+    showcaseNote: "Dash, console, trim, and mats reset.",
+    image: media.workInterior,
+    items: [
+      "Full interior vacuum",
+      "Dash, console & trim",
+      "Door panels",
+      "Interior glass",
+      "Cup holders & storage",
+      "Floor mats",
+    ],
+  },
+  {
+    name: "Full Detail",
+    slug: "full-detail",
+    description: "A complete inside-and-out clean for the full reset.",
+    showcaseNote: "Washed by hand, wheels and glass done.",
+    image: media.fullDetailPorsche,
+    items: [
+      "Hand wash & dry",
+      "Interior deep vacuum",
+      "Wheel & tire clean",
+      "Interior & exterior glass",
+      "Door jamb wipe down",
+      "Tire dressing",
+    ],
+  },
+  {
+    name: "Deep Restoration",
+    slug: "deep-restoration",
+    description:
+      "For heavy soil, stains, pet hair, or a car that has not been detailed in years.",
+    showcaseNote: "Extraction, steam, and stain treatment.",
+    image: media.deepRestoration,
+    items: [
+      "Carpet & seat shampoo",
+      "Hot-water extraction",
+      "Steam clean",
+      "Stain treatment",
+      "Leather conditioning",
+      "Clay bar treatment",
+      "Wheel wells",
+      "Streak-free glass",
+    ],
+  },
+  {
+    name: "Ceramic Coating",
+    slug: "ceramic-coating",
+    description: "An add-on protective layer over clean paint. Priced after photos.",
+    image: media.ceramicCoating,
+    addOn: true,
+    items: [
+      "Paint decontamination",
+      "Surface preparation",
+      "Ceramic application",
+      "Cure & buff",
+      "Hydrophobic finish",
+    ],
+  },
+  {
+    name: "Hand Wax",
+    slug: "hand-wax",
+    description:
+      "An add-on warm shine between full details, applied and buffed by hand.",
+    image: media.handWax,
+    addOn: true,
+    items: ["Hand wash & dry", "Wax application", "Hand buff", "Tire dressing"],
+  },
+]
+
+/**
+ * The line items the quote tool can add on top of a package.
+ *
+ * The two with their own panel above (Ceramic Coating, Hand Wax) are repeated here so the /book/
+ * extras step and the /services/ add-on grid read one list and cannot drift apart. `condition` ties
+ * an add-on to the answer in the condition step that suggests it — see suggestAddOns() in
+ * src/lib/quote.ts. A suggested add-on is pre-checked and always removable.
+ */
+export type AddOn = {
+  name: string
+  description: string
+  /** Which condition answer pre-checks this. Undefined means it is never auto-suggested. */
+  condition?: ConditionId
+}
+
+export type ConditionId = "pet-hair" | "stains" | "odour" | "long-gap"
+
+export const addOns: AddOn[] = [
+  {
+    name: "Ceramic Coating",
+    description: "A protective layer over clean paint, applied after the detail and left to cure.",
+  },
+  {
+    name: "Hand Wax",
+    description: "A warm shine applied and buffed by hand, for cars between full details.",
+  },
+  {
+    name: "Pet Hair Removal",
+    description:
+      "Hair worked out of carpet and upholstery by hand before the vacuum. Slow, and the reason a pet car takes longer.",
+    condition: "pet-hair",
+  },
+  {
+    name: "Heavy Stain Treatment",
+    description: "Spot treatment and extraction on set-in spills, in the seats and the carpet.",
+    condition: "stains",
+  },
+  {
+    name: "Odour Removal",
+    description: "Source cleaning plus an ozone treatment, for smoke and for anything that soaked in.",
+    condition: "odour",
+  },
+  {
+    name: "Engine Bay",
+    description: "A degrease and dress of the bay, avoiding the electronics.",
+  },
+  {
+    name: "Headlight Restoration",
+    description: "Sanding and polishing clouded lenses back to clear, then sealing them.",
+  },
+  {
+    name: "Trunk Deep Clean",
+    description: "The trunk or cargo area emptied, vacuumed and wiped down, spare-wheel well included.",
+    condition: "long-gap",
+  },
+]
+
+/** The condition questions asked in step 3 of /book/. Honest answers cost less than surprises. */
+export const conditions: { id: ConditionId; question: string; help: string }[] = [
+  {
+    id: "pet-hair",
+    question: "Does a pet ride in the car?",
+    help: "Hair works into the weave and has to come out by hand before anything else.",
+  },
+  {
+    id: "stains",
+    question: "Any spills or set-in stains?",
+    help: "Coffee, food, anything that soaked into a seat or the carpet.",
+  },
+  {
+    id: "odour",
+    question: "Any smell you want gone?",
+    help: "Smoke, damp, or something that was left in the car too long.",
+  },
+  {
+    id: "long-gap",
+    question: "Has it gone more than a year without a detail?",
+    help: "Not a problem — it just changes how long the first one takes.",
+  },
+]
+
+/** The three you can actually book on their own. */
+export const bookablePackages = packages.filter((item) => !item.addOn)
+
+export function packageBySlug(slug: string): Package | undefined {
+  return packages.find((item) => item.slug === slug)
+}
 
 export const services = {
   eyebrow: "Services",
-  heading: "Three packages and two add-ons. That is the whole menu.",
-  intro: "Pick the one that sounds closest. The price comes from your photos, not from a guess over the phone.",
-  includedLabel: "What's included",
-  /** Stands in for a price until Kunj sets one. Never replace this with a number nobody confirmed. */
+  heading: "Services designed around your vehicle.",
+  intro:
+    "Three packages and a short list of extras. Pick the one that matches the state the car is actually in — the quote tool prices it against your size and your photos.",
+  includedLabel: "What is included",
   priceNote: "Priced from your photos, before you book",
-};
+}
 
-export type Package = {
-  title: string;
-  desc: string;
-  /** Alt text for the panel image. */
-  imageAlt: string;
-  image: string;
-  /** Add-ons are sold alongside a package, not instead of one. Brief §3d. */
-  addOn?: boolean;
-  /** Confirmed price, in dollars. Null until Kunj sets one — see the note above. */
-  price: number | null;
-  included: string[];
-};
+/**
+ * Copy for /services/.
+ *
+ * The honesty block is the part that matters. Every detailer's site says "no hidden fees"; this one
+ * lists the four things that actually do change a price and commits to how you find out. It is only
+ * worth having if it is specific, so keep it specific.
+ */
+export const servicesPage = {
+  anchors: [
+    { href: "#packages", label: "Packages" },
+    { href: "#add-ons", label: "Add-ons" },
+    { href: "#extras", label: "What costs extra" },
+    { href: "#compare", label: "Compare" },
+  ],
 
-// Order matches the brief: the three packages in escalating order, then the two add-ons.
-export const packages: Package[] = [
-  {
-    title: "Interior Refresh",
-    desc: "Inside only. For a car that gets used every day and just needs resetting.",
-    image: imgInteriorRefresh,
-    imageAlt: "The interior of a car, steering wheel and centre console",
-    price: null,
-    included: [
-      "Full Interior Vacuum",
-      "Dashboard & Console Wipe",
-      "Door Panels & Trim",
-      "Interior Glass",
-      "Cup Holders & Storage",
-      "Floor Mats Cleaned",
+  packages: {
+    eyebrow: "The three packages",
+    heading: "Pick the one that matches the state the car is in.",
+    intro:
+      "Each package is priced by how much car there is, so the four sizes below are the whole price list. The number you pay is confirmed from your photos before the deposit — it does not move after that.",
+  },
+
+  addOns: {
+    eyebrow: "Add-ons",
+    heading: "Extras, priced as line items you can take off.",
+    intro:
+      "These go on top of a package. Some of them we can price from a photo and some we cannot yet — where a price is missing it says so rather than guessing low and correcting you later.",
+  },
+
+  extras: {
+    eyebrow: "What costs extra",
+    heading: "When the price changes — and how you will know first.",
+    intro:
+      "A quote is only useful if it holds. These are the four things that move a number, and in every case you see the new figure in writing before any work starts.",
+    reasons: [
+      {
+        title: "The photos did not show it",
+        body: "Ground-in pet hair, a spill under a seat, mould in a footwell. If the car turns out to need more than the photos showed, you get the revised price before we start — and you can say no.",
+      },
+      {
+        title: "You added something on the day",
+        body: "An extra add-on you decided on once we were there. It is quoted and agreed the same way, and it goes on the same written total.",
+      },
+      {
+        title: "The vehicle is a size up",
+        body: "A three-row that was booked as an SUV, say. The size band changes, the package does not, and the difference is the published one on this page.",
+      },
+      {
+        title: "You are outside the radius",
+        body: "A travel fee is quoted with the price, before the deposit, never added afterwards.",
+      },
     ],
+    promise: {
+      title: "What does not change it",
+      lines: [
+        "Paying by card. There is no surcharge — the processing cost is absorbed.",
+        "The job taking longer than expected. That is our estimate to get right, not your bill.",
+        "Anything discussed at the door without a written number first.",
+      ],
+    },
   },
-  {
-    title: "Full Detail",
-    desc: "Inside and out in one visit. This is the one most people book.",
-    image: imgFullDetail,
-    imageAlt: "A gloved hand washing a car headlight with a soapy sponge",
-    price: null,
-    included: [
-      "Hand Wash & Dry",
-      "Interior Deep Vacuum",
-      "Dashboard & Console Wipe",
-      "Wheel & Tire Cleaning",
-      "Interior & Exterior Glass",
-      "Door Jamb Wipe Down",
-      "Tire Dressing",
-    ],
+
+  compare: {
+    eyebrow: "Compare",
+    heading: "How this works against how it usually works.",
   },
-  {
-    title: "Deep Restoration",
-    desc: "For a car that has never been detailed, or has not been for years.",
-    image: imgDeepRestoration,
-    imageAlt: "A car covered in snow foam during a wash",
-    price: null,
-    included: [
-      "Carpet & Seat Shampoo",
-      "Hot-Water Extraction",
-      "Steam Clean",
-      "Stain & Spot Treatment",
-      "Leather & Vinyl Conditioning",
-      "Clay Bar Treatment",
-      "Wheel Well Cleaning",
-      "Streak-Free Glass",
-    ],
+
+  faq: {
+    eyebrow: "Before you book",
+    heading: "The questions the packages raise.",
   },
-  {
-    title: "Ceramic Coating",
-    desc: "An add-on. A protective layer over clean paint, so the shine lasts and dirt lets go easier.",
-    image: imgCeramic,
-    imageAlt: "The rear quarter of a dark blue car with a high-gloss finish",
-    addOn: true,
-    price: null,
-    included: [
-      "Paint Decontamination",
-      "Surface Preparation",
-      "Ceramic Application",
-      "Cure & Buff",
-      "Hydrophobic Finish",
-      "Trim & Glass Coverage",
-    ],
-  },
-  {
-    title: "Hand Wax",
-    desc: "An add-on. A warm shine between full details, applied and buffed by hand.",
-    image: imgHandWax,
-    imageAlt: "A glossy black car parked on wet pavement",
-    addOn: true,
-    price: null,
-    included: ["Hand Wash & Dry", "Wax Application", "Hand Buff", "Tire Dressing"],
-  },
-];
+}
