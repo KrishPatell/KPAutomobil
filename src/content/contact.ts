@@ -29,7 +29,7 @@ export const contactPage = {
         placeholder: "(000) 000-0000",
         hint: "Optional. Only used to answer this message.",
       },
-      subject: { label: "What is this about" },
+      subject: { label: "What is this about", placeholder: "Choose a topic" },
       message: {
         label: "Message",
         placeholder: "As much or as little as you like.",

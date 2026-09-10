@@ -100,7 +100,7 @@ export default function Contact() {
     name: "",
     email: "",
     phone: "",
-    subject: form.subjects[0],
+    subject: "",
     message: "",
   })
   const [photo, setPhoto] = useState<{ name: string; src: string } | null>(null)
@@ -149,6 +149,7 @@ export default function Contact() {
     if (!fields.name.trim()) next.name = form.errorRequired
     if (!fields.email.trim()) next.email = form.errorRequired
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.trim())) next.email = form.errorEmail
+    if (!fields.subject) next.subject = form.errorRequired
     if (fields.message.trim().length < 8) next.message = form.errorMessage
     if (messageCooldown() > 0) next.rate = form.errorTooFast
 
@@ -198,7 +199,7 @@ export default function Contact() {
                         name: "",
                         email: "",
                         phone: "",
-                        subject: form.subjects[0],
+                        subject: "",
                         message: "",
                       })
                       setPhoto(null)
@@ -262,12 +263,16 @@ export default function Contact() {
                         onChange={(event) => set("subject", event.target.value)}
                         value={fields.subject}
                       >
+                        <option disabled value="">
+                          {form.fields.subject.placeholder}
+                        </option>
                         {form.subjects.map((subject) => (
                           <option key={subject} value={subject}>
                             {subject}
                           </option>
                         ))}
                       </select>
+                      {errors.subject && <em>{errors.subject}</em>}
                     </label>
                   </div>
 

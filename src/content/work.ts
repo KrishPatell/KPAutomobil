@@ -1,26 +1,35 @@
-// The scrolling work rail on the homepage.
+// Reference-detailing imagery for the static Recent Work section on the homepage.
 //
-// These are captions describing what a detail covers, not customer quotes. There is no review,
-// rating or star count anywhere in this file and none belongs here — KP Automobil is new and has
-// none. When real reviews exist they get their own file and their own section.
+// These are factual descriptions of service actions, not customer quotes, ratings, or claims
+// about completed KP Automobil jobs. The photography is explicitly labelled as reference work
+// until the business has its own documented portfolio.
 
 import { media } from "./media"
 
 export type WorkCard = {
   image: string
+  imageAlt: string
   title: string
   caption: string
 }
 
 export const workCards: WorkCard[] = [
-  { image: media.blackSedan, title: "Hand Wax", caption: "Warm shine, buffed by hand" },
-  { image: media.blueCoupe, title: "Driveway Finish", caption: "Ready before you leave" },
-  { image: media.darkPickup, title: "Mobile Service", caption: "Everything travels in the van" },
-  { image: media.whiteSuv, title: "SUV Detail", caption: "Paint, wheels, and glass finished" },
-  { image: media.blackSedan, title: "Exterior Finish", caption: "A clean driveway-ready sedan" },
-  { image: media.blueCoupe, title: "Full Detail", caption: "Paintwork and glass completed" },
-  { image: media.darkPickup, title: "Truck Detail", caption: "A complete exterior reset" },
-  { image: media.whiteSuv, title: "Driveway Detail", caption: "An on-site finish, front to back" },
-  { image: media.blackSedan, title: "Sedan Finish", caption: "Careful work across every panel" },
-  { image: media.blueCoupe, title: "Final Polish", caption: "A clear, even gloss" },
+  {
+    image: media.recentWorkInterior,
+    imageAlt: "Detailer vacuuming the rear cabin of a modern car",
+    title: "Interior reset",
+    caption: "Vacuumed through the seats, rails, and center console.",
+  },
+  {
+    image: media.recentWorkHandWax,
+    imageAlt: "Hand wax being applied to clean dark vehicle paint",
+    title: "Hand wax",
+    caption: "Applied in sections and buffed by hand between full details.",
+  },
+  {
+    image: media.recentWorkExterior,
+    imageAlt: "Clean wheel, glass, and paint receiving a final microfiber wipe",
+    title: "Exterior finish",
+    caption: "Wheel faces, glass, and paint finished for the driveway.",
+  },
 ]

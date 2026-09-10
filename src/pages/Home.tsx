@@ -5,12 +5,11 @@
 // hold inline now comes from src/content/, and the three booking entry points are real links to
 // /book/ instead of an in-place state swap.
 
-import { useRef, useState, type PointerEvent as ReactPointerEvent, type WheelEvent as ReactWheelEvent } from "react"
+import { useState } from "react"
 import { Link } from "../router"
-import { Arrow, ButtonLink, Eyebrow, Reveal, SlotDeposit } from "../components/primitives"
+import { Arrow, ButtonLink, Eyebrow, Mark, Reveal, SlotDeposit } from "../components/primitives"
 import Comparison from "../components/Comparison"
 import { about } from "../content/about"
-import { commitments } from "../content/commitments"
 import { rows as compareRows } from "../content/compare"
 import { faqs } from "../content/faqs"
 import { media } from "../content/media"
@@ -19,84 +18,13 @@ import { processSteps } from "../content/process"
 import { promiseCards } from "../content/promise"
 import { bookablePackages, packages } from "../content/services"
 import { serviceArea, site } from "../content/site"
-import { sizeLabels } from "../content/vehicles"
 import { bodyStyles } from "../content/vehicles"
 import { workCards } from "../content/work"
 
 export default function Home() {
   const [activePackage, setActivePackage] = useState(0)
   const [openFaq, setOpenFaq] = useState(0)
-  const reviewRailRef = useRef<HTMLDivElement>(null)
-  const reviewDragRef = useRef({
-    active: false,
-    pointerId: 0,
-    startScroll: 0,
-    startX: 0,
-  })
   const active = packages[activePackage]
-
-  // The rail loops by scrolling a duplicated track and wrapping scrollLeft, rather than by
-  // animating a transform — that way a drag, a wheel and the arrows all move the same value.
-  const getReviewLoopWidth = (rail: HTMLDivElement) => {
-    const group = rail.querySelector<HTMLElement>(".review-track__group")
-    const track = rail.querySelector<HTMLElement>(".review-track")
-    if (!group || !track) return 0
-    const gap = Number.parseFloat(window.getComputedStyle(track).gap) || 0
-    return group.getBoundingClientRect().width + gap
-  }
-  const setReviewLoopPosition = (rail: HTMLDivElement, position: number) => {
-    const loopWidth = getReviewLoopWidth(rail)
-    if (!loopWidth) return
-    rail.scrollLeft = ((position % loopWidth) + loopWidth) % loopWidth
-  }
-  const clearReviewDrag = () => {
-    reviewDragRef.current.active = false
-    reviewRailRef.current?.classList.remove("is-dragging")
-  }
-  const moveReviewRail = (direction: number) => {
-    const rail = reviewRailRef.current
-    if (!rail) return
-    const card = rail.querySelector<HTMLElement>(".review-card")
-    const distance = (card?.getBoundingClientRect().width ?? 280) + 16
-    setReviewLoopPosition(rail, rail.scrollLeft + direction * distance)
-  }
-  const startReviewDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const rail = reviewRailRef.current
-    if (!rail) return
-    reviewDragRef.current = {
-      active: true,
-      pointerId: event.pointerId,
-      startScroll: rail.scrollLeft,
-      startX: event.clientX,
-    }
-    rail.classList.add("is-dragging")
-    rail.setPointerCapture(event.pointerId)
-  }
-  const moveReviewDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const rail = reviewRailRef.current
-    const drag = reviewDragRef.current
-    if (!rail || !drag.active || drag.pointerId !== event.pointerId) return
-    event.preventDefault()
-    setReviewLoopPosition(rail, drag.startScroll - (event.clientX - drag.startX))
-  }
-  const endReviewDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const rail = reviewRailRef.current
-    if (!rail || reviewDragRef.current.pointerId !== event.pointerId) return
-    clearReviewDrag()
-    if (rail.hasPointerCapture(event.pointerId))
-      rail.releasePointerCapture(event.pointerId)
-  }
-  const scrollReviewWithWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
-    const rail = reviewRailRef.current
-    if (!rail) return
-    const distance =
-      Math.abs(event.deltaX) > Math.abs(event.deltaY)
-        ? event.deltaX
-        : event.deltaY
-    if (!distance) return
-    event.preventDefault()
-    setReviewLoopPosition(rail, rail.scrollLeft + distance)
-  }
 
   return (
     <>
@@ -275,7 +203,6 @@ export default function Home() {
               <Link href={`/book/?size=${item.size}`}>
                 <img src={item.image} alt={`${item.name} vehicle`} />
                 <b>{item.name}</b>
-                <small>Prices as {sizeLabels[item.size]}</small>
               </Link>
             </Reveal>
           ))}
@@ -426,123 +353,35 @@ export default function Home() {
         </Reveal>
       </section>
       <section className="section reviews" id="reviews">
-        <div className="promise-head">
-          <div>
-            <Reveal>
-              <Eyebrow>Recent work</Eyebrow>
-            </Reveal>
-            <Reveal className="delay-1">
-              <h2>Polished cars. The standard you can expect.</h2>
-            </Reveal>
-            <Reveal className="delay-2">
-              <p className="promise-intro">
-                Every image is a finish reference. Customer reviews will appear
-                here only when they are real and verified.
-              </p>
-            </Reveal>
-          </div>
-          <div className="slider-controls">
-            <button
-              aria-label="Previous recent work"
-              onClick={() => moveReviewRail(-1)}
-              type="button"
-            >
-              ←
-            </button>
-            <button
-              aria-label="Next recent work"
-              onClick={() => moveReviewRail(1)}
-              type="button"
-            >
-              →
-            </button>
-          </div>
+        <div className="section-head section-head--center reviews-head">
+          <Reveal>
+            <Eyebrow>Recent work</Eyebrow>
+          </Reveal>
+          <Reveal className="delay-1">
+            <div className="reviews-head__title">
+              <Mark />
+              <h2>Reference work for the care your car can expect.</h2>
+            </div>
+          </Reveal>
+          <Reveal className="delay-2">
+            <p>
+              These are reference-detailing examples. {site.owner}&apos;s own
+              documented work replaces them as bookings are completed.
+            </p>
+          </Reveal>
         </div>
-        <div
-          aria-label="Recent work moving continuously right to left"
-          className="review-marquee"
-          onPointerCancel={endReviewDrag}
-          onPointerDown={startReviewDrag}
-          onPointerMove={moveReviewDrag}
-          onPointerUp={endReviewDrag}
-          onLostPointerCapture={endReviewDrag}
-          onWheel={scrollReviewWithWheel}
-          ref={reviewRailRef}
-        >
-          <div className="review-track">
-            {[false, true].map((duplicate) => (
-              <div
-                aria-hidden={duplicate || undefined}
-                className="review-track__group"
-                key={duplicate ? "repeat" : "original"}
-              >
-                {workCards.map((card, index) => {
-                  const cardNumber = index + 1
-                  return (
-                    <article
-                      className="review-card"
-                      data-review-index={cardNumber}
-                      key={`${card.title}-${index}-${
-                        duplicate ? "repeat" : "original"
-                      }`}
-                    >
-                      <img
-                        src={card.image}
-                        alt={
-                          duplicate ? "" : `${card.title} polished car reference`
-                        }
-                      />
-                      <div className="review-card__shade" />
-                      <div className="review-card__quote" aria-hidden="true">
-                        “
-                      </div>
-                      <div className="review-card__copy">
-                        <span>
-                          {String(cardNumber).padStart(2, "0")} /{" "}
-                          {workCards.length}
-                        </span>
-                        <b>{card.title}</b>
-                        <small>{card.caption}</small>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="review-commitments">
-          <div className="review-commitments__head">
-            <Reveal>
-              <Eyebrow>Customer feedback</Eyebrow>
-            </Reveal>
-            <Reveal className="delay-1">
-              <h3>No reviews yet. The commitments stay in writing.</h3>
-            </Reveal>
-            <Reveal className="delay-2">
-              <p>
-                KP Automobil is new. Real customer names and feedback will be
-                published here only after customers choose to share them.
-              </p>
-            </Reveal>
-          </div>
-          <ul className="testimonial-grid">
-            {commitments.map((commitment, index) => (
-              <Reveal
-                className={`testimonial-card delay-${index + 1}`}
-                key={commitment.label}
-              >
-                <p>{commitment.body}</p>
-                <div className="testimonial-card__person">
-                  <span aria-hidden="true">{index === 0 ? "K" : "KP"}</span>
-                  <div>
-                    <b>{index === 0 ? "Kunj" : "KP Automobil"}</b>
-                    <small>{commitment.sublabel}</small>
-                  </div>
+        <div className="review-gallery" aria-label="Reference detailing work">
+          {workCards.map((card, index) => (
+            <Reveal className={`review-card delay-${index + 1}`} key={card.title}>
+              <article>
+                <img src={card.image} alt={card.imageAlt} />
+                <div className="review-card__copy">
+                  <b>{card.title}</b>
+                  <small>{card.caption}</small>
                 </div>
-              </Reveal>
-            ))}
-          </ul>
+              </article>
+            </Reveal>
+          ))}
         </div>
       </section>
       <section className="section promise" id="promise">

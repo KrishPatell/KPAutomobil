@@ -104,6 +104,8 @@ export const packages: Package[] = [
 export type AddOn = {
   name: string
   description: string
+  image: string
+  imageAlt: string
   /** Which condition answer pre-checks this. Undefined means it is never auto-suggested. */
   condition?: ConditionId
 }
@@ -114,38 +116,54 @@ export const addOns: AddOn[] = [
   {
     name: "Ceramic Coating",
     description: "A protective layer over clean paint, applied after the detail and left to cure.",
+    image: media.addonCeramicCoating,
+    imageAlt: "Ceramic coating being applied to a car hood with a suede applicator",
   },
   {
     name: "Hand Wax",
     description: "A warm shine applied and buffed by hand, for cars between full details.",
+    image: media.addonHandWax,
+    imageAlt: "Hand wax being applied to a red car fender with a foam pad",
   },
   {
     name: "Pet Hair Removal",
     description:
       "Hair worked out of carpet and upholstery by hand before the vacuum. Slow, and the reason a pet car takes longer.",
+    image: media.addonPetHairRemoval,
+    imageAlt: "Pet hair being vacuumed and brushed from a car's rear seats and carpet",
     condition: "pet-hair",
   },
   {
     name: "Heavy Stain Treatment",
     description: "Spot treatment and extraction on set-in spills, in the seats and the carpet.",
+    image: media.addonHeavyStainTreatment,
+    imageAlt: "Hot-water extractor lifting a stain from a fabric car seat",
     condition: "stains",
   },
   {
     name: "Odour Removal",
     description: "Source cleaning plus an ozone treatment, for smoke and for anything that soaked in.",
+    image: media.addonOdourRemoval,
+    imageAlt: "Ozone generator treating the interior of a car",
     condition: "odour",
   },
   {
     name: "Engine Bay",
     description: "A degrease and dress of the bay, avoiding the electronics.",
+    image: media.addonEngineBay,
+    imageAlt: "Soft brush detailing a car engine bay",
   },
   {
     name: "Headlight Restoration",
     description: "Sanding and polishing clouded lenses back to clear, then sealing them.",
+    image: media.addonHeadlightRestoration,
+    imageAlt: "Polisher restoring a cloudy car headlight lens",
   },
   {
     name: "Trunk Deep Clean",
     description: "The trunk or cargo area emptied, vacuumed and wiped down, spare-wheel well included.",
+    image: media.addonTrunkDeepClean,
+    imageAlt: "Vacuum and cloth cleaning the spare-wheel well in an SUV trunk",
     condition: "long-gap",
   },
 ]

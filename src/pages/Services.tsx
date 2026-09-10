@@ -8,7 +8,7 @@
 import PageHead from "../components/PageHead"
 import AnchorBar from "../components/AnchorBar"
 import CtaBand from "../components/CtaBand"
-import { ButtonLink, Eyebrow, Reveal } from "../components/primitives"
+import { ButtonLink, Eyebrow, Reveal, RollingPrice } from "../components/primitives"
 import { pageCopy } from "../content/pages"
 import { addOns, bookablePackages, servicesPage } from "../content/services"
 import { addOnPrices, packagePrices, pricing } from "../content/pricing"
@@ -16,7 +16,6 @@ import { sizeIds, sizeLabels } from "../content/vehicles"
 import type { SizeId } from "../content/vehicles"
 import { rows as compareRows, compare } from "../content/compare"
 import { serviceFaqs } from "../content/faqs"
-import { money } from "../lib/quote"
 import { site } from "../content/site"
 
 /** The four-cell price strip under a package. A null cell says so rather than showing a zero. */
@@ -30,7 +29,7 @@ function PriceStrip({ prices }: { prices: Record<SizeId, number | null> }) {
             {prices[size] === null ? (
               <span className="price-strip__pending">{pricing.pendingTotal}</span>
             ) : (
-              money(prices[size] as number)
+              <RollingPrice amount={prices[size] as number} />
             )}
           </dd>
         </div>
@@ -67,11 +66,10 @@ export default function Services() {
         </div>
 
         <div className="pkg-rows">
-          {bookablePackages.map((item, index) => (
+          {bookablePackages.map((item) => (
             <Reveal as="article" className="pkg-row" id={item.slug} key={item.slug}>
               <div className="pkg-row__media">
                 <img alt={`${item.name} detailing`} src={item.image} />
-                <span className="pkg-row__index">{String(index + 1).padStart(2, "0")}</span>
               </div>
 
               <div className="pkg-row__body">
@@ -134,20 +132,18 @@ export default function Services() {
                 className={`addon-card delay-${Math.min(index + 1, 4)}`}
                 key={addOn.name}
               >
+                <img alt={addOn.imageAlt} className="addon-card__image" loading="lazy" src={addOn.image} />
                 <h3>{addOn.name}</h3>
                 <p>{addOn.description}</p>
                 <span className="addon-card__price">
                   {from.length > 0
-                    ? `${pricing.startingLabel} ${money(Math.min(...from))}`
+                    ? <>{pricing.startingLabel} <RollingPrice amount={Math.min(...from)} /></>
                     : pricing.unpricedNote}
                 </span>
               </Reveal>
             )
           })}
         </ul>
-        <Reveal className="addon-note">
-          <p>{pricing.sizeNote}</p>
-        </Reveal>
       </section>
 
       <section className="section extras-section" id="extras">

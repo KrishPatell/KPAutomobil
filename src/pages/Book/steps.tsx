@@ -11,15 +11,16 @@ import { booking } from "../../content/booking"
 import { addOns as addOnCatalogue, bookablePackages, conditions } from "../../content/services"
 import type { ConditionId } from "../../content/services"
 import { addOnPrices, packagePrices, pricing } from "../../content/pricing"
-import { bodyStyles, sizeLabels } from "../../content/vehicles"
+import { quoteBodyStyles, sizeLabels } from "../../content/vehicles"
 import type { SizeId } from "../../content/vehicles"
 import { PHOTO_SLOTS, preview, validate } from "../../lib/photos"
 import type { PhotoSlotId } from "../../lib/photos"
-import { money, suggestAddOns } from "../../lib/quote"
+import { suggestAddOns } from "../../lib/quote"
 import { photoCount } from "../../lib/bookingFlow"
 import type { FlowState } from "../../lib/bookingFlow"
 import { site } from "../../content/site"
 import { Link } from "../../router"
+import { RollingPrice } from "../../components/primitives"
 
 export type StepProps = {
   state: FlowState
@@ -36,7 +37,7 @@ export function VehicleStep({ state, patch }: StepProps) {
   return (
     <>
       <div className="booking-choice-grid booking-choice-grid--media">
-        {bodyStyles.map((style) => (
+        {quoteBodyStyles.map((style) => (
           <button
             className={state.bodyStyle === style.name ? "selected" : ""}
             key={style.name}
@@ -87,7 +88,7 @@ export function ServiceStep({ state, patch }: StepProps) {
               <span className="booking-choice-copy">
                 <b>{item.name}</b>
                 <span>{item.description}</span>
-                <small>{price === null ? pricing.pendingTotal : money(price)}</small>
+                <small>{price === null ? pricing.pendingTotal : <RollingPrice amount={price} />}</small>
               </span>
             </button>
           )
@@ -164,7 +165,7 @@ export function ConditionStep({ state, patch }: StepProps) {
               return (
                 <li key={name}>
                   <span>{name}</span>
-                  <em>{price === null ? pricing.pendingTotal : money(price)}</em>
+                  <em>{price === null ? pricing.pendingTotal : <RollingPrice amount={price} />}</em>
                 </li>
               )
             })}
@@ -299,7 +300,7 @@ export function ExtrasStep({ state, patch }: StepProps) {
                   <small>{addOn.description}</small>
                 </span>
                 <span className="booking-extras__price">
-                  {price === null ? bookFlow.extras.unpricedTag : money(price)}
+                  {price === null ? bookFlow.extras.unpricedTag : <RollingPrice amount={price} />}
                 </span>
               </button>
             </li>
@@ -410,7 +411,7 @@ export function DepositStep({ state, patch }: StepProps) {
       <div className="booking-deposit">
         <img alt="" className="booking-deposit__image" src={bookablePackages[0].image} />
         <div className="booking-deposit__copy">
-          <strong>${site.deposit}</strong>
+          <strong><RollingPrice amount={site.deposit} /></strong>
           <div>
             <b>{bookFlow.deposit.amountLabel}</b>
             <p>{bookFlow.deposit.lede}</p>

@@ -14,15 +14,18 @@ export default function PageHead({
   heading,
   standfirst,
   children,
+  compact = false,
 }: {
   eyebrow: string
   title: string
   heading: string
   standfirst: string
   children?: ReactNode
+  /** Used where the next section should begin immediately below the page introduction. */
+  compact?: boolean
 }) {
   return (
-    <section className="page-head">
+    <section className={`page-head${compact ? " page-head--compact" : ""}`}>
       <div className="page-head__inner">
         <Breadcrumb title={title} />
         <Reveal>

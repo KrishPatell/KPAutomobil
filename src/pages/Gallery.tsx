@@ -13,7 +13,6 @@
 import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import PageHead from "../components/PageHead"
-import AnchorBar from "../components/AnchorBar"
 import CtaBand from "../components/CtaBand"
 import Comparison from "../components/Comparison"
 import { Arrow, Eyebrow, Reveal } from "../components/primitives"
@@ -114,13 +113,12 @@ export default function Gallery() {
   return (
     <>
       <PageHead
+        compact
         eyebrow={pageCopy.gallery.eyebrow}
         heading={pageCopy.gallery.heading}
         standfirst={pageCopy.gallery.standfirst}
         title="Gallery"
-      >
-        <AnchorBar anchors={gallery.anchors} />
-      </PageHead>
+      />
 
       <section className="section gallery-compare" id="compare">
         <div className="gallery-head">

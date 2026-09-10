@@ -12,7 +12,7 @@
 import PageHead from "../components/PageHead"
 import AnchorBar from "../components/AnchorBar"
 import CtaBand from "../components/CtaBand"
-import { ButtonLink, Eyebrow, Reveal } from "../components/primitives"
+import { ButtonLink, Eyebrow, Reveal, SlotDeposit } from "../components/primitives"
 import { pageCopy } from "../content/pages"
 import { about, aboutPage } from "../content/about"
 import { media } from "../content/media"
@@ -153,6 +153,12 @@ export default function About() {
               className={`addon-card delay-${Math.min(index + 1, 4)}`}
               key={item.name}
             >
+              <img
+                alt={item.imageAlt}
+                className="addon-card__image"
+                loading="lazy"
+                src={item.image}
+              />
               <h3>{item.name}</h3>
               <p>{item.detail}</p>
               <span className="addon-card__price">{item.where}</span>
@@ -178,7 +184,7 @@ export default function About() {
               key={stat.label}
             >
               <dt>{stat.label}</dt>
-              <dd>{stat.figure}</dd>
+              <dd>{stat.amount !== undefined ? <SlotDeposit /> : stat.figure}</dd>
             </Reveal>
           ))}
         </dl>

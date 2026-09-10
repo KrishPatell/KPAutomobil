@@ -115,11 +115,6 @@ export const galleryStills: Still[] = [
 ]
 
 export const gallery = {
-  anchors: [
-    { href: "#compare", label: "Before & after" },
-    { href: "#stills", label: "Stills" },
-  ],
-
   /**
    * On the page, not in the small print. The brand's whole position is that it does not play games,
    * and putting somebody else's work up as ours would be the first game.

@@ -29,6 +29,10 @@ export function LocationPin() {
 }
 
 export function Mark() {
+  if (site.logo.src) {
+    return <img className="mark mark--logo" src={site.logo.src} alt={site.logo.alt} />
+  }
+
   return (
     <span className="mark">
       <b>{site.mark.lead}</b>
@@ -99,10 +103,10 @@ export function Eyebrow({ children }: { children: ReactNode }) {
   )
 }
 
-/** The deposit figure that counts up to $50 once, the first time it is scrolled into view. */
-export function SlotDeposit() {
+/** A brief one-time slot-style reveal for each price. */
+export function RollingPrice({ amount }: { amount: number }) {
   const amountRef = useRef<HTMLSpanElement>(null)
-  const [amount, setAmount] = useState(0)
+  const [displayedAmount, setDisplayedAmount] = useState(amount)
   const [isRolling, setIsRolling] = useState(false)
 
   useEffect(() => {
@@ -110,21 +114,30 @@ export function SlotDeposit() {
     if (!element) return
     let frame = 0
     let hasPlayed = false
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     const run = () => {
-      if (hasPlayed) return
+      if (hasPlayed || reducedMotion) return
       hasPlayed = true
       setIsRolling(true)
       const start = window.performance.now()
-      const duration = 900
+      const duration = 760
       const tick = (now: number) => {
         const progress = Math.min((now - start) / duration, 1)
         const eased = 1 - (1 - progress) ** 3
-        setAmount(Math.round(eased * 50))
+        setDisplayedAmount(Math.round(eased * amount))
         if (progress < 1) frame = window.requestAnimationFrame(tick)
-        else setIsRolling(false)
+        else {
+          setDisplayedAmount(amount)
+          setIsRolling(false)
+        }
       }
       frame = window.requestAnimationFrame(tick)
+    }
+
+    if (reducedMotion) {
+      setDisplayedAmount(amount)
+      return
     }
 
     const observer = new IntersectionObserver(
@@ -145,13 +158,17 @@ export function SlotDeposit() {
 
   return (
     <span
-      aria-label="50 dollar refundable deposit"
-      className={`slot-deposit${isRolling ? " is-rolling" : ""}`}
+      aria-label={`$${amount.toLocaleString("en-US")}`}
+      className={`rolling-price${isRolling ? " is-rolling" : ""}`}
       ref={amountRef}
     >
-      ${amount}
+      <span aria-hidden="true">${displayedAmount.toLocaleString("en-US")}</span>
     </span>
   )
+}
+
+export function SlotDeposit() {
+  return <RollingPrice amount={site.deposit} />
 }
 
 /**

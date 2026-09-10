@@ -33,6 +33,9 @@ import darkPickupReviewImage from "../assets/reviews/dark-pickup-driveway.jpg"
 import whiteSuvReviewImage from "../assets/reviews/white-suv-driveway.jpg"
 import foamWashImage from "../assets/reviews/foam-wash-mobile-service-v2.png"
 import dirtyBmwDrivewayImage from "../assets/reviews/dirty-bmw-driveway-v2.png"
+import recentWorkInteriorImage from "../assets/recent-work/interior-reset-reference-v1.png"
+import recentWorkHandWaxImage from "../assets/recent-work/hand-wax-reference-v1.png"
+import recentWorkExteriorImage from "../assets/recent-work/exterior-finish-reference-v1.png"
 
 import handWaxImage from "../assets/booking/hand-wax-application.jpg"
 import deepRestorationImage from "../assets/booking/deep-restoration-before.jpg"
@@ -40,6 +43,21 @@ import ceramicCoatingImage from "../assets/booking/ceramic-coating-application.j
 import threeRowCatalogImage from "../assets/booking/three-row-catalog-white-v3.jpg"
 import minivanCatalogImage from "../assets/booking/minivan-catalog-white-v3.jpg"
 import threeRowBookingImage from "../assets/booking/three-row-booking-black-v3.jpg"
+import threeRowCatalogBlackImage from "../assets/booking/three-row-catalog-black-v4.jpg"
+import minivanCatalogBlackImage from "../assets/booking/minivan-catalog-black-v4.jpg"
+
+import vanWaterPowerImage from "../assets/kit/van-water-power.jpg"
+import steamCleaningInteriorImage from "../assets/kit/steam-cleaning-interior.jpg"
+import clayBarDecontaminationImage from "../assets/kit/clay-bar-decontamination.jpg"
+
+import addonCeramicCoatingImage from "../assets/addons/ceramic-coating-application.jpg"
+import addonHandWaxImage from "../assets/addons/hand-wax-application.jpg"
+import addonPetHairRemovalImage from "../assets/addons/pet-hair-vacuum-removal.jpg"
+import addonHeavyStainTreatmentImage from "../assets/addons/heavy-stain-extraction.jpg"
+import addonOdourRemovalImage from "../assets/addons/odour-ozone-treatment.jpg"
+import addonEngineBayImage from "../assets/addons/engine-bay-detailing.jpg"
+import addonHeadlightRestorationImage from "../assets/addons/headlight-restoration.jpg"
+import addonTrunkDeepCleanImage from "../assets/addons/trunk-deep-clean.jpg"
 
 import bmwFinishedImage from "../assets/results/bmw-3-series-finished.jpg"
 import bmwHeavyDirtyImage from "../assets/results/bmw-heavy-dirty-v3.jpg"
@@ -52,6 +70,14 @@ import porscheCleanImage from "../assets/results/porsche-clean-v2.jpg"
 import porscheHeavyDirtyImage from "../assets/results/porsche-heavy-dirty-v3.jpg"
 import suvCleanImage from "../assets/results/suv-clean-v2.jpg"
 import suvHeavyDirtyImage from "../assets/results/suv-heavy-dirty-v3.jpg"
+import blueSedanCleanImage from "../assets/results/blue-sedan-clean.jpg"
+import blueSedanRoadFilmImage from "../assets/results/blue-sedan-road-film-before.jpg"
+import pickupCleanImage from "../assets/results/pickup-clean.jpg"
+import pickupRoadGrimeImage from "../assets/results/pickup-road-grime-before.jpg"
+import compactSuvCleanImage from "../assets/results/compact-suv-clean.jpg"
+import compactSuvWaterSpotsImage from "../assets/results/compact-suv-water-spots-before.jpg"
+import minivanCleanImage from "../assets/results/minivan-clean.jpg"
+import minivanRoadFilmImage from "../assets/results/minivan-road-film-before.jpg"
 
 import bmwCleanPromiseImage from "../assets/promise-bmw-clean-v3.png"
 import bmwDirtyPromiseImage from "../assets/promise-bmw-dirty-v3.png"
@@ -78,6 +104,12 @@ export const media = {
   threeRowCatalog: threeRowCatalogImage,
   threeRowBooking: threeRowBookingImage,
   minivanCatalog: minivanCatalogImage,
+  threeRowCatalogBlack: threeRowCatalogBlackImage,
+  minivanCatalogBlack: minivanCatalogBlackImage,
+
+  vanWaterPower: vanWaterPowerImage,
+  steamCleaningInterior: steamCleaningInteriorImage,
+  clayBarDecontamination: clayBarDecontaminationImage,
 
   process: processImage,
   processQuote: processQuoteImage,
@@ -90,11 +122,23 @@ export const media = {
   whiteSuv: whiteSuvReviewImage,
   foamWash: foamWashImage,
   dirtyBmwDriveway: dirtyBmwDrivewayImage,
+  recentWorkInterior: recentWorkInteriorImage,
+  recentWorkHandWax: recentWorkHandWaxImage,
+  recentWorkExterior: recentWorkExteriorImage,
 
   handWax: handWaxImage,
   deepRestoration: deepRestorationImage,
   ceramicCoating: ceramicCoatingImage,
   fullDetailPorsche: fullDetailPorscheImage,
+
+  addonCeramicCoating: addonCeramicCoatingImage,
+  addonHandWax: addonHandWaxImage,
+  addonPetHairRemoval: addonPetHairRemovalImage,
+  addonHeavyStainTreatment: addonHeavyStainTreatmentImage,
+  addonOdourRemoval: addonOdourRemovalImage,
+  addonEngineBay: addonEngineBayImage,
+  addonHeadlightRestoration: addonHeadlightRestorationImage,
+  addonTrunkDeepClean: addonTrunkDeepCleanImage,
 
   bmwFinished: bmwFinishedImage,
   bmwHeavyDirty: bmwHeavyDirtyImage,
@@ -107,6 +151,14 @@ export const media = {
   porscheHeavyDirty: porscheHeavyDirtyImage,
   suvClean: suvCleanImage,
   suvHeavyDirty: suvHeavyDirtyImage,
+  blueSedanClean: blueSedanCleanImage,
+  blueSedanRoadFilm: blueSedanRoadFilmImage,
+  pickupClean: pickupCleanImage,
+  pickupRoadGrime: pickupRoadGrimeImage,
+  compactSuvClean: compactSuvCleanImage,
+  compactSuvWaterSpots: compactSuvWaterSpotsImage,
+  minivanClean: minivanCleanImage,
+  minivanRoadFilm: minivanRoadFilmImage,
 
   promiseDirty: bmwDirtyPromiseImage,
   promiseFoam: bmwFoamPromiseImage,

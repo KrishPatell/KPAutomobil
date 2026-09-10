@@ -9,6 +9,8 @@
 // refundable with 24+ hours notice, and Kunj absorbs the whole Stripe cost so the card fee
 // passed to the customer is zero.
 
+import { media } from "./media"
+
 export const about = {
   eyebrow: "About KP Automobil",
   heading: "One van, one detailer, and a price you agree to before we arrive.",
@@ -17,8 +19,8 @@ export const about = {
     "Send two interior and two exterior photos and the price comes back on screen. No callback, no walkaround, no new number once we pull up.",
   ],
   stats: [
-    { figure: "$50", label: "Refundable deposit" },
-    { figure: "0%", label: "Card fee" },
+    { amount: 50, figure: "$50", label: "Refundable deposit" },
+    { amount: undefined, figure: "0%", label: "Card fee" },
   ],
 };
 
@@ -46,6 +48,8 @@ export type StoryChapter = {
 export type KitItem = {
   name: string
   detail: string
+  image: string
+  imageAlt: string
   /** The package or add-on on the price list this exists for. Nothing rides along for the photo. */
   where: string
 }
@@ -135,31 +139,43 @@ export const aboutPage = {
       {
         name: "Water and power",
         detail: "A tank and a supply on board, so a driveway, a lot bay or an apartment space is a complete workspace.",
+        image: media.vanWaterPower,
+        imageAlt: "Water tank, power station and hose setup inside a mobile detailing van",
         where: "Every job",
       },
       {
         name: "Hot-water extractor",
         detail: "Shampoo goes into the carpet and comes back out with the dirt in it, rather than drying back into the weave.",
+        image: media.addonHeavyStainTreatment,
+        imageAlt: "Hot-water extractor lifting soil from a fabric car seat",
         where: "Deep Restoration",
       },
       {
         name: "Steam",
         detail: "Vents, seams, seat rails and the places a cloth cannot reach without taking something apart.",
+        image: media.steamCleaningInterior,
+        imageAlt: "Steam cleaner working through a car dashboard air vent",
         where: "Deep Restoration",
       },
       {
         name: "Clay bar",
         detail: "Bonded contamination pulled off the clearcoat so wax or coating has clean paint to sit on.",
+        image: media.clayBarDecontamination,
+        imageAlt: "Clay bar being worked across a wet dark car hood",
         where: "Deep Restoration",
       },
       {
         name: "Wax and hand applicators",
         detail: "Applied in sections and buffed by hand. A machine is quicker and leaves more behind.",
+        image: media.addonHandWax,
+        imageAlt: "Hand wax being applied to a red car fender",
         where: "Hand Wax",
       },
       {
         name: "Ceramic coating kit",
         detail: "Laid on decontaminated paint one panel at a time and levelled before it flashes.",
+        image: media.addonCeramicCoating,
+        imageAlt: "Ceramic coating being applied to a glossy car hood",
         where: "Ceramic Coating",
       },
     ] satisfies KitItem[],

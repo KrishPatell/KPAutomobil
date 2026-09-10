@@ -44,6 +44,8 @@ export type Town = {
   zips?: string[]
 }
 
+import kp11Logo from "../assets/brand/kp11-mobile-auto-spa.svg"
+
 export type Hours = {
   days: string
   opens: string
@@ -67,7 +69,11 @@ export const site = {
   region: "Massachusetts",
   regionShort: "MA",
 
-  logo: { src: null, alt: "KP Automobil", height: 28 } satisfies SiteLogo,
+  logo: {
+    src: kp11Logo,
+    alt: "KP11 Mobile Auto Spa",
+    height: 28,
+  } satisfies SiteLogo,
 
   deposit: 50,
   refundNoticeHours: 24,

@@ -30,15 +30,26 @@ export default function Comparison({ pairs = comparisonPairs }: ComparisonProps)
     <figure>
       <div className="comparison-stage">
         <img
+          className={pair.mirrored ? "comparison-image--mirrored" : undefined}
           src={pair.after}
           alt={`Finished vehicle after ${pair.title.toLowerCase()} service`}
         />
-        <img
+        {/*
+          Keep the reveal mask outside the image transform. Mirroring a clipped image also
+          mirrors the clipped area, which made the Audi and Ram slides reveal from the wrong
+          side. The wrapper is always clipped left-to-right; only the photograph is mirrored.
+        */}
+        <div
+          aria-hidden="true"
           className="comparison-before"
-          src={pair.before}
-          alt={`Vehicle before ${pair.title.toLowerCase()} service`}
           style={{ clipPath: `inset(0 ${100 - split}% 0 0)` }}
-        />
+        >
+          <img
+            className={pair.mirrored ? "comparison-image--mirrored" : undefined}
+            src={pair.before}
+            alt=""
+          />
+        </div>
         <span className="comparison-label comparison-label--before">Before</span>
         <span className="comparison-label comparison-label--after">After</span>
         <input
@@ -53,7 +64,6 @@ export default function Comparison({ pairs = comparisonPairs }: ComparisonProps)
           ↔
         </span>
       </div>
-      <figcaption>{pair.caption}</figcaption>
       {pairs.length > 1 && (
         <div className="comparison-controls">
           <button

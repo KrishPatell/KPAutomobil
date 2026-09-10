@@ -12,7 +12,7 @@
 
 import { useEffect, useRef, useState, type ReactElement } from "react"
 import { Link, useRoute } from "../../router"
-import { Mark } from "../../components/primitives"
+import { Mark, RollingPrice } from "../../components/primitives"
 import {
   ConditionStep,
   DepositStep,
@@ -40,7 +40,7 @@ import {
   stepIndex,
 } from "../../lib/bookingFlow"
 import type { FlowState, StepSlug } from "../../lib/bookingFlow"
-import { applySuggestions, money, quote, suggestAddOns } from "../../lib/quote"
+import { applySuggestions, quote, suggestAddOns } from "../../lib/quote"
 import { bookFlow } from "../../content/bookFlow"
 import { pricing } from "../../content/pricing"
 import { packageBySlug } from "../../content/services"
@@ -299,18 +299,18 @@ function Summary({ priced, state }: { priced: ReturnType<typeof quote>; state: F
           {priced.lines.map((line) => (
             <li className={line.base ? "is-base" : ""} key={line.label}>
               <span>{line.label}</span>
-              <em>{line.amount === null ? pricing.pendingTotal : money(line.amount)}</em>
+              <em>{line.amount === null ? pricing.pendingTotal : <RollingPrice amount={line.amount} />}</em>
             </li>
           ))}
         </ul>
         <div className="booking-total">
           <span>{bookFlow.deposit.totalLabel}</span>
-          <strong>{priced.total === null ? pricing.pendingTotal : money(priced.total)}</strong>
+          <strong>{priced.total === null ? pricing.pendingTotal : <RollingPrice amount={priced.total} />}</strong>
         </div>
         {priced.total !== null && (
           <div className="booking-total booking-total--balance">
             <span>{bookFlow.deposit.balanceLabel}</span>
-            <em>{money(Math.max(priced.total - site.deposit, 0))}</em>
+            <em><RollingPrice amount={Math.max(priced.total - site.deposit, 0)} /></em>
           </div>
         )}
         <p className="booking-note">
@@ -356,7 +356,7 @@ function Pill({ priced }: { priced: ReturnType<typeof quote> }) {
           ? bookFlow.pill.empty
           : priced.total === null
             ? pricing.pendingTotal
-            : money(priced.total)}
+            : <RollingPrice amount={priced.total} />}
       </strong>
     </div>
   )

@@ -12,6 +12,8 @@ export type ComparisonPair = {
   before: string
   after: string
   category: "exterior" | "interior" | "pet-hair" | "stains"
+  /** Use the same left-facing vehicle direction as the rest of the comparison sequence. */
+  mirrored?: boolean
 }
 
 export const comparisonPairs: ComparisonPair[] = [
@@ -37,31 +39,33 @@ export const comparisonPairs: ComparisonPair[] = [
     category: "exterior",
   },
   {
-    title: "Dried mud",
-    caption: "Mud spatter off the lower panels and arches, paint left even.",
-    before: media.bmwMud,
-    after: media.bmwFinished,
+    title: "Blue sedan road film",
+    caption: "Road film lifted from the lower panels, wheels, and glass.",
+    before: media.blueSedanRoadFilm,
+    after: media.blueSedanClean,
     category: "exterior",
   },
   {
-    title: "Pollen season",
-    caption: "A full pollen layer cleared without marring the clearcoat.",
-    before: media.bmwPollen,
-    after: media.bmwFinished,
+    title: "Pickup road grime",
+    caption: "Road grit cleared from the grille, wheels, and lower bodywork.",
+    before: media.pickupRoadGrime,
+    after: media.pickupClean,
     category: "exterior",
+    mirrored: true,
   },
   {
-    title: "Water spotting",
+    title: "Compact SUV water spotting",
     caption: "Hard-water spots taken off glass and paint.",
-    before: media.bmwWaterSpot,
-    after: media.bmwFinished,
+    before: media.compactSuvWaterSpots,
+    after: media.compactSuvClean,
     category: "stains",
+    mirrored: true,
   },
   {
-    title: "Paint haze",
-    caption: "Surface haze cut back so the colour reads properly again.",
-    before: media.bmwPaintHaze,
-    after: media.bmwFinished,
+    title: "Minivan road film",
+    caption: "Road film cleared from the paint, glass, and wheel faces.",
+    before: media.minivanRoadFilm,
+    after: media.minivanClean,
     category: "exterior",
   },
 ]
