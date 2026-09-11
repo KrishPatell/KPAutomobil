@@ -64,17 +64,14 @@ export const contactPage = {
     /** Rate limit, not a bot accusation. One a minute is plenty for a real person. */
     errorTooFast: "That went through a moment ago. Give it a minute before sending another.",
 
-    successTitle: "Held, and here is exactly where it is.",
-    /**
-     * Says plainly what did and did not happen. There is no inbox wired up yet — see
-     * src/lib/booking.ts — and claiming "we'll be in touch shortly" would be the one kind of lie
-     * this site is built against.
-     */
-    successBody:
-      "Your message is saved in this browser. There is no inbox connected to this form yet, so nothing has been emailed to anyone and nobody has been notified. When the inbox is live this page sends for real and nothing else about it changes.",
+    sentTitle: "Message sent.",
+    sentBody: "Your message and photo, if attached, have been emailed to the team.",
+    savedTitle: "Message saved here.",
+    savedBody:
+      "Your message is saved in this browser, but the email did not send. Check the Resend env vars before relying on this deployment.",
     successAgain: "Write another",
     pendingNote:
-      "This form is not connected to an inbox yet. Until it is, use the quote tool — that one works end to end.",
+      "Sends by email when Resend is configured. The quote tool is still the fastest way to get a price.",
   },
 
   channels: {

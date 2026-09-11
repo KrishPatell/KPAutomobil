@@ -5,7 +5,6 @@ import { bookFlow } from "../../content/bookFlow";
 import { pricing } from "../../content/pricing";
 import { clear, emptyState, STEPS } from "../../lib/bookingFlow";
 import { send } from "../../lib/booking";
-import { uploadPhotos } from "../../lib/photos";
 import { takeDeposit, type DepositResult } from "../../lib/payments";
 import { PHOTO_SLOTS } from "../../lib/photos";
 import type { StepProps } from "./BookFlow";
@@ -34,8 +33,8 @@ export default function StepDeposit({ state, set, goTo }: StepProps) {
     const files = PHOTO_SLOTS.map((slot) => state.photos[slot.id]?.file).filter(
       (file): file is File => Boolean(file),
     );
-    const [sent, uploaded] = await Promise.all([
-      send({
+    const sent = await send(
+      {
         name: state.name,
         phone: state.phone,
         email: state.email,
@@ -46,10 +45,10 @@ export default function StepDeposit({ state, set, goTo }: StepProps) {
         notes: [state.notes, state.addOns.length ? `Add-ons: ${state.addOns.join(", ")}` : ""]
           .filter(Boolean)
           .join("\n"),
-      }),
-      uploadPhotos(files),
-    ]);
-    setDelivered(sent && uploaded);
+      },
+      files,
+    );
+    setDelivered(sent);
     setStatus("done");
   }
 
@@ -57,8 +56,12 @@ export default function StepDeposit({ state, set, goTo }: StepProps) {
     return (
       <section className="kp-step">
         <div className="kp-step__done" role="status">
-          <h1 className="kp-step__heading">{bookFlow.deposit.doneTitle}</h1>
-          <p className="kp-step__lede">{bookFlow.deposit.doneBody}</p>
+          <h1 className="kp-step__heading">
+            {delivered ? bookFlow.deposit.sentTitle : bookFlow.deposit.savedTitle}
+          </h1>
+          <p className="kp-step__lede">
+            {delivered ? bookFlow.deposit.sentBody : bookFlow.deposit.savedBody}
+          </p>
           {!delivered && <p className="kp-step__note">{bookFlow.deposit.pendingNote}</p>}
           <div className="kp-step__actions">
             <Link className="kp-step__back" to="/">

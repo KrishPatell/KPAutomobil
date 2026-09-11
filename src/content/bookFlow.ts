@@ -10,7 +10,7 @@
 //   - The slot step says **requested**, not booked. There is no calendar backend to promise
 //     against, and a confirmation the business cannot honour is worse than a caveat.
 //   - The deposit step says plainly that nothing was charged and where the request actually went.
-//     See src/lib/payments.ts and src/lib/booking.ts — both return "not delivered" on purpose.
+//     See src/lib/payments.ts for the still-unwired payment seam.
 
 import { site } from "./site"
 
@@ -106,11 +106,14 @@ export const bookFlow = {
     termsLink: "Read the booking terms",
     submit: "Send this request",
     sending: "Sending…",
-    doneTitle: "Request held",
-    doneBody:
-      "Your answers, your thumbnails and your preferred window are recorded in this browser. Nothing has been charged and nothing has been sent.",
+    sentTitle: "Request sent",
+    sentBody:
+      "Your answers and attached photos have been emailed to the team. Nothing has been charged yet.",
+    savedTitle: "Request saved here",
+    savedBody:
+      "Your answers are saved in this browser, but the email did not send. Check the Resend env vars before relying on this deployment.",
     pendingNote:
-      "The send and the deposit are not switched on yet — there is no inbox or payment account behind them. Rather than show a confirmation that has not happened, this says exactly where your request is.",
+      "Card payments are not switched on yet, so the request is sent without taking the deposit.",
     startAgain: "Start again",
   },
 

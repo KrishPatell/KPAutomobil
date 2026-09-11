@@ -7,8 +7,9 @@
 //   - **Each step is a URL.** /book/photos is real and shareable; /book/ redirects to whichever step
 //     is actually next. You cannot deep-link past your own answers — the guard below bounces you
 //     back to the first unanswered step, so the summary can never render half a booking.
-//   - **The seams stay visible.** send(), uploadPhotos() and takeDeposit() all report that they did
-//     not deliver, and the final screen says so in those words. See src/lib/payments.ts.
+//   - **The seams stay visible.** send() reports whether Resend accepted the email, and
+//     takeDeposit() reports that card payments are not active yet. The final screen says which
+//     parts actually happened.
 
 import { useEffect, useRef, useState, type ReactElement } from "react"
 import { Link, useRoute } from "../../router"
@@ -45,7 +46,7 @@ import { bookFlow } from "../../content/bookFlow"
 import { pricing } from "../../content/pricing"
 import { packageBySlug } from "../../content/services"
 import { sizeLabels } from "../../content/vehicles"
-import { PHOTO_SLOTS, uploadPhotos } from "../../lib/photos"
+import { PHOTO_SLOTS } from "../../lib/photos"
 import { takeDeposit } from "../../lib/payments"
 import { send } from "../../lib/booking"
 import { site } from "../../content/site"
@@ -143,7 +144,6 @@ export default function Book() {
     const files = PHOTO_SLOTS.map((slot) => state.photos[slot.id]?.file).filter(
       (file): file is File => file instanceof File,
     )
-    const photosUploaded = files.length > 0 ? await uploadPhotos(files) : false
     const deposit = await takeDeposit()
     const delivered = await send({
       name: state.name,
@@ -163,11 +163,11 @@ export default function Book() {
       payMethod: state.payMethod,
       total: priced.total,
       notes: state.notes,
-    })
+    }, files)
     setSending(false)
     setOutcome({
       delivered,
-      photosUploaded,
+      photosUploaded: delivered && files.length > 0,
       depositReason: deposit.status === "unavailable" ? deposit.reason : "",
     })
   }
@@ -196,8 +196,8 @@ export default function Book() {
             <div className="booking-complete">
               <span aria-hidden="true">✓</span>
               <p>{bookFlow.stepOf(STEPS.length, STEPS.length)}</p>
-              <h1>{bookFlow.deposit.doneTitle}</h1>
-              <p>{bookFlow.deposit.doneBody}</p>
+              <h1>{outcome.delivered ? bookFlow.deposit.sentTitle : bookFlow.deposit.savedTitle}</h1>
+              <p>{outcome.delivered ? bookFlow.deposit.sentBody : bookFlow.deposit.savedBody}</p>
               <ul className="booking-outcome">
                 <li>
                   {outcome.delivered
@@ -206,8 +206,8 @@ export default function Book() {
                 </li>
                 <li>
                   {outcome.photosUploaded
-                    ? "Your photos were uploaded."
-                    : "Your photos stayed on this device. Nothing was uploaded."}
+                    ? "Your photos were attached to the email."
+                    : "No photo attachments reached the email."}
                 </li>
                 <li>{outcome.depositReason || "Nothing was charged."}</li>
               </ul>

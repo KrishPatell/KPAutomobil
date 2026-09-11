@@ -1,32 +1,28 @@
-// The seam between the booking form and whatever ends up receiving it.
+// The seam between the browser forms and the Resend-backed Vercel functions.
 //
-// Nothing receives it yet: there is no backend, no form service and no confirmed inbox — site.email
-// is still null. So a submitted request is kept in sessionStorage under one key, and that is
-// stated on screen rather than dressed up as "we'll be in touch shortly".
-//
-// When the /book/ flow lands (docs/information-architecture.pdf), `send` becomes the POST and this
-// module is the only file that changes.
+// The request is also kept in sessionStorage as a local fallback. That gives the UI an honest
+// answer if the deployment is missing Resend env vars or the network fails during a local preview.
 
 export type BookingRequest = {
   name: string;
   phone: string;
   email: string;
-  address: string;
+  address?: string;
   size: string;
-  bodyStyle: string;
-  vehicleNote: string;
+  bodyStyle?: string;
+  vehicleNote?: string;
   service: string;
-  conditions: string[];
-  addOns: string[];
+  conditions?: string[];
+  addOns?: string[];
   /** How many of the four photo slots were filled. The files themselves are not in here. */
-  photoCount: number;
-  photosSkipped: boolean;
+  photoCount?: number;
+  photosSkipped?: boolean;
   date: string;
   window: string;
   /** Preferred method for the balance. Nothing is charged either way. */
-  payMethod: string;
+  payMethod?: string;
   /** Dollars, or null when any line in the quote is still unpriced. */
-  total: number | null;
+  total?: number | null;
   notes: string;
 };
 
@@ -42,24 +38,22 @@ export function loadDraft(): Partial<BookingRequest> {
   }
 }
 
-/**
- * Records the request. Returns `false` when it could only be held locally, so the caller can say
- * so instead of claiming it was sent.
- */
-export async function send(request: BookingRequest): Promise<boolean> {
+export async function send(request: BookingRequest, photos: File[] = []): Promise<boolean> {
   try {
     sessionStorage.setItem(KEY, JSON.stringify(request));
   } catch {
     // Nothing to do — the UI does not depend on the draft surviving a reload.
   }
-  return false;
+  const data = new FormData();
+  data.append("payload", JSON.stringify(request));
+  for (const photo of photos) data.append("photos", photo, photo.name);
+  return postForm("/api/booking", data);
 }
 
 // ── /contact/ ───────────────────────────────────────────────────────────────────────────────────
 //
-// Same seam, same honesty: there is no inbox behind this either. `sendMessage` returns false so the
-// page can say the message was held locally rather than claiming somebody was notified. When an
-// inbox exists this becomes the POST and nothing above the seam changes.
+// Same seam, same fallback. The original image, when present, goes to the function as multipart
+// data and is attached to the email.
 
 export type ContactMessage = {
   name: string;
@@ -93,16 +87,33 @@ export function messageCooldown(now = Date.now()): number {
   }
 }
 
-/**
- * Records the message. Returns `false` when it could only be held locally, which is every time
- * until an inbox is wired up — so the caller says that rather than "we'll be in touch".
- */
-export async function sendMessage(message: ContactMessage): Promise<boolean> {
+export async function sendMessage(message: ContactMessage, photo?: File | null): Promise<boolean> {
   try {
     window.sessionStorage.setItem(MESSAGE_KEY, JSON.stringify(message));
     window.localStorage.setItem(LAST_SENT_KEY, String(message.sentAt));
   } catch {
     // Nothing to do — the UI does not depend on the draft surviving a reload.
   }
-  return false;
+  const data = new FormData();
+  data.append("name", message.name);
+  data.append("email", message.email);
+  data.append("phone", message.phone);
+  data.append("subject", message.subject);
+  data.append("message", message.message);
+  if (photo) data.append("photo", photo, photo.name);
+  return postForm("/api/contact", data);
+}
+
+async function postForm(path: string, data: FormData): Promise<boolean> {
+  try {
+    const response = await fetch(path, {
+      body: data,
+      method: "POST",
+    });
+    if (!response.ok) return false;
+    const result = (await response.json()) as { ok?: boolean };
+    return result.ok === true;
+  } catch {
+    return false;
+  }
 }

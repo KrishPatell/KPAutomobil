@@ -8,9 +8,7 @@
 //   3. A honeypot and a one-a-minute rate limit instead of a CAPTCHA. A real person is never asked
 //      to prove they are one.
 //
-// The submit goes through the same honest seam as the booking flow — src/lib/booking.ts — which
-// returns false because there is no inbox yet. The success panel says exactly that rather than
-// "we'll be in touch shortly".
+// The submit goes through the same Resend-backed seam as the booking flow — src/lib/booking.ts.
 
 import { useState } from "react"
 import type { ChangeEvent, FormEvent } from "react"
@@ -103,12 +101,12 @@ export default function Contact() {
     subject: "",
     message: "",
   })
-  const [photo, setPhoto] = useState<{ name: string; src: string } | null>(null)
+  const [photo, setPhoto] = useState<{ file: File; name: string; src: string } | null>(null)
   const [photoError, setPhotoError] = useState<string | null>(null)
   const [trap, setTrap] = useState("")
   const [errors, setErrors] = useState<Partial<Record<keyof Fields | "rate", string>>>({})
   const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState(false)
+  const [sent, setSent] = useState<"sent" | "saved" | null>(null)
 
   const channels = availableChannels()
 
@@ -128,7 +126,7 @@ export default function Contact() {
     }
     setPhotoError(null)
     try {
-      setPhoto({ name: file.name, src: await preview(file, 320) })
+      setPhoto({ file, name: file.name, src: await preview(file, 320) })
     } catch {
       setPhotoError("That image could not be read. Try a different one.")
     }
@@ -141,7 +139,7 @@ export default function Contact() {
     // Anything in the honeypot came from a script. Show the same screen a person sees and store
     // nothing — telling a bot it was caught only teaches whoever wrote it.
     if (trap.trim() !== "") {
-      setSent(true)
+      setSent("sent")
       return
     }
 
@@ -157,7 +155,7 @@ export default function Contact() {
     if (Object.keys(next).length > 0) return
 
     setSending(true)
-    await sendMessage({
+    const delivered = await sendMessage({
       name: fields.name.trim(),
       email: fields.email.trim(),
       phone: fields.phone.trim(),
@@ -165,9 +163,9 @@ export default function Contact() {
       message: fields.message.trim(),
       photoName: photo?.name ?? null,
       sentAt: Date.now(),
-    })
+    }, photo?.file ?? null)
     setSending(false)
-    setSent(true)
+    setSent(delivered ? "sent" : "saved")
   }
 
   return (
@@ -185,8 +183,8 @@ export default function Contact() {
             {sent ? (
               <div className="contact-done">
                 <Eyebrow>{form.eyebrow}</Eyebrow>
-                <h2>{form.successTitle}</h2>
-                <p>{form.successBody}</p>
+                <h2>{sent === "sent" ? form.sentTitle : form.savedTitle}</h2>
+                <p>{sent === "sent" ? form.sentBody : form.savedBody}</p>
                 <div className="contact-done__actions">
                   <ButtonLink href={primaryCta.href} variant="dark">
                     {primaryCta.label}
@@ -194,7 +192,7 @@ export default function Contact() {
                   <button
                     className="contact-again"
                     onClick={() => {
-                      setSent(false)
+                      setSent(null)
                       setFields({
                         name: "",
                         email: "",
