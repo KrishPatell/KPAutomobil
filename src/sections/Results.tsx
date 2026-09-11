@@ -103,10 +103,6 @@ export default function Results() {
             </div>
           </div>
 
-          <figcaption className="kp-results__caption">
-            <span className="kp-results__caption-line">{pair.caption}</span>
-            {pair.reference && <small className="kp-results__note">{results.referenceNote}</small>}
-          </figcaption>
         </figure>
 
         {/* The export drew these arrows over a single slide and wired them to nothing. They come

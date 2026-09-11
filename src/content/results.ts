@@ -1,57 +1,78 @@
-// The before/after slider.
+// Before / after pairs for the drag-to-reveal slider.
 //
-// docs/content-brief.md §3g calls this "the strongest asset we have" and says it cannot launch
-// empty — but the same brief says real photos only, and KP has detailed zero cars commercially,
-// so there is nothing of Kunj's to put in it yet. This is the fourth "we have nothing yet"
-// problem, and it gets the same answer the testimonials got: keep the section, do not claim what
-// is not ours.
-//
-// So the pair below is the stock pair the export shipped with, flagged `reference: true`. That
-// flag puts one plain line under the slider saying so, and it is the only thing standing between
-// this section and the same lie the fabricated reviews told. When Kunj sends a real pair: add it
-// to the front of `pairs` with `reference: false` and write the caption the brief asks for —
-// vehicle, package, and the specific problem solved ("2016 Honda Pilot · Deep Restoration · two
-// dogs, four years, never detailed"), never a generic label.
-//
-// `pairs` drives the carousel: the arrows and the counter only render once there are two, so the
-// dead prev/next buttons in the export disappear until they mean something.
+// Every pair must be the same car, same angle, same lighting — that is the whole claim the gallery
+// makes ("The work, unedited"), and a mismatched pair breaks it. `category` drives the gallery
+// filter chips.
 
-import imgBefore from "../imports/1440WLight/505593d73bde8af5bfbbd47b09c07cb19a8e5c0f.png";
-import imgAfter from "../imports/1440WLight/169c3269761df8accf364e4f8c82b4270a13dd5e.png";
+import { media } from "./media"
 
-export type Pair = {
-  id: string;
-  before: string;
-  after: string;
-  beforeAlt: string;
-  afterAlt: string;
-  /** Vehicle, package, and the problem actually solved. Never a generic label. */
-  caption: string;
-  /** True while this is a stock photo rather than one of Kunj's jobs. */
-  reference: boolean;
-};
+export type ComparisonPair = {
+  title: string
+  caption: string
+  before: string
+  after: string
+  category: "exterior" | "interior" | "pet-hair" | "stains"
+  /** Use the same left-facing vehicle direction as the rest of the comparison sequence. */
+  mirrored?: boolean
+}
 
-export const pairs: Pair[] = [
+export const comparisonPairs: ComparisonPair[] = [
   {
-    id: "creta",
-    before: imgBefore,
-    after: imgAfter,
-    beforeAlt: "A compact SUV caked in dried road mud, parked on wet gravel",
-    afterAlt: "The same SUV washed clean, its blue paint and wheels visible again",
-    caption: "Exterior wash and decontamination · a winter's worth of road film, one pass",
-    reference: true,
+    title: "Road film",
+    caption: "Road grime lifted from paint and wheels.",
+    before: media.bmwHeavyDirty,
+    after: media.bmwFinished,
+    category: "exterior",
   },
-];
+  {
+    title: "Road-film coupe",
+    caption: "A wet-weather layer lifted from paint, glass, and wheels.",
+    before: media.porscheHeavyDirty,
+    after: media.porscheClean,
+    category: "exterior",
+  },
+  {
+    title: "Pollen SUV",
+    caption: "Pollen, brake dust, and lower-panel grime cleared away.",
+    before: media.suvHeavyDirty,
+    after: media.suvClean,
+    category: "exterior",
+  },
+  {
+    title: "Blue sedan road film",
+    caption: "Road film lifted from the lower panels, wheels, and glass.",
+    before: media.blueSedanRoadFilm,
+    after: media.blueSedanClean,
+    category: "exterior",
+  },
+  {
+    title: "Pickup road grime",
+    caption: "Road grit cleared from the grille, wheels, and lower bodywork.",
+    before: media.pickupRoadGrime,
+    after: media.pickupClean,
+    category: "exterior",
+    mirrored: true,
+  },
+  {
+    title: "Compact SUV water spotting",
+    caption: "Hard-water spots taken off glass and paint.",
+    before: media.compactSuvWaterSpots,
+    after: media.compactSuvClean,
+    category: "stains",
+    mirrored: true,
+  },
+  {
+    title: "Minivan road film",
+    caption: "Road film cleared from the paint, glass, and wheel faces.",
+    before: media.minivanRoadFilm,
+    after: media.minivanClean,
+    category: "exterior",
+  },
+]
 
 export const results = {
-  eyebrow: "Before & After",
-  heading: "Same car, same spot. Drag to see what comes off.",
+  eyebrow: "Results",
+  heading: "Drag the handle. Same car, same angle, same light.",
   intro:
-    "Two photos taken from one position, one detail apart. Nothing retouched, and no flattering angle on the second shot to make the first look worse than it was.",
-  beforeLabel: "Before",
-  afterLabel: "After",
-  handleLabel: "Drag to compare before and after",
-  referenceNote: "Stock reference pair. Kunj's own before-and-afters replace it as jobs come in.",
-  prevLabel: "Previous comparison",
-  nextLabel: "Next comparison",
-};
+    "No filters and no staged lighting. If the after shot needed a different lens to look good, it would not be an after shot.",
+}

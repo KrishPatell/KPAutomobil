@@ -98,7 +98,7 @@ export const packages: Package[] = [
   },
 ]
 
-export type Faq = { question: string answer: string }
+export type Faq = { question: string; answer: string }
 
 // Order matches the imported FAQ rows (document order: left column, then right).
 export const faqs: Faq[] = [

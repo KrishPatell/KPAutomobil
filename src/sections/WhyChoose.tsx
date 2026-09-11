@@ -1,5 +1,6 @@
 import svgPaths from "../imports/1440WLight/svg-badzmtz89q";
 import SectionEyebrow from "../components/SectionEyebrow";
+import { Mark } from "../components/primitives";
 import useReveal, { revealDelay } from "../lib/useReveal";
 import { compare, rows } from "../content/compare";
 
@@ -48,7 +49,7 @@ export default function WhyChoose() {
           <thead>
             <tr>
               <th scope="col">{compare.featureLabel}</th>
-              <th className="kp-why__col--kp" scope="col">{compare.kpLabel}</th>
+              <th className="kp-why__col--kp" scope="col"><span className="why-kp__brand"><Mark /></span></th>
               <th scope="col">{compare.othersLabel}</th>
             </tr>
           </thead>

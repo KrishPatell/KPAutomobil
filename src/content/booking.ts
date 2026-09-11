@@ -19,7 +19,7 @@ export const booking = {
 
   fields: {
     name: { label: "Your name", placeholder: "First and last" },
-    phone: { label: "Phone", placeholder: "(000) 000-0000", hint: "For the quote and the arrival text. Nothing else." },
+    phone: { label: "Phone", placeholder: "(000) 000-0000" },
     email: { label: "Email", placeholder: "you@example.com", hint: "Optional. Where the written price is sent." },
     size: { label: "Vehicle size", placeholder: "Choose a size" },
     service: { label: "Package", placeholder: "Choose a package" },
@@ -55,9 +55,9 @@ export const booking = {
   successTitle: "Saved. Next: four photos.",
   successBody: `Two interior and two exterior shots are what turn this into a real number. The written price comes back before the $${site.deposit} deposit, and the deposit is refundable with ${site.refundNoticeHours}+ hours notice.`,
 
-  /** Shown when nothing is wired up to receive the request yet. */
+  /** Shown on the homepage fast path before the full /book/ flow handles photos and email. */
   pendingNote:
-    "The photo upload and deposit step are not live yet. Your answers are held in this browser so nothing has to be typed twice when they are.",
+    "Your answers carry into the quote flow so nothing has to be typed twice.",
 
   errorRequired: "This one is needed to quote the job.",
   errorPhone: "A number we can reach you on.",

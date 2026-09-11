@@ -96,7 +96,6 @@ export default function Book() {
                 required
                 type="tel"
               />
-              <span className="kp-field__hint">{booking.fields.phone.hint}</span>
             </label>
 
             <label className="kp-field">

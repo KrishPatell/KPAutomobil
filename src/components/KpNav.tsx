@@ -3,7 +3,7 @@ type KpNavProps = {
   onNavigate: (label: string) => void
 }
 
-const links: Array<{ label: string target: string }> = [
+const links: Array<{ label: string; target: string }> = [
   { label: "Packages", target: "Designed" },
   { label: "Results", target: "Difference." },
   { label: "Promise", target: "#promise" },
