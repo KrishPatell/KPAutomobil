@@ -8,7 +8,7 @@
 import PageHead from "../components/PageHead"
 import AnchorBar from "../components/AnchorBar"
 import CtaBand from "../components/CtaBand"
-import { ButtonLink, Eyebrow, Reveal, RollingPrice } from "../components/primitives"
+import { ButtonLink, Eyebrow, Mark, Reveal, RollingPrice } from "../components/primitives"
 import { pageCopy } from "../content/pages"
 import { addOns, bookablePackages, servicesPage } from "../content/services"
 import { addOnPrices, packagePrices, pricing } from "../content/pricing"
@@ -204,7 +204,7 @@ export default function Services() {
             <thead>
               <tr>
                 <th>{compare.featureLabel}</th>
-                <th className="why-kp">{compare.kpLabel}</th>
+                <th className="why-kp"><span className="why-kp__brand"><Mark /></span></th>
                 <th>{compare.othersLabel}</th>
               </tr>
             </thead>

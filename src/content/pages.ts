@@ -28,9 +28,9 @@ export const pageCopy = {
   },
   about: {
     eyebrow: `About ${site.name}`,
-    heading: "One person. One van. Your driveway.",
+    heading: "One team. One van. Your driveway.",
     standfirst:
-      "No franchise, no rotating crew, no shop to drive to. The person who quotes your car is the person who details it.",
+      "One coordinated team, one mobile setup, and no shop to drive to. The people who quote your car work from the same scope through the detail.",
   },
   serviceAreas: {
     eyebrow: "Service areas",
@@ -42,7 +42,7 @@ export const pageCopy = {
     eyebrow: "Contact",
     heading: "Talk to us.",
     standfirst:
-      "For a price, the quote tool is faster than a message — it takes about a minute. For everything else, this reaches the same person.",
+      "For a price, the quote tool is faster than a message — it takes about a minute. For everything else, this reaches the team behind the service.",
   },
   bookingTerms: {
     eyebrow: "Booking terms",

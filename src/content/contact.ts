@@ -87,7 +87,7 @@ export const contactPage = {
       note: "The only channel here that answers instantly.",
       href: "/book/",
     },
-    phone: { label: "Phone", note: "Calls and texts reach the same person." },
+    phone: { label: "Phone", note: "Calls and texts reach the team." },
     email: { label: "Email", note: "Written questions, written answers." },
     instagram: { label: "Instagram", note: "Jobs go up the day they are done." },
     facebook: { label: "Facebook", note: "The same posts, a different feed." },

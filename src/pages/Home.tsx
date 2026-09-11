@@ -17,7 +17,7 @@ import { primaryCta } from "../content/nav"
 import { processSteps } from "../content/process"
 import { promiseCards } from "../content/promise"
 import { bookablePackages, packages } from "../content/services"
-import { serviceArea, site } from "../content/site"
+import { serviceArea } from "../content/site"
 import { bodyStyles } from "../content/vehicles"
 import { workCards } from "../content/work"
 
@@ -75,7 +75,7 @@ export default function Home() {
           </Reveal>
           <Reveal className="delay-1">
             <h2>
-              One van, one detailer, and a price you agree to before we arrive.
+              Our team, one mobile setup, and a price you agree to before we arrive.
             </h2>
           </Reveal>
         </div>
@@ -229,9 +229,8 @@ export default function Home() {
                 </Reveal>
                 <Reveal className="delay-2">
                   <p>
-                    Four photos and about a minute of your time. That is the
-                    whole booking — no site visit, no phone tag, and no new
-                    figure once we are standing in your driveway.
+                    Send four photos, choose a time, and see the price before we arrive.
+                    No site visit, no phone tag, and no new figure in your driveway.
                   </p>
                 </Reveal>
                 <Reveal className="delay-3">
@@ -285,8 +284,8 @@ export default function Home() {
           </div>
           <Reveal className="delay-2">
             <p>
-              Reference photography for now. {site.owner}&apos;s own job photos
-              replace these as the work comes in.
+              Reference photography for now. Our own documented job photos replace
+              these as the work comes in.
             </p>
           </Reveal>
         </div>
@@ -330,7 +329,7 @@ export default function Home() {
             <thead>
               <tr>
                 <th>How it works</th>
-                <th className="why-kp">KP Automobil</th>
+                <th className="why-kp"><span className="why-kp__brand"><Mark /></span></th>
                 <th>Most detailers</th>
               </tr>
             </thead>
@@ -365,8 +364,8 @@ export default function Home() {
           </Reveal>
           <Reveal className="delay-2">
             <p>
-              These are reference-detailing examples. {site.owner}&apos;s own
-              documented work replaces them as bookings are completed.
+              These are reference-detailing examples. Our own documented work
+              replaces them as bookings are completed.
             </p>
           </Reveal>
         </div>

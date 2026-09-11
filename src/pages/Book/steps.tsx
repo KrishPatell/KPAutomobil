@@ -33,6 +33,100 @@ function priceFor(table: Record<string, Record<SizeId, number | null>>, name: st
   return table[name]?.[size] ?? null
 }
 
+function localDateIso(date = new Date()): string {
+  const month = `${date.getMonth() + 1}`.padStart(2, "0")
+  const day = `${date.getDate()}`.padStart(2, "0")
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
+function monthKey(date: Date): string {
+  return `${date.getFullYear()}-${`${date.getMonth() + 1}`.padStart(2, "0")}`
+}
+
+function dateKey(year: number, month: number, day: number): string {
+  return localDateIso(new Date(year, month, day))
+}
+
+function CalendarPicker({ value, onChange }: { value: string; onChange: (date: string) => void }) {
+  const today = localDateIso()
+  const selected = value ? new Date(`${value}T12:00:00`) : new Date()
+  const [viewMonth, setViewMonth] = useState(() => new Date(selected.getFullYear(), selected.getMonth(), 1))
+  const currentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const [year, month] = [viewMonth.getFullYear(), viewMonth.getMonth()]
+  const firstWeekday = new Date(year, month, 1).getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const monthOptions = Array.from({ length: 24 }, (_, index) => {
+    const option = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + index, 1)
+    return { label: option.toLocaleDateString("en-US", { month: "long", year: "numeric" }), value: monthKey(option) }
+  })
+  const dayCells = Array.from({ length: firstWeekday + daysInMonth }, (_, index) => {
+    if (index < firstWeekday) return null
+    return index - firstWeekday + 1
+  })
+
+  function chooseMonth(key: string) {
+    const [nextYear, nextMonth] = key.split("-").map(Number)
+    setViewMonth(new Date(nextYear, nextMonth - 1, 1))
+  }
+
+  function moveMonth(offset: number) {
+    const next = new Date(year, month + offset, 1)
+    if (next < currentMonth) return
+    setViewMonth(next)
+  }
+
+  return (
+    <div className="booking-calendar" aria-label="Choose a preferred date">
+      <div className="booking-calendar__header">
+        <button
+          aria-label="Previous month"
+          className="booking-calendar__arrow"
+          disabled={monthKey(viewMonth) === monthKey(currentMonth)}
+          onClick={() => moveMonth(-1)}
+          type="button"
+        >
+          ←
+        </button>
+        <label className="booking-calendar__month">
+          <span>Month</span>
+          <select aria-label="Choose month" onChange={(event) => chooseMonth(event.target.value)} value={monthKey(viewMonth)}>
+            {monthOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
+        </label>
+        <button aria-label="Next month" className="booking-calendar__arrow" onClick={() => moveMonth(1)} type="button">
+          →
+        </button>
+      </div>
+      <div className="booking-calendar__weekdays" aria-hidden="true">
+        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => <span key={`${day}-${index}`}>{day}</span>)}
+      </div>
+      <div className="booking-calendar__days" role="grid">
+        {dayCells.map((day, index) => {
+          if (day === null) return <span aria-hidden="true" className="booking-calendar__empty" key={`empty-${index}`} />
+          const date = dateKey(year, month, day)
+          const isPast = date < today
+          const isSelected = date === value
+          return (
+            <button
+              aria-label={new Date(`${date}T12:00:00`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+              aria-selected={isSelected}
+              className={`${isSelected ? "is-selected " : ""}${date === today ? "is-today" : ""}`}
+              disabled={isPast}
+              key={date}
+              onClick={() => onChange(date)}
+              role="gridcell"
+              type="button"
+            >
+              {day}
+            </button>
+          )
+        })}
+      </div>
+      <p className="booking-calendar__note">Today is selected by default. You can change it anytime.</p>
+    </div>
+  )
+}
+
 export function VehicleStep({ state, patch }: StepProps) {
   return (
     <>
@@ -313,18 +407,12 @@ export function ExtrasStep({ state, patch }: StepProps) {
 }
 
 export function SlotStep({ state, patch }: StepProps) {
-  const today = new Date().toISOString().slice(0, 10)
   return (
     <>
       <div className="booking-contact">
         <label>
           {bookFlow.slot.dateLabel}
-          <input
-            min={today}
-            onChange={(event) => patch({ date: event.target.value })}
-            type="date"
-            value={state.date}
-          />
+          <CalendarPicker onChange={(date) => patch({ date })} value={state.date} />
         </label>
         <div className="booking-windows">
           <span className="booking-windows__label">{bookFlow.slot.windowLabel}</span>
@@ -369,7 +457,6 @@ export function DetailsStep({ state, patch }: StepProps) {
           type="tel"
           value={state.phone}
         />
-        <small>{booking.fields.phone.hint}</small>
       </label>
       <label className="booking-contact__wide">
         {booking.fields.email.label}

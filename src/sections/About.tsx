@@ -23,7 +23,7 @@ export default function About() {
 
         <div className="kp-about__grid">
           <figure className="kp-about__media kp-reveal" style={revealDelay(2)}>
-            <img alt="Kunj polishing a black car door with a rotary buffer" src={polishImage} />
+            <img alt="Our team polishing a black car door with a rotary buffer" src={polishImage} />
           </figure>
           {/* The frame stacked two near-identical copies of this photo behind a Figma mask. */}
           <figure className="kp-about__media kp-reveal" style={revealDelay(3)}>

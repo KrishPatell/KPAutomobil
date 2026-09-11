@@ -25,7 +25,7 @@ export const rows: CompareRow[] = [
   { feature: "Getting a price", kp: "In writing, from your photos, before you book", others: "Call back for an estimate" },
   { feature: "Who quotes it", kp: "Nobody has to come out first", others: "A visit to see the car" },
   { feature: "Where the work happens", kp: "Your driveway, lot or garage", others: "You drive to them and wait" },
-  { feature: "Who does the work", kp: "KP Automobil, every booking", others: "Whoever is rostered" },
+  { feature: "Who does the work", kp: "We do the work, every booking", others: "Whoever is rostered" },
   { feature: "Holding the slot", kp: `$${site.deposit}, refundable with ${site.refundNoticeHours}+ hours notice`, others: "Non-refundable, or no slot held" },
   { feature: "Paying by card", kp: "Same price as cash", others: "A processing fee on top" },
   { feature: "On arrival", kp: "The quote is the price", others: "Add-ons priced at the door" },

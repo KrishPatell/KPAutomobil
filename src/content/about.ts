@@ -13,9 +13,9 @@ import { media } from "./media"
 
 export const about = {
   eyebrow: "About KP Automobil",
-  heading: "One van, one detailer, and a price you agree to before we arrive.",
+  heading: "Our team, one mobile setup, and a price you agree to before we arrive.",
   body: [
-    "KP Automobil is Kunj — one person, one van, working in your driveway. Home, work or an apartment garage: the car stays where it is.",
+    "KP Automobil is a coordinated team working from one mobile setup. Home, work or an apartment garage: the car stays where it is.",
     "Send two interior and two exterior photos and the price comes back on screen. No callback, no walkaround, no new number once we pull up.",
   ],
   stats: [
@@ -62,7 +62,7 @@ export const aboutPage = {
   ],
 
   quote: {
-    label: "Kunj, owner",
+    label: "The KP Automobil team",
     text: "I hate it when I have to wait for a quote because I fear someone will give me a call and try to upsell me.",
     /** Not a slogan — the design brief this whole site was built from. */
     note: "That sentence is the reason the price is on screen instead of on a callback.",
@@ -70,14 +70,14 @@ export const aboutPage = {
 
   story: {
     eyebrow: "The story",
-    heading: "One person, and no layer between you and him.",
+    heading: "One team, with no layer between you and the work.",
     intro:
-      "There is no franchise behind this, no dispatcher, and no crew that rotates. The person who reads your photos and sets your price is the person who turns up and does the work.",
+      "There is one coordinated team behind this, with no dispatcher or rotating handoff. Everyone who reads your photos works from the same scope through the detail.",
     chapters: [
       {
         number: "01",
         title: "Owner-operated, and that is the product",
-        body: "Kunj quotes the car, details the car, and hands it back. Nothing is passed to a subcontractor and nobody arrives who has not seen your photos. If something on the day is not right, you are talking to the person who can fix it.",
+        body: "We quote the car, detail the car, and hand it back. Every person on the team works from the same photos and written scope, so the booking stays consistent from quote to finish.",
       },
       {
         number: "02",
@@ -95,7 +95,7 @@ export const aboutPage = {
         body: "Every extra is a named line item with its own price, added by you and removable by you. There is no commission, no package to talk you up to, and nothing discussed at the door without a written number first.",
       },
       // ── Needs the interview. Rendered only once there is a real answer. ────────────────────────
-      { number: "05", title: "Where Kunj learned to detail", body: null },
+      { number: "05", title: "Where our team learned to detail", body: null },
       { number: "06", title: "The car that started it", body: null },
       { number: "07", title: "Why this town", body: null },
     ] satisfies StoryChapter[],
@@ -189,6 +189,5 @@ export const aboutPage = {
      * available and neither is anything shaped like it. These two are true the day the site goes
      * live and stay true.
      */
-    note: "KP Automobil is new. There is no vehicle count and no star rating on this page because there is no honest one to print.",
   },
 }

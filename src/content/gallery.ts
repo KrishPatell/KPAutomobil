@@ -124,7 +124,7 @@ export const gallery = {
     lines: [
       "These are reference shots, not KP Automobil jobs.",
       "The business is new and has not built a portfolio yet. Passing another detailer's work off as ours would be the first thing on this site that was not true.",
-      "Every frame here gets replaced with Kunj's own as the work comes in.",
+      "Every frame here gets replaced with our own as the work comes in.",
     ],
   },
 

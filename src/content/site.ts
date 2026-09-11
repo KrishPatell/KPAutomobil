@@ -62,7 +62,7 @@ export const site = {
   name: "KP Automobil",
   mark: { lead: "KP", tail: "Automobil" },
   domain: "kpautomobil.com",
-  owner: "Kunj",
+  owner: "Our team",
   tagline: "Mobile detailing with the price shown before you book.",
 
   city: "Boston",

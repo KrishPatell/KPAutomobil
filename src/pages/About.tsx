@@ -17,7 +17,6 @@ import { pageCopy } from "../content/pages"
 import { about, aboutPage } from "../content/about"
 import { media } from "../content/media"
 import { primaryCta } from "../content/nav"
-import { site } from "../content/site"
 
 export default function About() {
   const chapters = aboutPage.story.chapters.filter((chapter) => chapter.body !== null)
@@ -52,7 +51,7 @@ export default function About() {
       <section className="process" id="story">
         <div className="process-grid">
           <div className="process-panel">
-            <img alt={`${site.owner} working on a car at a customer's home`} src={media.about} />
+            <img alt="Our team working on a car at a customer's home" src={media.about} />
             <div className="process-shade" />
             <div className="process-panel__content">
               <div className="process-panel__cluster">
@@ -189,9 +188,6 @@ export default function About() {
           ))}
         </dl>
 
-        <Reveal className="story-stats__note delay-3">
-          <p>{aboutPage.stats.note}</p>
-        </Reveal>
       </section>
 
       <CtaBand />

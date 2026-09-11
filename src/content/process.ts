@@ -24,7 +24,7 @@ export const processSteps: ProcessStep[] = [
   {
     number: "02",
     title: "We come to you",
-    body: `${site.owner} arrives at the time you picked with everything the job needs already in the van. Driveway, office lot or apartment parking — the car does not have to move.`,
+    body: "We arrive at the time you picked with everything the job needs already in the van. Driveway, office lot or apartment parking — the car does not have to move.",
     meta: "Everything travels in the van",
     image: media.processArrive,
     imageAlt: "A detailer working on a car in a driveway",
@@ -43,5 +43,5 @@ export const process = {
   eyebrow: "How it works",
   heading: "Three steps, and none of them is waiting for a callback.",
   intro:
-    "The whole point is that you know the number before anyone turns up. Everything below exists to make that true.",
+    "Know the number before we arrive. Everything below exists to make that clear.",
 }

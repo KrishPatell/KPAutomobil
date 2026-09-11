@@ -66,6 +66,14 @@ export type FlowState = {
   payMethod: string
 }
 
+function localDateIso(date = new Date()): string {
+  const month = `${date.getMonth() + 1}`.padStart(2, "0")
+  const day = `${date.getDate()}`.padStart(2, "0")
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
+const today = localDateIso()
+
 export const emptyState: FlowState = {
   size: null,
   bodyStyle: null,
@@ -76,10 +84,9 @@ export const emptyState: FlowState = {
   photos: {},
   photosSkipped: false,
   addOns: [],
-  date: "",
-  // Seeded, not blank: the slot step's control shows this window from the start, so leaving state
-  // empty meant the summary said "no time chosen" about a time the visitor could see.
-  window: booking.windows[0],
+  date: today,
+  // Keep the time blank until the visitor explicitly chooses a window.
+  window: "",
   name: "",
   phone: "",
   email: "",
@@ -88,7 +95,7 @@ export const emptyState: FlowState = {
   payMethod: "card",
 }
 
-const KEY = "kp-book-flow"
+const KEY = "kp-book-flow-v2"
 const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000
 
 export function isSizeId(value: string | null): value is SizeId {
@@ -163,7 +170,7 @@ export function load(): FlowState {
       localStorage.removeItem(KEY)
       return { ...emptyState }
     }
-    return { ...emptyState, ...saved, photos: saved.photos ?? {} }
+    return { ...emptyState, ...saved, date: saved.date || today, photos: saved.photos ?? {} }
   } catch {
     return { ...emptyState }
   }

@@ -2,7 +2,6 @@
 // good the work is — we have no reviews yet and these have to be true on day one.
 
 import { media } from "./media"
-import { site } from "./site"
 
 export type PromiseCard = {
   label: string
@@ -26,8 +25,8 @@ export const promiseCards: PromiseCard[] = [
   },
   {
     label: "The work",
-    title: `${site.owner} does every job`,
-    body: "One person quotes your car and one person details it. There is no handoff.",
+    title: "Our team does every job",
+    body: "The same written scope guides the team from quote through handoff. There is no surprise handoff.",
     image: media.promiseClean,
   },
 ]

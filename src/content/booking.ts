@@ -19,7 +19,7 @@ export const booking = {
 
   fields: {
     name: { label: "Your name", placeholder: "First and last" },
-    phone: { label: "Phone", placeholder: "(000) 000-0000", hint: "For the quote and the arrival text. Nothing else." },
+    phone: { label: "Phone", placeholder: "(000) 000-0000" },
     email: { label: "Email", placeholder: "you@example.com", hint: "Optional. Where the written price is sent." },
     size: { label: "Vehicle size", placeholder: "Choose a size" },
     service: { label: "Package", placeholder: "Choose a package" },

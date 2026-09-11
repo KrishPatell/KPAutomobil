@@ -56,7 +56,6 @@ export default function StepContact({ state, set, next, goTo }: StepProps) {
             type="tel"
             value={state.phone}
           />
-          <span className="kp-field__hint">{booking.fields.phone.hint}</span>
         </label>
 
         <label className="kp-field">
@@ -90,8 +89,11 @@ export default function StepContact({ state, set, next, goTo }: StepProps) {
           <select
             name="window"
             onChange={(event) => set({ window: event.target.value })}
-            value={state.window || booking.windows[0]}
+            value={state.window}
           >
+            <option disabled value="">
+              Choose a time window
+            </option>
             {booking.windows.map((slot) => (
               <option key={slot}>{slot}</option>
             ))}
