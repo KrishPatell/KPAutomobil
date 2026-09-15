@@ -34,6 +34,7 @@ export default function SiteFooter() {
         <div className="footer-links">
           <strong>Information</strong>
           <Link href="/services/#extras">What costs extra</Link>
+          <Link href="/booking-terms/">Booking terms</Link>
           {telHref && <a href={telHref}>{site.phone}</a>}
           {mailHref && <a href={mailHref}>{site.email}</a>}
           {socials.map((social) => (

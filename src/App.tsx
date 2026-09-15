@@ -16,6 +16,7 @@ import Gallery from "./pages/Gallery"
 import About from "./pages/About"
 import ServiceAreas from "./pages/ServiceAreas"
 import Contact from "./pages/Contact"
+import BookingTerms from "./pages/BookingTerms"
 import Book from "./pages/Book"
 import NotFound from "./pages/NotFound"
 
@@ -27,6 +28,7 @@ const routes: Record<string, () => ReactElement> = {
   "/about": About,
   "/service-areas": ServiceAreas,
   "/contact": Contact,
+  "/booking-terms": BookingTerms,
 }
 
 function useDocumentTitle(path: string) {

@@ -108,10 +108,25 @@ export function RollingPrice({ amount }: { amount: number }) {
   const amountRef = useRef<HTMLSpanElement>(null)
   const [displayedAmount, setDisplayedAmount] = useState(amount)
   const [isRolling, setIsRolling] = useState(false)
+  const renderedAmount = useRef(amount)
+  const hasMounted = useRef(false)
 
   useEffect(() => {
     const element = amountRef.current
     if (!element) return
+
+    // A running total stays mounted while the visitor changes package. Its amount prop can therefore
+    // change while it is already visible. Never leave the previous package's figure on screen while
+    // waiting for the visibility observer to run again.
+    if (hasMounted.current && renderedAmount.current !== amount) {
+      renderedAmount.current = amount
+      setDisplayedAmount(amount)
+      setIsRolling(false)
+      return
+    }
+
+    hasMounted.current = true
+    renderedAmount.current = amount
     let frame = 0
     let hasPlayed = false
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
