@@ -499,59 +499,73 @@ a { color: inherit; }
   .nav {
     align-items: center;
     display: grid;
-    gap: 22px 16px;
+    gap: 20px;
     grid-template-columns: 1fr;
-    justify-items: start;
-    padding: 22px clamp(18px, 5vw, 54px) 26px;
+    justify-items: center;
+    padding: 22px clamp(18px, 5vw, 54px) 24px;
     position: fixed;
   }
-  .nav-brand { grid-column: 1 / -1; }
+  .nav-brand {
+    display: inline-flex;
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
   .nav-actions {
-    display: grid;
-    gap: 14px;
-    grid-template-columns: minmax(0, 1fr) 56px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
     max-width: 720px;
+    min-width: 0;
     width: 100%;
   }
   .nav .nav-cta {
+    flex: 1 1 0;
+    gap: 12px;
+    max-width: 520px;
     min-height: 56px;
+    min-width: 0;
     padding: 0 clamp(18px, 5vw, 42px);
-    width: 100%;
+    width: auto;
   }
-  .nav-toggle { display: inline-flex; height: 56px; width: 56px; }
+  .nav .nav-cta span {
+    font-size: clamp(16px, 3.4vw, 19px);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .nav .nav-cta .arrow { flex: 0 0 auto; }
+  .nav-toggle { display: inline-flex; flex: 0 0 56px; height: 56px; width: 56px; }
   .nav-toggle i { width: 22px; }
   .nav-menu { display: block; inset: calc(100% + 10px) 0 auto; }
   .page-head { padding-top: clamp(118px, 20vh, 160px); }
 }
 @media (max-width: 560px) {
   .nav {
-    gap: 18px 12px;
-    padding: 20px 18px 22px;
+    gap: 18px;
+    padding: 20px 16px 22px;
   }
-  .mark--logo { width: clamp(180px, 58vw, 260px); }
+  .mark--logo { width: clamp(174px, 56vw, 238px); }
   .nav-actions {
-    gap: 10px;
-    grid-template-columns: minmax(0, 1fr) 52px;
+    gap: 9px;
     width: 100%;
   }
   .nav .nav-cta {
+    gap: 9px;
     min-height: 52px;
-    padding: 0 14px;
+    padding: 0 12px;
   }
-  .nav-toggle { height: 52px; width: 52px; }
+  .nav-toggle { flex-basis: 52px; height: 52px; width: 52px; }
   .nav-toggle i { width: 20px; }
   .nav-menu { inset: calc(100% + 10px) 0 auto; }
   .nav-menu nav a { font-size: 19px; padding: 15px 8px; }
-  .nav .nav-cta span { font-size: clamp(16px, 4vw, 20px); }
+  .nav .nav-cta span { font-size: clamp(14px, 4vw, 18px); }
 }
 @media (max-width: 360px) {
   .nav .nav-cta {
-    gap: 10px;
-    padding: 0 11px;
+    gap: 8px;
+    padding: 0 10px;
   }
-  .nav .nav-cta span { font-size: 14px; }
-  .nav-actions { grid-template-columns: minmax(0, 1fr) 48px; }
-  .nav-toggle { height: 48px; width: 48px; }
+  .nav .nav-cta span { font-size: 13.5px; }
+  .nav-toggle { flex-basis: 48px; height: 48px; width: 48px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nav, .nav-toggle i, .nav-menu { transition: none; }
