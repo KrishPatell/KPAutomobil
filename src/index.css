@@ -574,7 +574,7 @@ a { color: inherit; }
     gap: 12px;
     padding: 0 20px;
   }
-  .nav .nav-brand .mark--logo { margin-left: -4px; width: clamp(96px, 28vw, 112px); }
+  .nav .nav-brand .mark--logo { width: clamp(96px, 28vw, 112px); }
   .nav-actions {
     gap: 8px;
     width: auto;
