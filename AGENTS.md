@@ -113,3 +113,12 @@ There is no testimonials section. The slot it occupied now holds **commitments**
 - `pnpm build` must stay clean before you call anything done.
 - Before finishing UI work, check the page in a browser at 1920 / 1440 / 1024 / 768 / 390. The
   extraction work is only safe if it is visually invisible.
+
+## Navbar layout rules
+
+- On desktop, use the entire available navbar row: brand on the left, primary links distributed
+  across the middle, and the booking CTA on the far right.
+- Keep a deliberate gap between the final nav link and the CTA; do not let the button crowd the
+  link group.
+- On mobile, preserve equal outside gaps on both sides of the navbar and do not shrink it from only
+  one edge. The compact brand-and-menu layout remains the mobile pattern.
