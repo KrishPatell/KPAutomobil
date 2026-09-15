@@ -615,6 +615,13 @@ a { color: inherit; }
   .nav, .nav-toggle i, .nav-menu { transition: none; }
 }
 
+/* Mobile uses a taller comparison stage than the source photographs. Contain both images so every
+   pair keeps the entire vehicle visible instead of cropping its front or rear. */
+@media (max-width: 560px) {
+  .comparison-stage { background: #111; }
+  .comparison-stage > img, .comparison-before > img { object-fit: contain; }
+}
+
 /* ── Anchor bar + closing CTA, shared by the sub-pages ─────────────────────────────────────── */
 [id] { scroll-margin-top: 104px; }
 .anchor-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; }
