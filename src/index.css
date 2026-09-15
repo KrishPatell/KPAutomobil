@@ -1059,3 +1059,9 @@ a { color: inherit; }
   .contact-photo { grid-template-columns: 1fr; }
   .contact-photo__pick { justify-self: start; }
 }
+
+/* Match the comparison stage to the source photographs on phones so full-image framing leaves no
+   empty top and bottom bands. */
+@media (max-width: 560px) {
+  .comparison-stage { aspect-ratio: 16 / 9; }
+}
