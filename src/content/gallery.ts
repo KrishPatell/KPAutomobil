@@ -71,10 +71,10 @@ export const galleryStills: Still[] = [
     label: "Full Detail",
   },
   {
-    image: media.handWax,
-    title: "Wax, on by hand",
-    caption: "Applied in sections and buffed off by hand. A machine is faster and leaves more behind.",
-    label: "Hand Wax",
+    image: media.machineBuffing,
+    title: "Machine-polished paint",
+    caption: "A machine buffer works the clean paint into a deeper gloss.",
+    label: "Machine Buffing",
   },
   {
     image: media.workRestore,

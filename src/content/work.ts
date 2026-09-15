@@ -21,10 +21,10 @@ export const workCards: WorkCard[] = [
     caption: "Vacuumed through the seats, rails, and center console.",
   },
   {
-    image: media.recentWorkHandWax,
-    imageAlt: "Hand wax being applied to clean dark vehicle paint",
-    title: "Hand wax",
-    caption: "Applied in sections and buffed by hand between full details.",
+    image: media.recentWorkMachineBuffing,
+    imageAlt: "Machine polisher buffing glossy dark car paint",
+    title: "Machine buffing",
+    caption: "A machine-polished gloss pass after the paint is clean.",
   },
   {
     image: media.recentWorkExterior,

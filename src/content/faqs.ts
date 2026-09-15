@@ -64,7 +64,7 @@ export const serviceFaqs: Faq[] = [
   {
     question: "Can I book an add-on on its own?",
     answer:
-      "Ceramic Coating and Hand Wax are finishing steps, so they are booked alongside a package rather than by themselves.",
+      "Ceramic Coating and Machine Buffing are finishing steps, so they are booked alongside a package rather than by themselves.",
   },
   {
     question: "What if the car needs more work than the photos showed?",

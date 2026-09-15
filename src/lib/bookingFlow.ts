@@ -21,7 +21,7 @@ import { PHOTO_SLOTS } from "./photos"
 import type { SizeId } from "../content/vehicles"
 import { sizeIds } from "../content/vehicles"
 import type { ConditionId } from "../content/services"
-import { bookablePackages, conditions } from "../content/services"
+import { addOns, conditions, quoteServiceChoices } from "../content/services"
 import { booking } from "../content/booking"
 
 export const STEPS = [
@@ -103,7 +103,11 @@ export function isSizeId(value: string | null): value is SizeId {
 }
 
 export function isPackageName(value: string | null): value is string {
-  return !!value && bookablePackages.some((item) => item.name === value)
+  return !!value && quoteServiceChoices.some((item) => item.name === value)
+}
+
+function isAddOnName(value: string): boolean {
+  return addOns.some((item) => item.name === value)
 }
 
 export function isStep(value: string | undefined): value is StepSlug {
@@ -170,7 +174,12 @@ export function load(): FlowState {
       localStorage.removeItem(KEY)
       return { ...emptyState }
     }
-    return { ...emptyState, ...saved, date: saved.date || today, photos: saved.photos ?? {} }
+    const service = isPackageName(saved.service ?? null) ? saved.service ?? null : null
+    const savedAddOns = Array.isArray(saved.addOns) ? saved.addOns : []
+    const addOns = savedAddOns.filter((item): item is string =>
+      typeof item === "string" && isAddOnName(item) && item !== service
+    )
+    return { ...emptyState, ...saved, service, addOns, date: saved.date || today, photos: saved.photos ?? {} }
   } catch {
     return { ...emptyState }
   }

@@ -34,10 +34,10 @@ import whiteSuvReviewImage from "../assets/reviews/white-suv-driveway.jpg"
 import foamWashImage from "../assets/reviews/foam-wash-mobile-service-v2.png"
 import dirtyBmwDrivewayImage from "../assets/reviews/dirty-bmw-driveway-v2.png"
 import recentWorkInteriorImage from "../assets/recent-work/interior-reset-reference-v1.png"
-import recentWorkHandWaxImage from "../assets/recent-work/hand-wax-reference-v1.png"
+import recentWorkMachineBuffingImage from "../assets/addons/machine-buffing-application.png"
 import recentWorkExteriorImage from "../assets/recent-work/exterior-finish-reference-v1.png"
 
-import handWaxImage from "../assets/booking/hand-wax-application.jpg"
+import machineBuffingImage from "../assets/addons/machine-buffing-application.png"
 import deepRestorationImage from "../assets/booking/deep-restoration-before.jpg"
 import ceramicCoatingImage from "../assets/booking/ceramic-coating-application.jpg"
 import threeRowCatalogImage from "../assets/booking/three-row-catalog-white-v3.jpg"
@@ -51,7 +51,7 @@ import steamCleaningInteriorImage from "../assets/kit/steam-cleaning-interior.jp
 import clayBarDecontaminationImage from "../assets/kit/clay-bar-decontamination.jpg"
 
 import addonCeramicCoatingImage from "../assets/addons/ceramic-coating-application.jpg"
-import addonHandWaxImage from "../assets/addons/hand-wax-application.jpg"
+import addonMachineBuffingImage from "../assets/addons/machine-buffing-application.png"
 import addonPetHairRemovalImage from "../assets/addons/pet-hair-vacuum-removal.jpg"
 import addonHeavyStainTreatmentImage from "../assets/addons/heavy-stain-extraction.jpg"
 import addonOdourRemovalImage from "../assets/addons/odour-ozone-treatment.jpg"
@@ -123,16 +123,16 @@ export const media = {
   foamWash: foamWashImage,
   dirtyBmwDriveway: dirtyBmwDrivewayImage,
   recentWorkInterior: recentWorkInteriorImage,
-  recentWorkHandWax: recentWorkHandWaxImage,
+  recentWorkMachineBuffing: recentWorkMachineBuffingImage,
   recentWorkExterior: recentWorkExteriorImage,
 
-  handWax: handWaxImage,
+  machineBuffing: machineBuffingImage,
   deepRestoration: deepRestorationImage,
   ceramicCoating: ceramicCoatingImage,
   fullDetailPorsche: fullDetailPorscheImage,
 
   addonCeramicCoating: addonCeramicCoatingImage,
-  addonHandWax: addonHandWaxImage,
+  addonMachineBuffing: addonMachineBuffingImage,
   addonPetHairRemoval: addonPetHairRemovalImage,
   addonHeavyStainTreatment: addonHeavyStainTreatmentImage,
   addonOdourRemoval: addonOdourRemovalImage,

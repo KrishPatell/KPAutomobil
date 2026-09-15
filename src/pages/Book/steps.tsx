@@ -8,7 +8,7 @@
 import { useRef, useState } from "react"
 import { bookFlow } from "../../content/bookFlow"
 import { booking } from "../../content/booking"
-import { addOns as addOnCatalogue, bookablePackages, conditions } from "../../content/services"
+import { addOns as addOnCatalogue, bookablePackages, conditions, quoteServiceChoices } from "../../content/services"
 import type { ConditionId } from "../../content/services"
 import { addOnPrices, packagePrices, pricing } from "../../content/pricing"
 import { quoteBodyStyles, sizeLabels } from "../../content/vehicles"
@@ -19,7 +19,6 @@ import { suggestAddOns } from "../../lib/quote"
 import { photoCount } from "../../lib/bookingFlow"
 import type { FlowState } from "../../lib/bookingFlow"
 import { site } from "../../content/site"
-import { Link } from "../../router"
 import { RollingPrice } from "../../components/primitives"
 
 export type StepProps = {
@@ -165,17 +164,26 @@ export function VehicleStep({ state, patch }: StepProps) {
 }
 
 export function ServiceStep({ state, patch }: StepProps) {
+  function chooseService(name: string) {
+    patch({
+      service: name,
+      conditions: [],
+      conditionsAnswered: [],
+      addOns: state.addOns.filter((addOn) => addOn !== name),
+    })
+  }
+
   return (
     <>
       {!state.size && <p className="booking-note">{bookFlow.service.pickSizeFirst}</p>}
       <div className="booking-choice-grid booking-choice-grid--media booking-choice-grid--add-ons">
-        {bookablePackages.map((item) => {
-          const price = priceFor(packagePrices, item.name, state.size)
+        {quoteServiceChoices.map((item) => {
+          const price = priceFor(item.addOn ? addOnPrices : packagePrices, item.name, state.size)
           return (
             <button
               className={state.service === item.name ? "selected" : ""}
               key={item.slug}
-              onClick={() => patch({ service: item.name })}
+              onClick={() => chooseService(item.name)}
               type="button"
             >
               <img alt="" className="booking-choice-media" src={item.image} />
@@ -358,6 +366,7 @@ export function PhotosStep({ state, patch }: StepProps) {
 
 export function ExtrasStep({ state, patch }: StepProps) {
   const suggested = suggestAddOns(state.conditions)
+  const extras = addOnCatalogue.filter((addOn) => addOn.name !== state.service)
 
   function toggle(name: string) {
     patch({
@@ -370,7 +379,7 @@ export function ExtrasStep({ state, patch }: StepProps) {
   return (
     <>
       <ul className="booking-extras">
-        {addOnCatalogue.map((addOn) => {
+        {extras.map((addOn) => {
           const price = priceFor(addOnPrices, addOn.name, state.size)
           const on = state.addOns.includes(addOn.name)
           return (
@@ -525,9 +534,6 @@ export function DepositStep({ state, patch }: StepProps) {
         </div>
       </div>
 
-      <Link className="booking-terms-link" href="/booking-terms/">
-        {bookFlow.deposit.termsLink}
-      </Link>
     </>
   )
 }

@@ -140,6 +140,8 @@ export function RollingPrice({ amount }: { amount: number }) {
       return
     }
 
+    setDisplayedAmount(0)
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -154,7 +156,7 @@ export function RollingPrice({ amount }: { amount: number }) {
       observer.disconnect()
       window.cancelAnimationFrame(frame)
     }
-  }, [])
+  }, [amount])
 
   return (
     <span

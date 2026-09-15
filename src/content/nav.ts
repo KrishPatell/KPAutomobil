@@ -21,7 +21,6 @@ export const pages: Page[] = [
   { href: "/about/", label: "About", title: "About", inNav: true },
   { href: "/contact/", label: "Contact", title: "Contact", inNav: true },
   { href: "/book/", label: "Book", title: "Book & Instant Quote", inNav: false },
-  { href: "/booking-terms/", label: "Booking Terms", title: "Booking Terms", inNav: false },
 ]
 
 export const navPages = pages.filter((page) => page.inNav)

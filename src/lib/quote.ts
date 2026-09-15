@@ -32,11 +32,11 @@ export function quote(size: SizeId | null, service: string | null, addOns: strin
   if (service) {
     lines.push({
       label: service,
-      amount: size ? (packagePrices[service]?.[size] ?? null) : null,
+      amount: size ? (packagePrices[service]?.[size] ?? addOnPrices[service]?.[size] ?? null) : null,
       base: true,
     })
   }
-  for (const addOn of addOns) {
+  for (const addOn of addOns.filter((entry) => entry !== service)) {
     lines.push({
       label: addOn,
       amount: size ? (addOnPrices[addOn]?.[size] ?? null) : null,

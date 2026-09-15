@@ -165,11 +165,11 @@ export const aboutPage = {
         where: "Deep Restoration",
       },
       {
-        name: "Wax and hand applicators",
-        detail: "Applied in sections and buffed by hand. A machine is quicker and leaves more behind.",
-        image: media.addonHandWax,
-        imageAlt: "Hand wax being applied to a red car fender",
-        where: "Hand Wax",
+        name: "Machine buffer",
+        detail: "A controlled machine-polish pass for clean paint that needs more gloss.",
+        image: media.addonMachineBuffing,
+        imageAlt: "Machine polisher buffing glossy dark car paint",
+        where: "Machine Buffing",
       },
       {
         name: "Ceramic coating kit",

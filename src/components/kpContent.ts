@@ -4,7 +4,7 @@ import imgInteriorRefresh from "../imports/1440WLight/2b131945f24866466367159fe5
 import imgDeepRestoration from "../imports/1440WLight/cc6887674c6325a2a57f60e235ccc8654e9fb30c.png"
 import imgFullDetail from "../imports/1440WLight/2c0b095cbd13138aaabd6eedbf692c1f026269a3.png"
 import imgCeramic from "../imports/1440WLight/8f9b949be2c84db8c6782760daa08368225b5f25.png"
-import imgHandWax from "../imports/1440WLight/5a05f90c4323f8eb1048b55a1bf1ff72916c246a.png"
+import imgMachineBuffing from "../assets/addons/machine-buffing-application.png"
 
 export type Package = {
   title: string
@@ -83,16 +83,16 @@ export const packages: Package[] = [
     ],
   },
   {
-    title: "Hand Wax",
+    title: "Machine Buffing",
     descLines: [
-      "An add-on protective wax for a warm shine",
-      "between full details.",
+      "An add-on gloss pass with a machine polisher",
+      "after the paint is clean.",
     ],
-    image: imgHandWax,
+    image: imgMachineBuffing,
     included: [
       "Hand Wash & Dry",
-      "Wax Application",
-      "Hand Buff",
+      "Paint Wipe Down",
+      "Machine Polish",
       "Tire Dressing",
     ],
   },
