@@ -533,6 +533,7 @@ a { color: inherit; }
     min-height: 64px;
     padding: 0 clamp(16px, 4vw, 30px);
     position: fixed;
+    width: 100%;
   }
   .nav-brand {
     display: inline-flex;
