@@ -122,3 +122,6 @@ There is no testimonials section. The slot it occupied now holds **commitments**
   link group.
 - On mobile, preserve equal outside gaps on both sides of the navbar and do not shrink it from only
   one edge. The compact brand-and-menu layout remains the mobile pattern.
+- In the mobile menu, every navigation row must use the full available width, with the label on the
+  left and its arrow on the right. Keep the quote CTA below the rows, separated by a divider and a
+  visible gap; make the CTA full width rather than crowding it beside the navigation items.
