@@ -119,8 +119,8 @@ a { color: inherit; }
 .results { padding-bottom: 120px; }
 .comparison { margin: 0 auto; max-width: 972px; }
 .comparison figure { margin: 0; }
-.comparison-stage { aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; position: relative; }
-.comparison-stage > img, .comparison-before > img { height: 100%; inset: 0; object-fit: cover; position: absolute; width: 100%; }
+.comparison-stage { aspect-ratio: 16/9; background: #111; border-radius: 8px; overflow: hidden; position: relative; }
+.comparison-stage > img, .comparison-before > img { height: 100%; inset: 0; object-fit: contain; position: absolute; width: 100%; }
 .comparison-stage > img.comparison-image--mirrored { transform: scaleX(-1); }
 .comparison-before { inset: 0; overflow: hidden; position: absolute; z-index: 1; }
 .comparison-before > img.comparison-image--mirrored { transform: scaleX(-1); }
@@ -615,12 +615,6 @@ a { color: inherit; }
   .nav, .nav-toggle i, .nav-menu { transition: none; }
 }
 
-/* Mobile uses a taller comparison stage than the source photographs. Contain both images so every
-   pair keeps the entire vehicle visible instead of cropping its front or rear. */
-@media (max-width: 560px) {
-  .comparison-stage { background: #111; }
-  .comparison-stage > img, .comparison-before > img { object-fit: contain; }
-}
 
 /* ── Anchor bar + closing CTA, shared by the sub-pages ─────────────────────────────────────── */
 [id] { scroll-margin-top: 104px; }
