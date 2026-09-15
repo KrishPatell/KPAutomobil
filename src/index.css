@@ -572,9 +572,9 @@ a { color: inherit; }
 @media (max-width: 560px) {
   .nav {
     gap: 12px;
-    padding: 0 16px;
+    padding: 0 20px;
   }
-  .nav .nav-brand .mark--logo { width: clamp(96px, 28vw, 112px); }
+  .nav .nav-brand .mark--logo { margin-left: -4px; width: clamp(96px, 28vw, 112px); }
   .nav-actions {
     gap: 8px;
     width: auto;
@@ -584,7 +584,7 @@ a { color: inherit; }
   }
   .nav-toggle { flex-basis: 42px; height: 42px; width: 42px; }
   .nav-toggle i { width: 18px; }
-  .nav-menu { inset: 100% 0 auto; min-height: calc(100svh - 64px); padding: 12px 16px 28px; }
+  .nav-menu { inset: 100% 0 auto; min-height: calc(100svh - 64px); padding: 12px 20px 28px; }
   .nav-menu nav a { font-size: 19px; padding: 15px 8px; }
   .nav .nav-cta span { font-size: clamp(12px, 3.7vw, 15px); }
 }
