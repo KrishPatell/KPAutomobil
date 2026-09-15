@@ -2,7 +2,7 @@
 //
 // Three things shape it:
 //
-//   - **Reduced chrome.** No site nav, no footer, no links out except the wordmark and the terms.
+//   - **Reduced chrome.** No site nav, no footer, no links out except the wordmark.
 //     The IA is explicit that nothing on this page should offer an exit before the deposit.
 //   - **Each step is a URL.** /book/photos is real and shareable; /book/ redirects to whichever step
 //     is actually next. You cannot deep-link past your own answers — the guard below bounces you
@@ -104,7 +104,7 @@ export default function Book() {
     const size = params.get("size")
     const next: Partial<FlowState> = {}
     const chosen = slug ? packageBySlug(slug) : undefined
-    if (chosen && !chosen.addOn && isPackageName(chosen.name)) next.service = chosen.name
+    if (chosen && isPackageName(chosen.name)) next.service = chosen.name
     if (isSizeId(size)) next.size = size
     if (Object.keys(next).length > 0) setState((current) => ({ ...current, ...next }))
   }, [params])

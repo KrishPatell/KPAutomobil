@@ -33,8 +33,8 @@ export default function SiteFooter() {
 
         <div className="footer-links">
           <strong>Information</strong>
-          <Link href="/booking-terms/">Booking terms</Link>
           <Link href="/services/#extras">What costs extra</Link>
+          <Link href="/booking-terms/">Booking terms</Link>
           {telHref && <a href={telHref}>{site.phone}</a>}
           {mailHref && <a href={mailHref}>{site.email}</a>}
           {socials.map((social) => (
@@ -60,7 +60,6 @@ export default function SiteFooter() {
             <Link href="/services/">Services</Link>
             <Link href="/gallery/">Gallery</Link>
             <Link href="/about/">About</Link>
-            <Link href="/booking-terms/">Booking terms</Link>
           </nav>
           <span>Owner-operated mobile detailing</span>
         </div>

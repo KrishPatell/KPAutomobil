@@ -116,7 +116,7 @@ export default function Services({ onBook }: ServicesProps) {
             <div className="kp-services__included">
               <p className="kp-services__included-label">{services.includedLabel}</p>
               {/* One list that fills left to right. The frame froze it into two fixed 367px
-                  columns of 4 and 3, so a four-item package like Hand Wax blanked the entire
+                  columns of 4 and 3, so a four-item add-on blanked the entire
                   right-hand column and left the price and CTA stranded at the bottom. */}
               <ul className="kp-services__list">
                 {pkg.included.map((line) => (

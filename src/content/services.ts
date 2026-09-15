@@ -83,20 +83,20 @@ export const packages: Package[] = [
     ],
   },
   {
-    name: "Hand Wax",
-    slug: "hand-wax",
+    name: "Machine Buffing",
+    slug: "machine-buffing",
     description:
-      "An add-on warm shine between full details, applied and buffed by hand.",
-    image: media.handWax,
+      "An add-on gloss pass with a machine polisher after the paint is clean.",
+    image: media.machineBuffing,
     addOn: true,
-    items: ["Hand wash & dry", "Wax application", "Hand buff", "Tire dressing"],
+    items: ["Paint wiped clean", "Machine polish", "Gloss finish", "Final wipe-down"],
   },
 ]
 
 /**
  * The line items the quote tool can add on top of a package.
  *
- * The two with their own panel above (Ceramic Coating, Hand Wax) are repeated here so the /book/
+ * The two with their own panel above (Ceramic Coating, Machine Buffing) are repeated here so the /book/
  * extras step and the /services/ add-on grid read one list and cannot drift apart. `condition` ties
  * an add-on to the answer in the condition step that suggests it — see suggestAddOns() in
  * src/lib/quote.ts. A suggested add-on is pre-checked and always removable.
@@ -120,10 +120,10 @@ export const addOns: AddOn[] = [
     imageAlt: "Ceramic coating being applied to a car hood with a suede applicator",
   },
   {
-    name: "Hand Wax",
-    description: "A warm shine applied and buffed by hand, for cars between full details.",
-    image: media.addonHandWax,
-    imageAlt: "Hand wax being applied to a red car fender with a foam pad",
+    name: "Machine Buffing",
+    description: "A gloss pass with a machine polisher, for clean paint that needs more shine.",
+    image: media.addonMachineBuffing,
+    imageAlt: "Machine polisher buffing glossy dark car paint",
   },
   {
     name: "Pet Hair Removal",
@@ -192,8 +192,13 @@ export const conditions: { id: ConditionId; question: string; help: string }[] =
   },
 ]
 
-/** The three you can actually book on their own. */
+/** The three core detailing packages shown in the marketing package sections. */
 export const bookablePackages = packages.filter((item) => !item.addOn)
+
+/** Services that can be selected as the main booking choice in the quote flow. */
+export const quoteServiceChoices = packages.filter(
+  (item) => !item.addOn || item.name === "Ceramic Coating",
+)
 
 export function packageBySlug(slug: string): Package | undefined {
   return packages.find((item) => item.slug === slug)

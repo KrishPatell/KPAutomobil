@@ -103,7 +103,6 @@ export const bookFlow = {
       { id: "zelle", label: "Zelle", note: "Sent on the day, once the work is signed off." },
       { id: "cash", label: "Cash", note: "Paid on completion, receipt by text." },
     ],
-    termsLink: "Read the booking terms",
     submit: "Send this request",
     sending: "Sending…",
     sentTitle: "Request sent",

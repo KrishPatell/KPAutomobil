@@ -53,13 +53,13 @@ export const packagePrices: Record<string, SizePrices> = {
 /**
  * Add-ons are priced per vehicle size too — a truck's worth of paint is not a sedan's.
  *
- * Ceramic Coating maps to MPG's 2-year coating ($599.99 / $699.99). Hand Wax maps to their
- * Wash/Clay/Seal ($114.99 / $149.99). The other six have no MPG equivalent at all, so they stay
+ * Ceramic Coating now starts at $700. Machine Buffing maps to the former finishing add-on slot.
+ * The other six have no MPG equivalent at all, so they stay
  * null and the total degrades honestly. That is deliberate — see the header.
  */
 export const addOnPrices: Record<string, SizePrices> = {
-  "Ceramic Coating": { sedan: 600, suv: 700, "three-row": 750, truck: 750 },
-  "Hand Wax": { sedan: 115, suv: 150, "three-row": 165, truck: 165 },
+  "Ceramic Coating": { sedan: 700, suv: 700, "three-row": 750, truck: 750 },
+  "Machine Buffing": { sedan: 115, suv: 150, "three-row": 165, truck: 165 },
 
   "Pet Hair Removal": { ...unpriced },
   "Heavy Stain Treatment": { ...unpriced },

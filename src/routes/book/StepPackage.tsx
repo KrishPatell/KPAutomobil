@@ -7,7 +7,7 @@ import type { StepProps } from "./BookFlow";
 import { STEPS } from "../../lib/bookingFlow";
 
 /**
- * Step 2. Only the three real packages — Ceramic Coating and Hand Wax are add-ons and get their
+ * Step 2. Only the three real packages — Ceramic Coating and Machine Buffing are add-ons and get their
  * own step, which is the distinction src/content/services.ts marks with `addOn`.
  */
 export default function StepPackage({ state, set, next, goTo }: StepProps) {
