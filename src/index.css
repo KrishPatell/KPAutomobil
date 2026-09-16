@@ -1093,6 +1093,12 @@ a { color: inherit; }
   .promise-card { aspect-ratio: auto; min-height: 360px; }
 }
 
+/* On the touch carousel, reserve a complete text panel for every promise—not a clipped hover state. */
+@media (max-width: 900px) {
+  .promise-card { aspect-ratio: auto; min-height: 430px; padding: 0; }
+  .promise-card__content { min-height: 430px; padding: 24px; }
+}
+
 /* Match the comparison stage to the source photographs on phones so full-image framing leaves no
    empty top and bottom bands. */
 @media (max-width: 560px) {
