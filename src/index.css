@@ -1076,7 +1076,7 @@ a { color: inherit; }
 /* Keep the original compact mobile cards while preserving the full source photo and animated copy. */
 @media (max-width: 900px) {
   .promise-card { aspect-ratio: auto; min-height: 360px; padding: 0; }
-  .promise-card__image { background: #191919; object-fit: contain; }
+  .promise-card__image { background: #191919; object-fit: contain; object-position: center top; }
   .promise-card__content { min-height: 360px; padding: 24px; }
 }
 
