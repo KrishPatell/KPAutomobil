@@ -1061,8 +1061,17 @@ a { color: inherit; }
 }
 
 /* Keep every package tile on the same rhythm even when one description wraps differently. */
+.work-grid { align-items: stretch; }
+.work-card { align-self: stretch; }
 .work-card a { display: grid; grid-template-rows: auto minmax(148px, 1fr); height: 100%; }
 .work-card a > span { min-height: 148px; }
+
+/* The mobile work rail is a set of equal cards, not individually sized content panels. */
+@media (max-width: 900px) {
+  .work-grid { grid-auto-rows: 1fr; }
+  .work-card a { aspect-ratio: 2 / 3; grid-template-rows: auto 1fr; }
+  .work-card a > span { min-height: 0; }
+}
 
 /* Promise text is content, not decoration: it must remain readable on touch and hover alike. */
 .promise-card__content p {
