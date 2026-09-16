@@ -1073,11 +1073,12 @@ a { color: inherit; }
   .work-card a > span { min-height: 0; }
 }
 
-/* Keep the original compact mobile cards while preserving the full source photo and animated copy. */
+/* Mobile promise cards keep the full 16:9 photo without creating empty letterbox space. */
 @media (max-width: 900px) {
-  .promise-card { aspect-ratio: auto; min-height: 360px; padding: 0; }
-  .promise-card__image { background: #191919; object-fit: contain; }
-  .promise-card__content { min-height: 360px; padding: 24px; }
+  .promise-card { display: grid; grid-template-rows: auto minmax(198px, 1fr); min-height: 0; padding: 0; }
+  .promise-card__image { aspect-ratio: 16 / 9; background: #191919; grid-row: 1; height: auto; inset: auto; object-fit: contain; position: relative; }
+  .promise-card__shade { display: none; }
+  .promise-card__content { grid-row: 2; height: auto; min-height: 198px; padding: 24px; }
 }
 
 /* Match the comparison stage to the source photographs on phones so full-image framing leaves no
