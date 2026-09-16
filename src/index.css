@@ -1073,27 +1073,7 @@ a { color: inherit; }
   .work-card a > span { min-height: 0; }
 }
 
-/* Promise text is content, not decoration: it must remain readable on touch and hover alike. */
-.promise-card__content p {
-  font-size: 15px;
-  margin: 14px 0 0;
-  max-height: none;
-  opacity: 1;
-  overflow: visible;
-  transform: none;
-}
-.promise-card:hover .promise-card__content p,
-.promise-card:focus-within .promise-card__content p {
-  margin-bottom: 0;
-  max-height: none;
-  opacity: 1;
-  transform: none;
-}
-@media (max-width: 560px) {
-  .promise-card { aspect-ratio: auto; min-height: 360px; }
-}
-
-/* On the touch carousel, reserve a complete text panel for every promise—not a clipped hover state. */
+/* On the touch carousel, reserve room for the full animated promise copy. */
 @media (max-width: 900px) {
   .promise-card { aspect-ratio: auto; min-height: 430px; padding: 0; }
   .promise-card__content { min-height: 430px; padding: 24px; }
