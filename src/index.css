@@ -1060,6 +1060,30 @@ a { color: inherit; }
   .contact-photo__pick { justify-self: start; }
 }
 
+/* Keep every package tile on the same rhythm even when one description wraps differently. */
+.work-card a { display: grid; grid-template-rows: auto minmax(148px, 1fr); height: 100%; }
+.work-card a > span { min-height: 148px; }
+
+/* Promise text is content, not decoration: it must remain readable on touch and hover alike. */
+.promise-card__content p {
+  font-size: 15px;
+  margin: 14px 0 0;
+  max-height: none;
+  opacity: 1;
+  overflow: visible;
+  transform: none;
+}
+.promise-card:hover .promise-card__content p,
+.promise-card:focus-within .promise-card__content p {
+  margin-bottom: 0;
+  max-height: none;
+  opacity: 1;
+  transform: none;
+}
+@media (max-width: 560px) {
+  .promise-card { aspect-ratio: auto; min-height: 360px; }
+}
+
 /* Match the comparison stage to the source photographs on phones so full-image framing leaves no
    empty top and bottom bands. */
 @media (max-width: 560px) {
