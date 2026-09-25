@@ -16,9 +16,10 @@ import Gallery from "./pages/Gallery"
 import About from "./pages/About"
 import ServiceAreas from "./pages/ServiceAreas"
 import Contact from "./pages/Contact"
+import Faq from "./pages/Faq"
 import BookingTerms from "./pages/BookingTerms"
-import Book from "./pages/Book"
 import NotFound from "./pages/NotFound"
+import QuotePrototype from "./pages/QuotePrototype"
 
 /** Every page that renders inside the site shell, keyed by its normalised path. */
 const routes: Record<string, () => ReactElement> = {
@@ -28,15 +29,17 @@ const routes: Record<string, () => ReactElement> = {
   "/about": About,
   "/service-areas": ServiceAreas,
   "/contact": Contact,
+  "/faq": Faq,
   "/booking-terms": BookingTerms,
 }
 
 function useDocumentTitle(path: string) {
   useEffect(() => {
     const page = pageFor(path)
-    document.title = page && page.href !== "/"
-      ? `${page.title} · ${site.name}`
-      : `${site.name} — ${site.tagline}`
+    document.title =
+      page && page.href !== "/"
+        ? `${page.title} · ${site.name}`
+        : `${site.name} — ${site.tagline}`
   }, [path])
 }
 
@@ -44,9 +47,15 @@ export default function App() {
   const { path } = useRoute()
   useDocumentTitle(path)
 
-  // /book/ owns its whole viewport, including its own header and footer.
+  // The previous multi-step quote flow is replaced by one connected request page.
+  // Keep every older /book/* link valid by taking it to the same builder.
   if (path === "/book" || path.startsWith("/book/")) {
-    return <Book />
+    return <QuotePrototype />
+  }
+
+  // Retained as a convenient local review URL.
+  if (path === "/quote-prototype") {
+    return <QuotePrototype />
   }
 
   const Page = routes[path] ?? NotFound

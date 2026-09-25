@@ -25,10 +25,13 @@ import { instagramHref, site } from "../content/site"
 type Filter = ComparisonPair["category"] | "all"
 
 /** Only the categories that have at least one pair behind them, in the order they first appear. */
-const categories = comparisonPairs.reduce<ComparisonPair["category"][]>((list, pair) => {
-  if (!list.includes(pair.category)) list.push(pair.category)
-  return list
-}, [])
+const categories = comparisonPairs.reduce<ComparisonPair["category"][]>(
+  (list, pair) => {
+    if (!list.includes(pair.category)) list.push(pair.category)
+    return list
+  },
+  [],
+)
 
 function Lightbox({
   index,
@@ -66,7 +69,11 @@ function Lightbox({
       onClick={onClose}
       role="dialog"
     >
-      <button className="gallery-lightbox__close" onClick={onClose} type="button">
+      <button
+        className="gallery-lightbox__close"
+        onClick={onClose}
+        type="button"
+      >
         {gallery.stills.closeLabel}
         <i aria-hidden="true">×</i>
       </button>
@@ -80,14 +87,26 @@ function Lightbox({
         </figcaption>
       </figure>
 
-      <div className="gallery-lightbox__nav" onClick={(event) => event.stopPropagation()}>
-        <button aria-label={gallery.stills.previousLabel} onClick={() => onStep(-1)} type="button">
+      <div
+        className="gallery-lightbox__nav"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button
+          aria-label={gallery.stills.previousLabel}
+          onClick={() => onStep(-1)}
+          type="button"
+        >
           ←
         </button>
         <span>
-          {String(index + 1).padStart(2, "0")} / {String(galleryStills.length).padStart(2, "0")}
+          {String(index + 1).padStart(2, "0")} /{" "}
+          {String(galleryStills.length).padStart(2, "0")}
         </span>
-        <button aria-label={gallery.stills.nextLabel} onClick={() => onStep(1)} type="button">
+        <button
+          aria-label={gallery.stills.nextLabel}
+          onClick={() => onStep(1)}
+          type="button"
+        >
           →
         </button>
       </div>
@@ -101,7 +120,9 @@ export default function Gallery() {
   const [lightbox, setLightbox] = useState<number | null>(null)
 
   const pairs =
-    filter === "all" ? comparisonPairs : comparisonPairs.filter((pair) => pair.category === filter)
+    filter === "all"
+      ? comparisonPairs
+      : comparisonPairs.filter((pair) => pair.category === filter)
 
   const step = (direction: number) =>
     setLightbox((current) =>
@@ -135,9 +156,14 @@ export default function Gallery() {
           </div>
 
           <Reveal className="gallery-notice delay-2">
-            <span className="gallery-notice__label">{gallery.disclaimer.label}</span>
+            <span className="gallery-notice__label">
+              {gallery.disclaimer.label}
+            </span>
             {gallery.disclaimer.lines.map((line, index) => (
-              <p className={index === 0 ? "gallery-notice__lead" : ""} key={line}>
+              <p
+                className={index === 0 ? "gallery-notice__lead" : ""}
+                key={line}
+              >
                 {line}
               </p>
             ))}
@@ -145,7 +171,9 @@ export default function Gallery() {
         </div>
 
         <Reveal className="gallery-filter">
-          <span className="gallery-filter__label">{gallery.compare.filterLabel}</span>
+          <span className="gallery-filter__label">
+            {gallery.compare.filterLabel}
+          </span>
           <div>
             <button
               aria-pressed={filter === "all"}
@@ -157,7 +185,9 @@ export default function Gallery() {
               <i>{String(comparisonPairs.length).padStart(2, "0")}</i>
             </button>
             {categories.map((category) => {
-              const count = comparisonPairs.filter((pair) => pair.category === category).length
+              const count = comparisonPairs.filter(
+                (pair) => pair.category === category,
+              ).length
               return (
                 <button
                   aria-pressed={filter === category}
@@ -249,7 +279,11 @@ export default function Gallery() {
       )}
 
       {lightbox !== null && (
-        <Lightbox index={lightbox} onClose={() => setLightbox(null)} onStep={step} />
+        <Lightbox
+          index={lightbox}
+          onClose={() => setLightbox(null)}
+          onStep={step}
+        />
       )}
 
       <CtaBand />

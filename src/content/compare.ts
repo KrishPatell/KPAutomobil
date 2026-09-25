@@ -11,26 +11,58 @@
 // column says what is normal elsewhere — not an accusation, just the default this business is
 // built against.
 
-import { site } from "./site";
+import { site } from "./site"
 
 export type CompareRow = {
-  feature: string;
+  feature: string
   /** What KP does. Rendered with a tick. */
-  kp: string;
+  kp: string
   /** The common alternative. Rendered with a cross. */
-  others: string;
-};
+  others: string
+}
 
 export const rows: CompareRow[] = [
-  { feature: "Getting a price", kp: "In writing, from your photos, before you book", others: "Call back for an estimate" },
-  { feature: "Who quotes it", kp: "Nobody has to come out first", others: "A visit to see the car" },
-  { feature: "Where the work happens", kp: "Your driveway, lot or garage", others: "You drive to them and wait" },
-  { feature: "Who does the work", kp: "We do the work, every booking", others: "Whoever is rostered" },
-  { feature: "Holding the slot", kp: `$${site.deposit}, refundable with ${site.refundNoticeHours}+ hours notice`, others: "Non-refundable, or no slot held" },
-  { feature: "Paying by card", kp: "Same price as cash", others: "A processing fee on top" },
-  { feature: "On arrival", kp: "The quote is the price", others: "Add-ons priced at the door" },
-  { feature: "What the van carries", kp: "Its own water and power", others: "Your hose and your outlet" },
-];
+  {
+    feature: "Getting a price",
+    kp: "In writing, from your photos, before you book",
+    others: "Call back for an estimate",
+  },
+  {
+    feature: "Who quotes it",
+    kp: "Nobody has to come out first",
+    others: "A visit to see the car",
+  },
+  {
+    feature: "Where the work happens",
+    kp: "Your driveway, lot or garage",
+    others: "You drive to them and wait",
+  },
+  {
+    feature: "Who does the work",
+    kp: "We do the work, every booking",
+    others: "Whoever is rostered",
+  },
+  {
+    feature: "Holding the slot",
+    kp: `$${site.deposit}, refundable with ${site.refundNoticeHours}+ hours notice`,
+    others: "Non-refundable, or no slot held",
+  },
+  {
+    feature: "Paying by card",
+    kp: "Same price as cash",
+    others: "A processing fee on top",
+  },
+  {
+    feature: "On arrival",
+    kp: "The quote is the price",
+    others: "Add-ons priced at the door",
+  },
+  {
+    feature: "What the van carries",
+    kp: "Its own water and power",
+    others: "Your hose and your outlet",
+  },
+]
 
 export const compare = {
   eyebrow: "The Difference",
@@ -40,4 +72,4 @@ export const compare = {
   kpLabel: site.name,
   othersLabel: "Most detailers",
   featureLabel: "How it works",
-};
+}

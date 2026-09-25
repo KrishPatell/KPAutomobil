@@ -12,7 +12,9 @@ type ComparisonProps = {
   pairs?: ComparisonPair[]
 }
 
-export default function Comparison({ pairs = comparisonPairs }: ComparisonProps) {
+export default function Comparison({
+  pairs = comparisonPairs,
+}: ComparisonProps) {
   const [split, setSplit] = useState(50)
   const [pairIndex, setPairIndex] = useState(0)
 
@@ -22,7 +24,9 @@ export default function Comparison({ pairs = comparisonPairs }: ComparisonProps)
   if (!pair) return null
 
   const changePair = (direction: number) => {
-    setPairIndex((current) => (current + direction + pairs.length) % pairs.length)
+    setPairIndex(
+      (current) => (current + direction + pairs.length) % pairs.length,
+    )
     setSplit(50)
   }
 
@@ -50,7 +54,9 @@ export default function Comparison({ pairs = comparisonPairs }: ComparisonProps)
             alt=""
           />
         </div>
-        <span className="comparison-label comparison-label--before">Before</span>
+        <span className="comparison-label comparison-label--before">
+          Before
+        </span>
         <span className="comparison-label comparison-label--after">After</span>
         <input
           aria-label="Drag to compare before and after"
@@ -73,7 +79,10 @@ export default function Comparison({ pairs = comparisonPairs }: ComparisonProps)
           >
             ←
           </button>
-          <div aria-label="Before and after examples" className="comparison-dots">
+          <div
+            aria-label="Before and after examples"
+            className="comparison-dots"
+          >
             {pairs.map((item, dot) => (
               <button
                 aria-label={`Show ${item.title} example`}

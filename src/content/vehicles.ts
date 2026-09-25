@@ -64,8 +64,10 @@ export const bodyStyles: BodyStyle[] = [
 // The homepage uses the white catalogue cut-outs. The quote flow deliberately keeps its dark
 // selection cards, so it receives its own image bindings instead of changing the shared grid.
 export const quoteBodyStyles: BodyStyle[] = bodyStyles.map((style) => {
-  if (style.name === "Three-row SUV") return { ...style, image: media.threeRowCatalogBlack }
-  if (style.name === "Minivan") return { ...style, image: media.minivanCatalogBlack }
+  if (style.name === "Three-row SUV")
+    return { ...style, image: media.threeRowCatalogBlack }
+  if (style.name === "Minivan")
+    return { ...style, image: media.minivanCatalogBlack }
   return style
 })
 

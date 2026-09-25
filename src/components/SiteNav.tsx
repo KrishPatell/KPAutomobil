@@ -94,8 +94,7 @@ export default function SiteNav() {
               href={page.href}
               key={page.href}
             >
-              <span>{page.label}</span>
-              <Arrow />
+              {page.label}
             </Link>
           ))}
         </nav>

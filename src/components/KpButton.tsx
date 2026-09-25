@@ -6,18 +6,18 @@
 // that sit in the page itself. Everything else — type, radius, arrow, hover, focus ring — is
 // shared, so a button looks the same wherever it lands.
 
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react"
 
-type Size = "sm" | "md";
-type Variant = "light" | "dark" | "ghost";
+type Size = "sm" | "md"
+type Variant = "light" | "dark" | "ghost"
 
 type KpButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: ReactNode;
-  size?: Size;
-  variant?: Variant;
+  children: ReactNode
+  size?: Size
+  variant?: Variant
   /** Trailing arrow. On by default — it is what makes these read as calls to action. */
-  arrow?: boolean;
-};
+  arrow?: boolean
+}
 
 export default function KpButton({
   children,
@@ -30,12 +30,16 @@ export default function KpButton({
 }: KpButtonProps) {
   const classes = ["kp-btn", `kp-btn--${size}`, `kp-btn--${variant}`, className]
     .filter(Boolean)
-    .join(" ");
+    .join(" ")
 
   return (
     <button className={classes} type={type} {...rest}>
       <span className="kp-btn__label">{children}</span>
-      {arrow && <span className="kp-btn__arrow" aria-hidden="true">→</span>}
+      {arrow && (
+        <span className="kp-btn__arrow" aria-hidden="true">
+          →
+        </span>
+      )}
     </button>
-  );
+  )
 }

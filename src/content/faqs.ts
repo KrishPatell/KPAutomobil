@@ -7,7 +7,7 @@
 
 import { site } from "./site"
 
-export type Faq = { question: string; answer: string }
+export type Faq = { question: string answer: string }
 
 export const faq = {
   eyebrow: "FAQ",
@@ -38,13 +38,17 @@ export const faqs: Faq[] = [
   },
   {
     question: "Where can you detail my car?",
-    answer: "At home, work, or an apartment space with safe access to the vehicle.",
+    answer:
+      "At home, work, or an apartment space with safe access to the vehicle.",
   },
   {
     question: "Do you charge card fees?",
-    answer: "No. Card, Zelle, or cash — the price is the same.",
+    answer: "No. Card, Zelle, or cash all cost the same.",
   },
 ]
+
+/** The three questions that answer the essentials on the short home page. */
+export const quickFaqs = faqs.slice(0, 3)
 
 /**
  * Shown on /services/ underneath the homepage set. These are pricing-and-scope questions that only

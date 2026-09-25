@@ -71,7 +71,8 @@ export const packages: Package[] = [
   {
     name: "Ceramic Coating",
     slug: "ceramic-coating",
-    description: "An add-on protective layer over clean paint. Priced after photos.",
+    description:
+      "An add-on protective layer over clean paint. Priced after photos.",
     image: media.ceramicCoating,
     addOn: true,
     items: [
@@ -89,7 +90,12 @@ export const packages: Package[] = [
       "An add-on gloss pass with a machine polisher after the paint is clean.",
     image: media.machineBuffing,
     addOn: true,
-    items: ["Paint wiped clean", "Machine polish", "Gloss finish", "Final wipe-down"],
+    items: [
+      "Paint wiped clean",
+      "Machine polish",
+      "Gloss finish",
+      "Final wipe-down",
+    ],
   },
 ]
 
@@ -115,13 +121,16 @@ export type ConditionId = "pet-hair" | "stains" | "odour" | "long-gap"
 export const addOns: AddOn[] = [
   {
     name: "Ceramic Coating",
-    description: "A protective layer over clean paint, applied after the detail and left to cure.",
+    description:
+      "A protective layer over clean paint, applied after the detail and left to cure.",
     image: media.addonCeramicCoating,
-    imageAlt: "Ceramic coating being applied to a car hood with a suede applicator",
+    imageAlt:
+      "Ceramic coating being applied to a car hood with a suede applicator",
   },
   {
     name: "Machine Buffing",
-    description: "A gloss pass with a machine polisher, for clean paint that needs more shine.",
+    description:
+      "A gloss pass with a machine polisher, for clean paint that needs more shine.",
     image: media.addonMachineBuffing,
     imageAlt: "Machine polisher buffing glossy dark car paint",
   },
@@ -130,19 +139,22 @@ export const addOns: AddOn[] = [
     description:
       "Hair worked out of carpet and upholstery by hand before the vacuum. Slow, and the reason a pet car takes longer.",
     image: media.addonPetHairRemoval,
-    imageAlt: "Pet hair being vacuumed and brushed from a car's rear seats and carpet",
+    imageAlt:
+      "Pet hair being vacuumed and brushed from a car's rear seats and carpet",
     condition: "pet-hair",
   },
   {
     name: "Heavy Stain Treatment",
-    description: "Spot treatment and extraction on set-in spills, in the seats and the carpet.",
+    description:
+      "Spot treatment and extraction on set-in spills, in the seats and the carpet.",
     image: media.addonHeavyStainTreatment,
     imageAlt: "Hot-water extractor lifting a stain from a fabric car seat",
     condition: "stains",
   },
   {
     name: "Odour Removal",
-    description: "Source cleaning plus an ozone treatment, for smoke and for anything that soaked in.",
+    description:
+      "Source cleaning plus an ozone treatment, for smoke and for anything that soaked in.",
     image: media.addonOdourRemoval,
     imageAlt: "Ozone generator treating the interior of a car",
     condition: "odour",
@@ -155,13 +167,15 @@ export const addOns: AddOn[] = [
   },
   {
     name: "Headlight Restoration",
-    description: "Sanding and polishing clouded lenses back to clear, then sealing them.",
+    description:
+      "Sanding and polishing clouded lenses back to clear, then sealing them.",
     image: media.addonHeadlightRestoration,
     imageAlt: "Polisher restoring a cloudy car headlight lens",
   },
   {
     name: "Trunk Deep Clean",
-    description: "The trunk or cargo area emptied, vacuumed and wiped down, spare-wheel well included.",
+    description:
+      "The trunk or cargo area emptied, vacuumed and wiped down, spare-wheel well included.",
     image: media.addonTrunkDeepClean,
     imageAlt: "Vacuum and cloth cleaning the spare-wheel well in an SUV trunk",
     condition: "long-gap",
@@ -169,7 +183,7 @@ export const addOns: AddOn[] = [
 ]
 
 /** The condition questions asked in step 3 of /book/. Honest answers cost less than surprises. */
-export const conditions: { id: ConditionId; question: string; help: string }[] = [
+export const conditions: { id: ConditionId question: string help: string }[] = [
   {
     id: "pet-hair",
     question: "Does a pet ride in the car?",
@@ -232,7 +246,7 @@ export const servicesPage = {
     eyebrow: "The three packages",
     heading: "Pick the one that matches the state the car is in.",
     intro:
-      "Each package is priced by how much car there is, so the four sizes below are the whole price list. The number you pay is confirmed from your photos before the deposit — it does not move after that.",
+      "Each package is priced by vehicle size. Choose the size that best fits your car. Your written price is confirmed from photos before the deposit and does not change later.",
   },
 
   addOns: {

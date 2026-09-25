@@ -8,7 +8,13 @@
 import PageHead from "../components/PageHead"
 import AnchorBar from "../components/AnchorBar"
 import CtaBand from "../components/CtaBand"
-import { ButtonLink, Eyebrow, Mark, Reveal, RollingPrice } from "../components/primitives"
+import {
+  ButtonLink,
+  Eyebrow,
+  Mark,
+  Reveal,
+  RollingPrice,
+} from "../components/primitives"
 import { pageCopy } from "../content/pages"
 import { addOns, bookablePackages, servicesPage } from "../content/services"
 import { addOnPrices, packagePrices, pricing } from "../content/pricing"
@@ -27,7 +33,9 @@ function PriceStrip({ prices }: { prices: Record<SizeId, number | null> }) {
           <dt>{sizeLabels[size]}</dt>
           <dd>
             {prices[size] === null ? (
-              <span className="price-strip__pending">{pricing.pendingTotal}</span>
+              <span className="price-strip__pending">
+                {pricing.pendingTotal}
+              </span>
             ) : (
               <RollingPrice amount={prices[size] as number} />
             )}
@@ -67,7 +75,12 @@ export default function Services() {
 
         <div className="pkg-rows">
           {bookablePackages.map((item) => (
-            <Reveal as="article" className="pkg-row" id={item.slug} key={item.slug}>
+            <Reveal
+              as="article"
+              className="pkg-row"
+              id={item.slug}
+              key={item.slug}
+            >
               <div className="pkg-row__media">
                 <img alt={`${item.name} detailing`} src={item.image} />
               </div>
@@ -124,7 +137,9 @@ export default function Services() {
           {addOns.map((addOn, index) => {
             const prices = addOnPrices[addOn.name]
             const from = prices
-              ? Object.values(prices).filter((value): value is number => value !== null)
+              ? Object.values(prices).filter(
+                  (value): value is number => value !== null,
+                )
               : []
             return (
               <Reveal
@@ -132,13 +147,23 @@ export default function Services() {
                 className={`addon-card delay-${Math.min(index + 1, 4)}`}
                 key={addOn.name}
               >
-                <img alt={addOn.imageAlt} className="addon-card__image" loading="lazy" src={addOn.image} />
+                <img
+                  alt={addOn.imageAlt}
+                  className="addon-card__image"
+                  loading="lazy"
+                  src={addOn.image}
+                />
                 <h3>{addOn.name}</h3>
                 <p>{addOn.description}</p>
                 <span className="addon-card__price">
-                  {from.length > 0
-                    ? <>{pricing.startingLabel} <RollingPrice amount={Math.min(...from)} /></>
-                    : pricing.unpricedNote}
+                  {from.length > 0 ? (
+                    <>
+                      {pricing.startingLabel}{" "}
+                      <RollingPrice amount={Math.min(...from)} />
+                    </>
+                  ) : (
+                    pricing.unpricedNote
+                  )}
                 </span>
               </Reveal>
             )
@@ -204,7 +229,11 @@ export default function Services() {
             <thead>
               <tr>
                 <th>{compare.featureLabel}</th>
-                <th className="why-kp"><span className="why-kp__brand"><Mark /></span></th>
+                <th className="why-kp">
+                  <span className="why-kp__brand">
+                    <Mark />
+                  </span>
+                </th>
                 <th>{compare.othersLabel}</th>
               </tr>
             </thead>

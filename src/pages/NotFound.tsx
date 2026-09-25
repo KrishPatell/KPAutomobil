@@ -15,8 +15,8 @@ export default function NotFound() {
         </p>
         <h2>That page is not here.</h2>
         <p>
-          The link may be old, or the address mistyped. Everything the site has is one tap away
-          below.
+          The link may be old, or the address mistyped. Everything the site has
+          is one tap away below.
         </p>
       </div>
       <div className="notfound-actions">

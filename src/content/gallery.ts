@@ -43,25 +43,29 @@ export const galleryStills: Still[] = [
   {
     image: media.dirtyBmwDriveway,
     title: "Before anything is touched",
-    caption: "How the car looked when the van pulled up. Nothing moved, nothing tidied for the shot.",
+    caption:
+      "How the car looked when the van pulled up. Nothing moved, nothing tidied for the shot.",
     label: "Arrival",
   },
   {
     image: media.foamWash,
     title: "Foam over the panels",
-    caption: "The layer that lifts road grit off the clearcoat before a mitt goes anywhere near it.",
+    caption:
+      "The layer that lifts road grit off the clearcoat before a mitt goes anywhere near it.",
     label: "Full Detail",
   },
   {
     image: media.workInterior,
     title: "Cabin reset",
-    caption: "Dash, console, trim, door cards and mats, done in that order so nothing lands twice.",
+    caption:
+      "Dash, console, trim, door cards and mats, done in that order so nothing lands twice.",
     label: "Interior Refresh",
   },
   {
     image: media.deepRestoration,
     title: "Hot-water extraction",
-    caption: "Shampoo worked into the carpet, then pulled back out with the dirt in it.",
+    caption:
+      "Shampoo worked into the carpet, then pulled back out with the dirt in it.",
     label: "Deep Restoration",
   },
   {
@@ -79,13 +83,15 @@ export const galleryStills: Still[] = [
   {
     image: media.workRestore,
     title: "Seats after the shampoo",
-    caption: "Upholstery brought back as far as it goes. Some marks are permanent, and we say so first.",
+    caption:
+      "Upholstery brought back as far as it goes. Some marks are permanent, and we say so first.",
     label: "Deep Restoration",
   },
   {
     image: media.ceramicCoating,
     title: "Ceramic, panel by panel",
-    caption: "Laid on decontaminated paint and levelled before it flashes, one panel at a time.",
+    caption:
+      "Laid on decontaminated paint and levelled before it flashes, one panel at a time.",
     label: "Ceramic Coating",
   },
   {
@@ -97,7 +103,8 @@ export const galleryStills: Still[] = [
   {
     image: media.processArrive,
     title: "Working where the car already is",
-    caption: "A driveway is the whole workshop. Water and power come out of the van.",
+    caption:
+      "A driveway is the whole workshop. Water and power come out of the van.",
     label: "On site",
   },
   {
@@ -109,7 +116,8 @@ export const galleryStills: Still[] = [
   {
     image: media.whiteSuv,
     title: "Done and handed back",
-    caption: "The car does not move for any of this. It is finished in the space it was parked in.",
+    caption:
+      "The car does not move for any of this. It is finished in the space it was parked in.",
     label: "On site",
   },
 ]

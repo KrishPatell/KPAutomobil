@@ -26,13 +26,21 @@ export type Quote = {
   hasUnpriced: boolean
 }
 
-export function quote(size: SizeId | null, service: string | null, addOns: string[]): Quote {
+export function quote(
+  size: SizeId | null,
+  service: string | null,
+  addOns: string[],
+): Quote {
   const lines: QuoteLine[] = []
 
   if (service) {
     lines.push({
       label: service,
-      amount: size ? (packagePrices[service]?.[size] ?? addOnPrices[service]?.[size] ?? null) : null,
+      amount: size
+        ? (packagePrices[service]?.[size] ??
+          addOnPrices[service]?.[size] ??
+          null)
+        : null,
       base: true,
     })
   }
@@ -45,9 +53,10 @@ export function quote(size: SizeId | null, service: string | null, addOns: strin
   }
 
   const hasUnpriced = lines.some((line) => line.amount === null)
-  const total = lines.length === 0 || hasUnpriced
-    ? null
-    : lines.reduce((sum, line) => sum + (line.amount ?? 0), 0)
+  const total =
+    lines.length === 0 || hasUnpriced
+      ? null
+      : lines.reduce((sum, line) => sum + (line.amount ?? 0), 0)
 
   return { lines, total, hasUnpriced }
 }
@@ -63,18 +72,26 @@ export function quote(size: SizeId | null, service: string | null, addOns: strin
  */
 export function suggestAddOns(conditions: ConditionId[]): string[] {
   return addOnCatalogue
-    .filter((addOn) => addOn.condition !== undefined && conditions.includes(addOn.condition))
+    .filter(
+      (addOn) =>
+        addOn.condition !== undefined && conditions.includes(addOn.condition),
+    )
     .map((addOn) => addOn.name)
 }
 
 /** Merges suggestions into a selection without clobbering anything the visitor already removed. */
-export function applySuggestions(current: string[], suggested: string[]): string[] {
+export function applySuggestions(
+  current: string[],
+  suggested: string[],
+): string[] {
   const merged = [...current]
   for (const name of suggested) {
     if (!merged.includes(name)) merged.push(name)
   }
   // Keep catalogue order so the summary does not reshuffle as boxes are ticked.
-  return addOnCatalogue.map((addOn) => addOn.name).filter((name) => merged.includes(name))
+  return addOnCatalogue
+    .map((addOn) => addOn.name)
+    .filter((name) => merged.includes(name))
 }
 
 export function money(amount: number): string {

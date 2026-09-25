@@ -8,7 +8,11 @@
 // and the browser's own back button all have to keep working. So <Link> renders a real <a> with a
 // real href and only intercepts the one case it can improve — an unmodified left click.
 
-import { useSyncExternalStore, type AnchorHTMLAttributes, type MouseEvent } from "react"
+import {
+  useSyncExternalStore,
+  type AnchorHTMLAttributes,
+  type MouseEvent,
+} from "react"
 
 const listeners = new Set<() => void>()
 
@@ -67,7 +71,9 @@ export function navigate(to: string, options: { replace?: boolean } = {}) {
 
   if (url.hash) {
     // An in-page anchor keeps the scroll behaviour the CSS already defines.
-    document.getElementById(url.hash.slice(1))?.scrollIntoView({ block: "start" })
+    document
+      .getElementById(url.hash.slice(1))
+      ?.scrollIntoView({ block: "start" })
   } else if (!samePath) {
     window.scrollTo({ top: 0 })
   }

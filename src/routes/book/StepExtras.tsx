@@ -1,20 +1,20 @@
-import KpButton from "../../components/KpButton";
-import { bookFlow } from "../../content/bookFlow";
-import { packages } from "../../content/services";
-import { addOnPrices } from "../../content/pricing";
-import { money } from "../../lib/quote";
-import type { StepProps } from "./BookFlow";
+import KpButton from "../../components/KpButton"
+import { bookFlow } from "../../content/bookFlow"
+import { packages } from "../../content/services"
+import { addOnPrices } from "../../content/pricing"
+import { money } from "../../lib/quote"
+import type { StepProps } from "./BookFlow"
 
 /** Step 3. Optional by design — the Continue button is never disabled here. */
 export default function StepExtras({ state, set, next, goTo }: StepProps) {
-  const extras = packages.filter((pkg) => pkg.addOn);
+  const extras = packages.filter((pkg) => pkg.addOn)
 
   function toggle(title: string) {
     set({
       addOns: state.addOns.includes(title)
         ? state.addOns.filter((entry) => entry !== title)
         : [...state.addOns, title],
-    });
+    })
   }
 
   return (
@@ -24,8 +24,8 @@ export default function StepExtras({ state, set, next, goTo }: StepProps) {
 
       <ul className="kp-step__choices kp-step__choices--wide">
         {extras.map((pkg) => {
-          const on = state.addOns.includes(pkg.title);
-          const price = state.size ? addOnPrices[pkg.title]?.[state.size] : null;
+          const on = state.addOns.includes(pkg.title)
+          const price = state.size ? addOnPrices[pkg.title]?.[state.size] : null
           return (
             <li key={pkg.title}>
               <button
@@ -41,12 +41,16 @@ export default function StepExtras({ state, set, next, goTo }: StepProps) {
                 </em>
               </button>
             </li>
-          );
+          )
         })}
       </ul>
 
       <div className="kp-step__actions">
-        <button className="kp-step__back" onClick={() => goTo("package")} type="button">
+        <button
+          className="kp-step__back"
+          onClick={() => goTo("package")}
+          type="button"
+        >
           {bookFlow.back}
         </button>
         <KpButton onClick={next} size="md">
@@ -54,5 +58,5 @@ export default function StepExtras({ state, set, next, goTo }: StepProps) {
         </KpButton>
       </div>
     </section>
-  );
+  )
 }

@@ -15,13 +15,13 @@ export default function PageHead({
   standfirst,
   children,
   compact = false,
+  /** Used where the next section should begin immediately below the page introduction. */
 }: {
   eyebrow: string
   title: string
   heading: string
   standfirst: string
   children?: ReactNode
-  /** Used where the next section should begin immediately below the page introduction. */
   compact?: boolean
 }) {
   return (

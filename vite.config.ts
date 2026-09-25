@@ -1,7 +1,18 @@
-import { defineConfig, type HtmlTagDescriptor, type Plugin } from "vite"
+import {
+  defineConfig,
+  loadEnv,
+  type HtmlTagDescriptor,
+  type Plugin,
+} from "vite"
 import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
 import path from "node:path"
+import {
+  CheckoutValidationError,
+  createDepositCheckoutSession,
+  getBookingDetails,
+  getCheckoutPaymentStatus,
+} from "./api/stripe-deposit"
 
 import siteConfiguration from "./.figma/make/site.json"
 
@@ -9,6 +20,7 @@ import siteConfiguration from "./.figma/make/site.json"
 export default defineConfig(({ mode }) => {
   // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
   const emitSourcemaps = mode === "development"
+  const serverEnvironment = loadEnv(mode, process.cwd(), "")
 
   return {
     base: process.env.FIGMA_PUBLIC_URL
@@ -21,6 +33,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tailwindcss(),
+      stripeLocalCheckout(serverEnvironment.STRIPE_SECRET_KEY),
       figmaSiteConfiguration(siteConfiguration),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
@@ -43,6 +56,113 @@ export default defineConfig(({ mode }) => {
     },
   }
 })
+
+function stripeLocalCheckout(secretKey: string | undefined): Plugin {
+  const sendJson = (
+    response: import("node:http").ServerResponse,
+    status: number,
+    payload: Record<string, unknown>,
+  ) => {
+    response.statusCode = status
+    response.setHeader("Content-Type", "application/json; charset=utf-8")
+    response.end(JSON.stringify(payload))
+  }
+
+  const readBody = (request: import("node:http").IncomingMessage) =>
+    new Promise<unknown>((resolve, reject) => {
+      const chunks: Buffer[] = []
+      request.on("data", (chunk: Buffer | string) =>
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)),
+      )
+      request.on("end", () => {
+        try {
+          resolve(JSON.parse(Buffer.concat(chunks).toString("utf8")))
+        } catch {
+          resolve({})
+        }
+      })
+      request.on("error", reject)
+    })
+
+  return {
+    name: "stripe-local-checkout",
+    configureServer(server) {
+      server.middlewares.use(
+        "/api/create-checkout-session",
+        async (request, response, next) => {
+          if (request.method !== "POST") return next()
+          if (!secretKey) {
+            return sendJson(response, 503, {
+              error:
+                "Payments are not configured. Add a test key to .env.local and restart the local server.",
+            })
+          }
+
+          try {
+            const body = await readBody(request)
+            const origin = `http://${request.headers.host ?? "localhost:8443"}`
+            const session = await createDepositCheckoutSession({
+              booking: getBookingDetails(body),
+              origin,
+              secretKey,
+            })
+            if (!session.url)
+              throw new Error("Stripe did not return a checkout URL.")
+            return sendJson(response, 200, { url: session.url })
+          } catch (error) {
+            if (error instanceof CheckoutValidationError) {
+              return sendJson(response, 400, { error: error.message })
+            }
+            console.error(
+              "Unable to create local Stripe Checkout session",
+              error,
+            )
+            return sendJson(response, 502, {
+              error: "Unable to start secure checkout.",
+            })
+          }
+        },
+      )
+
+      server.middlewares.use(
+        "/api/checkout-session",
+        async (request, response, next) => {
+          if (request.method !== "GET") return next()
+          if (!secretKey) {
+            return sendJson(response, 503, {
+              error:
+                "Payments are not configured. Add a test key to .env.local and restart the local server.",
+            })
+          }
+
+          try {
+            const url = new URL(
+              request.url ?? "",
+              `http://${request.headers.host ?? "localhost:8443"}`,
+            )
+            const sessionId = url.searchParams.get("session_id")
+            if (!sessionId) {
+              throw new CheckoutValidationError("Invalid checkout session.")
+            }
+            return sendJson(
+              response,
+              200,
+              await getCheckoutPaymentStatus({ secretKey, sessionId }),
+            )
+          } catch (error) {
+            if (error instanceof CheckoutValidationError) {
+              return sendJson(response, 400, { error: error.message })
+            }
+            console.error("Unable to verify local Stripe payment", error)
+            return sendJson(response, 502, {
+              error: "Unable to verify payment.",
+            })
+          }
+        },
+      )
+    },
+  }
+}
 
 type FigmaSiteConfiguration = {
   title?: string

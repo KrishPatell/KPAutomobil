@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import BrandMark from "../../components/BrandMark";
+import { useEffect, useMemo, useRef, useState } from "react"
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
+import BrandMark from "../../components/BrandMark"
 import {
   STEPS,
   canVisit,
@@ -12,22 +12,22 @@ import {
   save,
   type FlowState,
   type StepSlug,
-} from "../../lib/bookingFlow";
-import { bookFlow } from "../../content/bookFlow";
-import StepSize from "./StepSize";
-import StepPackage from "./StepPackage";
-import StepExtras from "./StepExtras";
-import StepPhotos from "./StepPhotos";
-import StepContact from "./StepContact";
-import StepQuote from "./StepQuote";
-import StepDeposit from "./StepDeposit";
+} from "../../lib/bookingFlow"
+import { bookFlow } from "../../content/bookFlow"
+import StepSize from "./StepSize"
+import StepPackage from "./StepPackage"
+import StepExtras from "./StepExtras"
+import StepPhotos from "./StepPhotos"
+import StepContact from "./StepContact"
+import StepQuote from "./StepQuote"
+import StepDeposit from "./StepDeposit"
 
 export type StepProps = {
-  state: FlowState;
-  set: (patch: Partial<FlowState>) => void;
-  next: () => void;
-  goTo: (slug: StepSlug) => void;
-};
+  state: FlowState
+  set: (patch: Partial<FlowState>) => void
+  next: () => void
+  goTo: (slug: StepSlug) => void
+}
 
 /**
  * The instant-quote flow — the product, per docs/information-architecture.pdf. The marketing page
@@ -38,70 +38,74 @@ export type StepProps = {
  * the homepage uses so a visitor who has already picked a vehicle does not get asked twice.
  */
 export default function BookFlow() {
-  const params = useParams<{ step?: string }>();
-  const [search, setSearch] = useSearchParams();
-  const navigate = useNavigate();
-  const [state, setState] = useState<FlowState>(load);
+  const params = useParams<{ step?: string }>()
+  const [search, setSearch] = useSearchParams()
+  const navigate = useNavigate()
+  const [state, setState] = useState<FlowState>(load)
 
   // The query string is read once and then removed, so a Back button does not re-apply an answer
   // the visitor has since changed.
   useEffect(() => {
-    const size = search.get("size");
-    const pkg = search.get("package");
-    if (!size && !pkg) return;
+    const size = search.get("size")
+    const pkg = search.get("package")
+    if (!size && !pkg) return
     setState((prev) => ({
       ...prev,
       size: isSizeId(size) ? size : prev.size,
       service: isPackageTitle(pkg) ? pkg : prev.service,
-    }));
-    setSearch(new URLSearchParams(), { replace: true });
-  }, [search, setSearch]);
+    }))
+    setSearch(new URLSearchParams(), { replace: true })
+  }, [search, setSearch])
 
   useEffect(() => {
-    save(state);
-  }, [state]);
+    save(state)
+  }, [state])
 
-  const step: StepSlug = isStep(params.step) ? params.step : "size";
-  const index = STEPS.findIndex((entry) => entry.slug === step);
+  const step: StepSlug = isStep(params.step) ? params.step : "size"
+  const index = STEPS.findIndex((entry) => entry.slug === step)
 
   // Guard. Runs after the query hand-off above, so ?size=suv lands on /book/package rather than
   // being bounced back to the size step it just answered.
   useEffect(() => {
     if (!isStep(params.step)) {
-      navigate(`/book/${firstIncomplete(state)}`, { replace: true });
-      return;
+      navigate(`/book/${firstIncomplete(state)}`, { replace: true })
+      return
     }
     if (!canVisit(state, params.step)) {
-      navigate(`/book/${firstIncomplete(state)}`, { replace: true });
+      navigate(`/book/${firstIncomplete(state)}`, { replace: true })
     }
-  }, [params.step, state, navigate]);
+  }, [params.step, state, navigate])
 
   useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [step]);
+    window.scrollTo({ top: 0 })
+  }, [step])
 
   // Under 860px the step rail is a horizontal strip, so step 6 sits off the right edge and the
   // visitor sees a rail that looks stuck on step 1. Keep the current one in frame.
-  const railRef = useRef<HTMLOListElement>(null);
+  const railRef = useRef<HTMLOListElement>(null)
   useEffect(() => {
-    const rail = railRef.current;
-    const current = rail?.querySelector(".is-current");
-    if (!rail || !current || rail.scrollWidth <= rail.clientWidth) return;
+    const rail = railRef.current
+    const current = rail?.querySelector(".is-current")
+    if (!rail || !current || rail.scrollWidth <= rail.clientWidth) return
     rail.scrollTo({
-      left: (current as HTMLElement).offsetLeft - rail.clientWidth / 2 + (current as HTMLElement).offsetWidth / 2,
+      left:
+        (current as HTMLElement).offsetLeft -
+        rail.clientWidth / 2 +
+        (current as HTMLElement).offsetWidth / 2,
       behavior: "smooth",
-    });
-  }, [step]);
+    })
+  }, [step])
 
   const props: StepProps = useMemo(
     () => ({
       state,
       set: (patch) => setState((prev) => ({ ...prev, ...patch })),
-      next: () => navigate(`/book/${STEPS[Math.min(index + 1, STEPS.length - 1)].slug}`),
+      next: () =>
+        navigate(`/book/${STEPS[Math.min(index + 1, STEPS.length - 1)].slug}`),
       goTo: (slug) => navigate(`/book/${slug}`),
     }),
     [state, index, navigate],
-  );
+  )
 
   return (
     <div className="kp-flow">
@@ -116,10 +120,12 @@ export default function BookFlow() {
 
       <div className="kp-flow__body">
         <nav aria-label="Booking steps" className="kp-flow__steps">
-          <p className="kp-flow__count">{bookFlow.stepOf(index + 1, STEPS.length)}</p>
+          <p className="kp-flow__count">
+            {bookFlow.stepOf(index + 1, STEPS.length)}
+          </p>
           <ol ref={railRef}>
             {STEPS.map((entry, i) => {
-              const reachable = canVisit(state, entry.slug);
+              const reachable = canVisit(state, entry.slug)
               return (
                 <li
                   className={`kp-flow__step${i === index ? " is-current" : ""}${
@@ -136,7 +142,7 @@ export default function BookFlow() {
                     {entry.label}
                   </button>
                 </li>
-              );
+              )
             })}
           </ol>
         </nav>
@@ -152,5 +158,5 @@ export default function BookFlow() {
         </main>
       </div>
     </div>
-  );
+  )
 }

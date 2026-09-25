@@ -9,7 +9,7 @@
 // promise a callback that KP has no way to make yet. The four photos and the $50 deposit are the
 // next step, not this one — that is the /book/ flow in docs/information-architecture.pdf.
 
-import { site } from "./site";
+import { site } from "./site"
 
 export const booking = {
   eyebrow: "Book Now",
@@ -20,15 +20,23 @@ export const booking = {
   fields: {
     name: { label: "Your name", placeholder: "First and last" },
     phone: { label: "Phone", placeholder: "(000) 000-0000" },
-    email: { label: "Email", placeholder: "you@example.com", hint: "Optional. Where the written price is sent." },
+    email: {
+      label: "Email",
+      placeholder: "you@example.com",
+      hint: "Optional. Where the written price is sent.",
+    },
     size: { label: "Vehicle size", placeholder: "Choose a size" },
     service: { label: "Package", placeholder: "Choose a package" },
     // The frame spelled this "Preffered Date".
-    date: { label: "Preferred date", hint: `Serving ${site.city}, ${site.regionShort}.` },
+    date: {
+      label: "Preferred date",
+      hint: `Serving ${site.city}, ${site.regionShort}.`,
+    },
     window: { label: "Time of day" },
     notes: {
       label: "Anything we should price in?",
-      placeholder: "Pet hair, spills, smoke, or anything you would rather we knew before quoting.",
+      placeholder:
+        "Pet hair, spills, smoke, or anything you would rather we knew before quoting.",
     },
   },
 
@@ -46,7 +54,11 @@ export const booking = {
     ],
   },
 
-  windows: ["Morning (8am – 12pm)", "Afternoon (12pm – 4pm)", "Evening (4pm – 7pm)"],
+  windows: [
+    "Morning (8am – 12pm)",
+    "Afternoon (12pm – 4pm)",
+    "Evening (4pm – 7pm)",
+  ],
 
   submit: "Continue to photos",
   submitting: "Saving…",
@@ -61,4 +73,4 @@ export const booking = {
 
   errorRequired: "This one is needed to quote the job.",
   errorPhone: "A number we can reach you on.",
-};
+}

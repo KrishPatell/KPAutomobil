@@ -12,14 +12,21 @@
 import PageHead from "../components/PageHead"
 import AnchorBar from "../components/AnchorBar"
 import CtaBand from "../components/CtaBand"
-import { ButtonLink, Eyebrow, Reveal, SlotDeposit } from "../components/primitives"
+import {
+  ButtonLink,
+  Eyebrow,
+  Reveal,
+  SlotDeposit,
+} from "../components/primitives"
 import { pageCopy } from "../content/pages"
 import { about, aboutPage } from "../content/about"
 import { media } from "../content/media"
 import { primaryCta } from "../content/nav"
 
 export default function About() {
-  const chapters = aboutPage.story.chapters.filter((chapter) => chapter.body !== null)
+  const chapters = aboutPage.story.chapters.filter(
+    (chapter) => chapter.body !== null,
+  )
 
   return (
     <>
@@ -51,7 +58,10 @@ export default function About() {
       <section className="process" id="story">
         <div className="process-grid">
           <div className="process-panel">
-            <img alt="Our team working on a car at a customer's home" src={media.about} />
+            <img
+              alt="Our team working on a car at a customer's home"
+              src={media.about}
+            />
             <div className="process-shade" />
             <div className="process-panel__content">
               <div className="process-panel__cluster">
@@ -65,7 +75,9 @@ export default function About() {
                   <p>{aboutPage.story.intro}</p>
                 </Reveal>
                 <Reveal className="delay-3">
-                  <ButtonLink href={primaryCta.href}>{primaryCta.label}</ButtonLink>
+                  <ButtonLink href={primaryCta.href}>
+                    {primaryCta.label}
+                  </ButtonLink>
                 </Reveal>
               </div>
             </div>
@@ -183,11 +195,12 @@ export default function About() {
               key={stat.label}
             >
               <dt>{stat.label}</dt>
-              <dd>{stat.amount !== undefined ? <SlotDeposit /> : stat.figure}</dd>
+              <dd>
+                {stat.amount !== undefined ? <SlotDeposit /> : stat.figure}
+              </dd>
             </Reveal>
           ))}
         </dl>
-
       </section>
 
       <CtaBand />

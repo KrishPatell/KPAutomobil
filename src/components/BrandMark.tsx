@@ -1,4 +1,4 @@
-import { site } from "../content/site";
+import { site } from "../content/site"
 
 /**
  * The KP Automobil wordmark, in one place.
@@ -9,12 +9,14 @@ import { site } from "../content/site";
  */
 export default function BrandMark() {
   if (site.logo.src) {
-    return <img className="kp-brand-logo" src={site.logo.src} alt={site.logo.alt} />;
+    return (
+      <img className="kp-brand-logo" src={site.logo.src} alt={site.logo.alt} />
+    )
   }
   return (
     <>
       {site.mark.lead}
       <span>{site.mark.tail}</span>
     </>
-  );
+  )
 }

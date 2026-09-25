@@ -33,7 +33,12 @@ import { site } from "./site"
 /** Dollars, or null while unconfirmed. One cell per service per vehicle size. */
 export type SizePrices = Record<SizeId, number | null>
 
-const unpriced: SizePrices = { sedan: null, suv: null, "three-row": null, truck: null }
+const unpriced: SizePrices = {
+  sedan: null,
+  suv: null,
+  "three-row": null,
+  truck: null,
+}
 
 /**
  * Keyed by the package name in src/content/services.ts. The keys must match those names exactly —
@@ -73,7 +78,9 @@ export const addOnPrices: Record<string, SizePrices> = {
 export function startingPrice(name: string): number | null {
   const row = packagePrices[name] ?? addOnPrices[name]
   if (!row) return null
-  const known = Object.values(row).filter((value): value is number => value !== null)
+  const known = Object.values(row).filter(
+    (value): value is number => value !== null,
+  )
   return known.length > 0 ? Math.min(...known) : null
 }
 
@@ -83,8 +90,7 @@ export const pricing = {
 
   /** Shown wherever a total would go while any line in it is still unpriced. */
   pendingTotal: "Priced from your photos",
-  pendingNote:
-    `${site.name} writes the price after looking at your four photos, and that written price is what you pay on the day. No number is shown here that has not been quoted to you.`,
+  pendingNote: `${site.name} writes the price after looking at your four photos, and that written price is what you pay on the day. No number is shown here that has not been quoted to you.`,
 
   /** The qualifier that has to travel with every price on screen. Rule 1 in the header. */
   qualifier: "Confirmed from your photos, before you pay anything.",

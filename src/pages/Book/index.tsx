@@ -62,7 +62,7 @@ const bodies: Record<StepSlug, (props: StepProps) => ReactElement> = {
   deposit: DepositStep,
 }
 
-const copy: Record<StepSlug, { heading: string; lede: string }> = {
+const copy: Record<StepSlug, { heading: string lede: string }> = {
   vehicle: bookFlow.vehicle,
   service: bookFlow.service,
   condition: bookFlow.condition,
@@ -89,7 +89,8 @@ export default function Book() {
 
   const requested = path.split("/")[2] ?? ""
   const allowed = firstIncomplete(state)
-  const step: StepSlug = isStep(requested) && canVisit(state, requested) ? requested : allowed
+  const step: StepSlug =
+    isStep(requested) && canVisit(state, requested) ? requested : allowed
 
   function patch(next: Partial<FlowState>) {
     setState((current) => ({ ...current, ...next }))
@@ -106,7 +107,8 @@ export default function Book() {
     const chosen = slug ? packageBySlug(slug) : undefined
     if (chosen && isPackageName(chosen.name)) next.service = chosen.name
     if (isSizeId(size)) next.size = size
-    if (Object.keys(next).length > 0) setState((current) => ({ ...current, ...next }))
+    if (Object.keys(next).length > 0)
+      setState((current) => ({ ...current, ...next }))
   }, [params])
 
   useEffect(() => {
@@ -134,7 +136,9 @@ export default function Book() {
     // Leaving the condition step is what commits its answers to line items — pre-checked, named,
     // and every one removable on the extras step that follows.
     if (step === "condition") {
-      patch({ addOns: applySuggestions(state.addOns, suggestAddOns(state.conditions)) })
+      patch({
+        addOns: applySuggestions(state.addOns, suggestAddOns(state.conditions)),
+      })
     }
     navigate(`/book/${STEPS[index + 1].slug}`)
   }
@@ -145,25 +149,28 @@ export default function Book() {
       (file): file is File => file instanceof File,
     )
     const deposit = await takeDeposit()
-    const delivered = await send({
-      name: state.name,
-      phone: state.phone,
-      email: state.email,
-      address: state.address,
-      size: state.size ?? "",
-      bodyStyle: state.bodyStyle ?? "",
-      vehicleNote: state.vehicleNote,
-      service: state.service ?? "",
-      conditions: state.conditions,
-      addOns: state.addOns,
-      photoCount: photoCount(state),
-      photosSkipped: state.photosSkipped,
-      date: state.date,
-      window: state.window,
-      payMethod: state.payMethod,
-      total: priced.total,
-      notes: state.notes,
-    }, files)
+    const delivered = await send(
+      {
+        name: state.name,
+        phone: state.phone,
+        email: state.email,
+        address: state.address,
+        size: state.size ?? "",
+        bodyStyle: state.bodyStyle ?? "",
+        vehicleNote: state.vehicleNote,
+        service: state.service ?? "",
+        conditions: state.conditions,
+        addOns: state.addOns,
+        photoCount: photoCount(state),
+        photosSkipped: state.photosSkipped,
+        date: state.date,
+        window: state.window,
+        payMethod: state.payMethod,
+        total: priced.total,
+        notes: state.notes,
+      },
+      files,
+    )
     setSending(false)
     setOutcome({
       delivered,
@@ -196,8 +203,16 @@ export default function Book() {
             <div className="booking-complete">
               <span aria-hidden="true">✓</span>
               <p>{bookFlow.stepOf(STEPS.length, STEPS.length)}</p>
-              <h1>{outcome.delivered ? bookFlow.deposit.sentTitle : bookFlow.deposit.savedTitle}</h1>
-              <p>{outcome.delivered ? bookFlow.deposit.sentBody : bookFlow.deposit.savedBody}</p>
+              <h1>
+                {outcome.delivered
+                  ? bookFlow.deposit.sentTitle
+                  : bookFlow.deposit.savedTitle}
+              </h1>
+              <p>
+                {outcome.delivered
+                  ? bookFlow.deposit.sentBody
+                  : bookFlow.deposit.savedBody}
+              </p>
               <ul className="booking-outcome">
                 <li>
                   {outcome.delivered
@@ -212,7 +227,11 @@ export default function Book() {
                 <li>{outcome.depositReason || "Nothing was charged."}</li>
               </ul>
               <p className="booking-note">{bookFlow.deposit.pendingNote}</p>
-              <button className="booking-action" onClick={restart} type="button">
+              <button
+                className="booking-action"
+                onClick={restart}
+                type="button"
+              >
                 {bookFlow.deposit.startAgain}
               </button>
             </div>
@@ -228,7 +247,9 @@ export default function Book() {
                 const reachable = canVisit(state, entry.slug)
                 return (
                   <li
-                    className={`${done ? "complete" : ""} ${entry.slug === step ? "active" : ""}`.trim()}
+                    className={`${done ? "complete" : ""} ${
+                      entry.slug === step ? "active" : ""
+                    }`.trim()}
                     key={entry.slug}
                   >
                     <button
@@ -266,7 +287,12 @@ export default function Book() {
               </button>
               <span>{bookFlow.stepOf(index + 1, STEPS.length)}</span>
               {last ? (
-                <button className="booking-action" disabled={sending} onClick={submit} type="button">
+                <button
+                  className="booking-action"
+                  disabled={sending}
+                  onClick={submit}
+                  type="button"
+                >
                   {sending ? bookFlow.deposit.sending : bookFlow.deposit.submit}
                 </button>
               ) : (
@@ -290,27 +316,49 @@ export default function Book() {
 }
 
 /** The itemised quote. Shown on the deposit step, where a total is about to be acted on. */
-function Summary({ priced, state }: { priced: ReturnType<typeof quote>; state: FlowState }) {
+function Summary({
+  priced,
+  state,
+}: {
+  priced: ReturnType<typeof quote>
+  state: FlowState
+}) {
   return (
     <div className="booking-summary">
       <div className="booking-summary__body">
-        <span className="booking-summary__label">{bookFlow.deposit.summaryLabel}</span>
+        <span className="booking-summary__label">
+          {bookFlow.deposit.summaryLabel}
+        </span>
         <ul className="booking-lines">
           {priced.lines.map((line) => (
             <li className={line.base ? "is-base" : ""} key={line.label}>
               <span>{line.label}</span>
-              <em>{line.amount === null ? pricing.pendingTotal : <RollingPrice amount={line.amount} />}</em>
+              <em>
+                {line.amount === null ? (
+                  pricing.pendingTotal
+                ) : (
+                  <RollingPrice amount={line.amount} />
+                )}
+              </em>
             </li>
           ))}
         </ul>
         <div className="booking-total">
           <span>{bookFlow.deposit.totalLabel}</span>
-          <strong>{priced.total === null ? pricing.pendingTotal : <RollingPrice amount={priced.total} />}</strong>
+          <strong>
+            {priced.total === null ? (
+              pricing.pendingTotal
+            ) : (
+              <RollingPrice amount={priced.total} />
+            )}
+          </strong>
         </div>
         {priced.total !== null && (
           <div className="booking-total booking-total--balance">
             <span>{bookFlow.deposit.balanceLabel}</span>
-            <em><RollingPrice amount={Math.max(priced.total - site.deposit, 0)} /></em>
+            <em>
+              <RollingPrice amount={Math.max(priced.total - site.deposit, 0)} />
+            </em>
           </div>
         )}
         <p className="booking-note">
@@ -337,7 +385,10 @@ function Summary({ priced, state }: { priced: ReturnType<typeof quote>; state: F
             <dd>
               {state.photosSkipped && photoCount(state) === 0
                 ? bookFlow.photos.skipped
-                : bookFlow.photos.counter(photoCount(state), PHOTO_SLOTS.length)}
+                : bookFlow.photos.counter(
+                    photoCount(state),
+                    PHOTO_SLOTS.length,
+                  )}
             </dd>
           </div>
         </dl>
@@ -352,11 +403,13 @@ function Pill({ priced }: { priced: ReturnType<typeof quote> }) {
     <div className="book-pill">
       <span>{bookFlow.pill.label}</span>
       <strong>
-        {priced.lines.length === 0
-          ? bookFlow.pill.empty
-          : priced.total === null
-            ? pricing.pendingTotal
-            : <RollingPrice amount={priced.total} />}
+        {priced.lines.length === 0 ? (
+          bookFlow.pill.empty
+        ) : priced.total === null ? (
+          pricing.pendingTotal
+        ) : (
+          <RollingPrice amount={priced.total} />
+        )}
       </strong>
     </div>
   )

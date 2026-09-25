@@ -65,7 +65,7 @@ export const site = {
   owner: "Our team",
   tagline: "Mobile detailing with the price shown before you book.",
 
-  city: "Boston",
+  city: "Boylston",
   region: "Massachusetts",
   regionShort: "MA",
 
@@ -86,7 +86,9 @@ export const locationShort = `${site.city}, ${site.regionShort}`
 export const serviceArea = `Serving ${location}`
 export const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(location)}`
 
-export const telHref = site.phone ? `tel:${site.phone.replace(/[^\d+]/g, "")}` : null
+export const telHref = site.phone
+  ? `tel:${site.phone.replace(/[^\d+]/g, "")}`
+  : null
 export const mailHref = site.email ? `mailto:${site.email}` : null
 export const bookingMailHref = site.bookingEmail
   ? `mailto:${site.bookingEmail}`
@@ -103,4 +105,6 @@ export const facebookHref = site.facebook
 export const socials = [
   { label: "Instagram", href: instagramHref },
   { label: "Facebook", href: facebookHref },
-].filter((social): social is { label: string; href: string } => social.href !== null)
+].filter(
+  (social): social is { label: string href: string } => social.href !== null,
+)

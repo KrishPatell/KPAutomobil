@@ -13,7 +13,8 @@ import { media } from "./media"
 
 export const about = {
   eyebrow: "About KP Automobil",
-  heading: "Our team, one mobile setup, and a price you agree to before we arrive.",
+  heading:
+    "Our team, one mobile setup, and a price you agree to before we arrive.",
   body: [
     "KP Automobil is a coordinated team working from one mobile setup. Home, work or an apartment garage: the car stays where it is.",
     "Send two interior and two exterior photos and the price comes back on screen. No callback, no walkaround, no new number once we pull up.",
@@ -22,7 +23,7 @@ export const about = {
     { amount: 50, figure: "$50", label: "Refundable deposit" },
     { amount: undefined, figure: "0%", label: "Card fee" },
   ],
-};
+}
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 //  /about/
@@ -138,42 +139,49 @@ export const aboutPage = {
     items: [
       {
         name: "Water and power",
-        detail: "A tank and a supply on board, so a driveway, a lot bay or an apartment space is a complete workspace.",
+        detail:
+          "A tank and a supply on board, so a driveway, a lot bay or an apartment space is a complete workspace.",
         image: media.vanWaterPower,
-        imageAlt: "Water tank, power station and hose setup inside a mobile detailing van",
+        imageAlt:
+          "Water tank, power station and hose setup inside a mobile detailing van",
         where: "Every job",
       },
       {
         name: "Hot-water extractor",
-        detail: "Shampoo goes into the carpet and comes back out with the dirt in it, rather than drying back into the weave.",
+        detail:
+          "Shampoo goes into the carpet and comes back out with the dirt in it, rather than drying back into the weave.",
         image: media.addonHeavyStainTreatment,
         imageAlt: "Hot-water extractor lifting soil from a fabric car seat",
         where: "Deep Restoration",
       },
       {
         name: "Steam",
-        detail: "Vents, seams, seat rails and the places a cloth cannot reach without taking something apart.",
+        detail:
+          "Vents, seams, seat rails and the places a cloth cannot reach without taking something apart.",
         image: media.steamCleaningInterior,
         imageAlt: "Steam cleaner working through a car dashboard air vent",
         where: "Deep Restoration",
       },
       {
         name: "Clay bar",
-        detail: "Bonded contamination pulled off the clearcoat so wax or coating has clean paint to sit on.",
+        detail:
+          "Bonded contamination pulled off the clearcoat so wax or coating has clean paint to sit on.",
         image: media.clayBarDecontamination,
         imageAlt: "Clay bar being worked across a wet dark car hood",
         where: "Deep Restoration",
       },
       {
         name: "Machine buffer",
-        detail: "A controlled machine-polish pass for clean paint that needs more gloss.",
+        detail:
+          "A controlled machine-polish pass for clean paint that needs more gloss.",
         image: media.addonMachineBuffing,
         imageAlt: "Machine polisher buffing glossy dark car paint",
         where: "Machine Buffing",
       },
       {
         name: "Ceramic coating kit",
-        detail: "Laid on decontaminated paint one panel at a time and levelled before it flashes.",
+        detail:
+          "Laid on decontaminated paint one panel at a time and levelled before it flashes.",
         image: media.addonCeramicCoating,
         imageAlt: "Ceramic coating being applied to a glossy car hood",
         where: "Ceramic Coating",

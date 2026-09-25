@@ -31,7 +31,11 @@ export default function BookingTerms() {
 
         <ol className="terms-list">
           {bookingTerms.items.map((item, index) => (
-            <Reveal as="li" className={`delay-${Math.min(index + 1, 4)}`} key={item.label}>
+            <Reveal
+              as="li"
+              className={`delay-${Math.min(index + 1, 4)}`}
+              key={item.label}
+            >
               <span>{item.label}</span>
               <div>
                 <h3>{item.title}</h3>

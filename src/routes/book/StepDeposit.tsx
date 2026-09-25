@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import KpButton from "../../components/KpButton";
-import { Link } from "react-router-dom";
-import { bookFlow } from "../../content/bookFlow";
-import { pricing } from "../../content/pricing";
-import { clear, emptyState, STEPS } from "../../lib/bookingFlow";
-import { send } from "../../lib/booking";
-import { takeDeposit, type DepositResult } from "../../lib/payments";
-import { PHOTO_SLOTS } from "../../lib/photos";
-import type { StepProps } from "./BookFlow";
+import { useEffect, useState } from "react"
+import KpButton from "../../components/KpButton"
+import { Link } from "react-router-dom"
+import { bookFlow } from "../../content/bookFlow"
+import { pricing } from "../../content/pricing"
+import { clear, emptyState, STEPS } from "../../lib/bookingFlow"
+import { send } from "../../lib/booking"
+import { takeDeposit, type DepositResult } from "../../lib/payments"
+import { PHOTO_SLOTS } from "../../lib/photos"
+import type { StepProps } from "./BookFlow"
 
 /**
  * Step 7. It asks for the deposit and then does not take it, because there is no payment account
@@ -16,23 +16,23 @@ import type { StepProps } from "./BookFlow";
  * exists; this component already branches on its result.
  */
 export default function StepDeposit({ state, set, goTo }: StepProps) {
-  const [deposit, setDeposit] = useState<DepositResult | null>(null);
-  const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
-  const [delivered, setDelivered] = useState(false);
+  const [deposit, setDeposit] = useState<DepositResult | null>(null)
+  const [status, setStatus] = useState<"idle" | "sending" | "done">("idle")
+  const [delivered, setDelivered] = useState(false)
 
   useEffect(() => {
-    let live = true;
-    takeDeposit().then((result) => live && setDeposit(result));
+    let live = true
+    takeDeposit().then((result) => live && setDeposit(result))
     return () => {
-      live = false;
-    };
-  }, []);
+      live = false
+    }
+  }, [])
 
   async function submit() {
-    setStatus("sending");
+    setStatus("sending")
     const files = PHOTO_SLOTS.map((slot) => state.photos[slot.id]?.file).filter(
       (file): file is File => Boolean(file),
-    );
+    )
     const sent = await send(
       {
         name: state.name,
@@ -42,14 +42,17 @@ export default function StepDeposit({ state, set, goTo }: StepProps) {
         service: state.service ?? "",
         date: state.date,
         window: state.window,
-        notes: [state.notes, state.addOns.length ? `Add-ons: ${state.addOns.join(", ")}` : ""]
+        notes: [
+          state.notes,
+          state.addOns.length ? `Add-ons: ${state.addOns.join(", ")}` : "",
+        ]
           .filter(Boolean)
           .join("\n"),
       },
       files,
-    );
-    setDelivered(sent);
-    setStatus("done");
+    )
+    setDelivered(sent)
+    setStatus("done")
   }
 
   if (status === "done") {
@@ -57,22 +60,26 @@ export default function StepDeposit({ state, set, goTo }: StepProps) {
       <section className="kp-step">
         <div className="kp-step__done" role="status">
           <h1 className="kp-step__heading">
-            {delivered ? bookFlow.deposit.sentTitle : bookFlow.deposit.savedTitle}
+            {delivered
+              ? bookFlow.deposit.sentTitle
+              : bookFlow.deposit.savedTitle}
           </h1>
           <p className="kp-step__lede">
             {delivered ? bookFlow.deposit.sentBody : bookFlow.deposit.savedBody}
           </p>
-          {!delivered && <p className="kp-step__note">{bookFlow.deposit.pendingNote}</p>}
+          {!delivered && (
+            <p className="kp-step__note">{bookFlow.deposit.pendingNote}</p>
+          )}
           <div className="kp-step__actions">
             <Link className="kp-step__back" to="/">
               {bookFlow.backToSite}
             </Link>
             <KpButton
               onClick={() => {
-                clear();
-                set({ ...emptyState });
-                setStatus("idle");
-                goTo(STEPS[0].slug);
+                clear()
+                set({ ...emptyState })
+                setStatus("idle")
+                goTo(STEPS[0].slug)
               }}
               size="md"
             >
@@ -81,7 +88,7 @@ export default function StepDeposit({ state, set, goTo }: StepProps) {
           </div>
         </div>
       </section>
-    );
+    )
   }
 
   return (
@@ -100,13 +107,19 @@ export default function StepDeposit({ state, set, goTo }: StepProps) {
       </div>
 
       <div className="kp-step__actions">
-        <button className="kp-step__back" onClick={() => goTo("quote")} type="button">
+        <button
+          className="kp-step__back"
+          onClick={() => goTo("quote")}
+          type="button"
+        >
           {bookFlow.back}
         </button>
         <KpButton disabled={status === "sending"} onClick={submit} size="md">
-          {status === "sending" ? bookFlow.deposit.sending : bookFlow.deposit.submit}
+          {status === "sending"
+            ? bookFlow.deposit.sending
+            : bookFlow.deposit.submit}
         </KpButton>
       </div>
     </section>
-  );
+  )
 }

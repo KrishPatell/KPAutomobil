@@ -24,6 +24,3 @@ codebase.zip
 
 # Reference PDFs are large; tracked deliberately in docs/ — see AGENTS.md
 .vercel
-
-# macOS Finder metadata
-.DS_Store

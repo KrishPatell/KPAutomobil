@@ -1,7 +1,7 @@
-import KpButton from "../../components/KpButton";
-import { bookFlow } from "../../content/bookFlow";
-import { sizes } from "../../content/vehicles";
-import type { StepProps } from "./BookFlow";
+import KpButton from "../../components/KpButton"
+import { bookFlow } from "../../content/bookFlow"
+import { sizes } from "../../content/vehicles"
+import type { StepProps } from "./BookFlow"
 
 /** Step 1. The same four tiers as the marketing page's Vehicles section, and the same wording. */
 export default function StepSize({ state, set, next }: StepProps) {
@@ -33,5 +33,5 @@ export default function StepSize({ state, set, next }: StepProps) {
         </KpButton>
       </div>
     </section>
-  );
+  )
 }

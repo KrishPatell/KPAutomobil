@@ -35,7 +35,7 @@ export const STEPS = [
   { slug: "deposit", label: "Deposit" },
 ] as const
 
-export type StepSlug = (typeof STEPS)[number]["slug"]
+export type StepSlug = typeof STEPS[number]["slug"]
 
 export type FlowState = {
   size: SizeId | null
@@ -133,15 +133,24 @@ export function isComplete(state: FlowState, slug: StepSlug): boolean {
     case "service":
       return state.service !== null
     case "condition":
-      return conditions.every((item) => state.conditionsAnswered.includes(item.id))
+      return conditions.every((item) =>
+        state.conditionsAnswered.includes(item.id),
+      )
     case "photos":
-      return state.photosSkipped || PHOTO_SLOTS.every((slot) => Boolean(state.photos[slot.id]))
+      return (
+        state.photosSkipped ||
+        PHOTO_SLOTS.every((slot) => Boolean(state.photos[slot.id]))
+      )
     case "extras":
       return true
     case "slot":
       return state.date !== "" && state.window !== ""
     case "details":
-      return state.name.trim() !== "" && state.phone.trim() !== "" && state.address.trim() !== ""
+      return (
+        state.name.trim() !== "" &&
+        state.phone.trim() !== "" &&
+        state.address.trim() !== ""
+      )
     case "deposit":
       return true
   }
@@ -174,12 +183,22 @@ export function load(): FlowState {
       localStorage.removeItem(KEY)
       return { ...emptyState }
     }
-    const service = isPackageName(saved.service ?? null) ? saved.service ?? null : null
+    const service = isPackageName(saved.service ?? null)
+      ? (saved.service ?? null)
+      : null
     const savedAddOns = Array.isArray(saved.addOns) ? saved.addOns : []
-    const addOns = savedAddOns.filter((item): item is string =>
-      typeof item === "string" && isAddOnName(item) && item !== service
+    const addOns = savedAddOns.filter(
+      (item): item is string =>
+        typeof item === "string" && isAddOnName(item) && item !== service,
     )
-    return { ...emptyState, ...saved, service, addOns, date: saved.date || today, photos: saved.photos ?? {} }
+    return {
+      ...emptyState,
+      ...saved,
+      service,
+      addOns,
+      date: saved.date || today,
+      photos: saved.photos ?? {},
+    }
   } catch {
     return { ...emptyState }
   }
@@ -190,9 +209,15 @@ export function save(state: FlowState): void {
     // The File objects are dropped here, not in the reducer — the live state keeps them so the
     // current session can still upload, and only the reload path loses them.
     const photos = Object.fromEntries(
-      Object.entries(state.photos).map(([id, entry]) => [id, { ...entry, file: null }]),
+      Object.entries(state.photos).map(([id, entry]) => [
+        id,
+        { ...entry, file: null },
+      ]),
     )
-    localStorage.setItem(KEY, JSON.stringify({ ...state, photos, savedAt: Date.now() }))
+    localStorage.setItem(
+      KEY,
+      JSON.stringify({ ...state, photos, savedAt: Date.now() }),
+    )
   } catch {
     // Quota or private browsing. The flow still works, it just will not survive a reload.
   }

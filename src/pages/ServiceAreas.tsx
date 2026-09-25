@@ -19,12 +19,9 @@ import { areasPage } from "../content/areas"
 import type { Town } from "../content/site"
 import { location, site } from "../content/site"
 
-type Result =
-  | { kind: "covered"; town: Town }
-  | { kind: "travel"; town: Town }
-  | { kind: "outside" }
-  | { kind: "unknown" }
-  | { kind: "invalid" }
+type Result = { kind: "covered" town: Town } | { kind: "travel" town: Town } | {
+  kind: "outside"
+} | { kind: "unknown" } | { kind: "invalid" }
 
 /**
  * Answers only what the data supports. With no ZIPs on file the honest answer is "we have not
@@ -40,7 +37,9 @@ function check(input: string): Result {
 
   const match = answerable.find((town) => (town.zips ?? []).includes(zip))
   if (!match) return { kind: "outside" }
-  return match.travelFee ? { kind: "travel", town: match } : { kind: "covered", town: match }
+  return match.travelFee
+    ? { kind: "travel", town: match }
+    : { kind: "covered", town: match }
 }
 
 const tones: Record<Result["kind"], string> = {
@@ -51,12 +50,18 @@ const tones: Record<Result["kind"], string> = {
   invalid: "no",
 }
 
-function resultCopy(result: Result): { title: string; body: string } {
+function resultCopy(result: Result): { title: string body: string } {
   switch (result.kind) {
     case "covered":
-      return { title: areasPage.zip.covered.title(result.town.name), body: areasPage.zip.covered.body }
+      return {
+        title: areasPage.zip.covered.title(result.town.name),
+        body: areasPage.zip.covered.body,
+      }
     case "travel":
-      return { title: areasPage.zip.travel.title(result.town.name), body: areasPage.zip.travel.body }
+      return {
+        title: areasPage.zip.travel.title(result.town.name),
+        body: areasPage.zip.travel.body,
+      }
     case "outside":
       return areasPage.zip.outside
     case "invalid":
@@ -174,7 +179,9 @@ export default function ServiceAreas() {
             </form>
 
             {answer && result && (
-              <output className={`zip-result zip-result--${tones[result.kind]}`}>
+              <output
+                className={`zip-result zip-result--${tones[result.kind]}`}
+              >
                 <b>{answer.title}</b>
                 <p>{answer.body}</p>
               </output>

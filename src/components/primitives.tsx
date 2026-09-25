@@ -30,7 +30,13 @@ export function LocationPin() {
 
 export function Mark() {
   if (site.logo.src) {
-    return <img className="mark mark--logo" src={site.logo.src} alt={site.logo.alt} />
+    return (
+      <img
+        className="mark mark--logo"
+        src={site.logo.src}
+        alt={site.logo.alt}
+      />
+    )
   }
 
   return (
@@ -80,16 +86,18 @@ export function ButtonLink({
   href,
   variant = "light",
   className = "",
+  arrow = true,
 }: {
   children: ReactNode
   href: string
   variant?: "light" | "dark" | "outline"
   className?: string
+  arrow?: boolean
 }) {
   return (
     <Link className={`button button--${variant} ${className}`} href={href}>
       <span>{children}</span>
-      <Arrow />
+      {arrow && <Arrow />}
     </Link>
   )
 }
@@ -129,7 +137,9 @@ export function RollingPrice({ amount }: { amount: number }) {
     renderedAmount.current = amount
     let frame = 0
     let hasPlayed = false
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches
 
     const run = () => {
       if (hasPlayed || reducedMotion) return
@@ -208,7 +218,11 @@ export function Reveal({
 }) {
   const motion = useReveal<HTMLElement>()
   return (
-    <Tag className={`${motion.className} ${className}`} id={id} ref={motion.ref as never}>
+    <Tag
+      className={`${motion.className} ${className}`}
+      id={id}
+      ref={motion.ref as never}
+    >
       {children}
     </Tag>
   )

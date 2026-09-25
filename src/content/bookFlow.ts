@@ -29,7 +29,8 @@ export const bookFlow = {
     lede: "Footprint sets the price, not the badge. A coupe, an EV and a full-size luxury sedan all price the same.",
     noteLabel: "Year, make and model",
     notePlaceholder: "2019 Honda Accord",
-    noteHint: "Optional, and only for the record — it does not change the price.",
+    noteHint:
+      "Optional, and only for the record — it does not change the price.",
     sizeLabel: "Prices as",
   },
 
@@ -45,9 +46,11 @@ export const bookFlow = {
     yes: "Yes",
     no: "No",
     none: "None of these",
-    noneHint: "Answering none is a fine answer. It just means nothing is added.",
+    noneHint:
+      "Answering none is a fine answer. It just means nothing is added.",
     addedLabel: "Added by your answers",
-    addedNote: "Each of these is a line item on the next screen and every one can be taken off.",
+    addedNote:
+      "Each of these is a line item on the next screen and every one can be taken off.",
   },
 
   photos: {
@@ -59,6 +62,24 @@ export const bookFlow = {
     reattach: "Attach this one again",
     reattachNote:
       "This page was reloaded, so the full-size files were dropped. The thumbnails are yours — attach the originals again before sending.",
+    actions: [
+      {
+        id: "camera",
+        label: "Take photo",
+        accept: "image/*",
+        capture: "environment",
+      },
+      {
+        id: "gallery",
+        label: "Choose from gallery",
+        accept: "image/*",
+      },
+      {
+        id: "files",
+        label: "Upload a file",
+        accept: "image/jpeg,image/png,image/webp,image/heic,image/heif",
+      },
+    ] as const,
     counter: (done: number, total: number) => `${done} of ${total} added`,
     skip: "Skip the photos",
     skipped: "Photos skipped",
@@ -86,7 +107,8 @@ export const bookFlow = {
   details: {
     heading: "Where and how to reach you",
     lede: "A phone number and an address are enough. The written price comes back on the same number.",
-    addressHint: "Where the car will be parked. A driveway, a lot, a kerbside space.",
+    addressHint:
+      "Where the car will be parked. A driveway, a lot, a kerbside space.",
   },
 
   deposit: {
@@ -97,11 +119,24 @@ export const bookFlow = {
     totalLabel: "Total",
     balanceLabel: `Due on the day`,
     methodsLabel: "How you would like to pay the balance",
-    methodsNote: "No card fees. Whatever method you pick, the price is the price.",
+    methodsNote:
+      "No card fees. Whatever method you pick, the price is the price.",
     methods: [
-      { id: "card", label: "Card", note: "Processing cost is absorbed, not passed on." },
-      { id: "zelle", label: "Zelle", note: "Sent on the day, once the work is signed off." },
-      { id: "cash", label: "Cash", note: "Paid on completion, receipt by text." },
+      {
+        id: "card",
+        label: "Card",
+        note: "Processing cost is absorbed, not passed on.",
+      },
+      {
+        id: "zelle",
+        label: "Zelle",
+        note: "Sent on the day, once the work is signed off.",
+      },
+      {
+        id: "cash",
+        label: "Cash",
+        note: "Paid on completion, receipt by text.",
+      },
     ],
     submit: "Send this request",
     sending: "Sending…",

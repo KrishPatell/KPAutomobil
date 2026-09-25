@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react"
 
-export type Anchor = { href: string; label: string }
+export type Anchor = { href: string label: string }
 
 export default function AnchorBar({ anchors }: { anchors: Anchor[] }) {
   const [active, setActive] = useState(anchors[0]?.href ?? "")
@@ -22,7 +22,9 @@ export default function AnchorBar({ anchors }: { anchors: Anchor[] }) {
         const onScreen = entries.filter((entry) => entry.isIntersecting)
         if (onScreen.length === 0) return
         const top = onScreen.reduce((best, entry) =>
-          entry.boundingClientRect.top < best.boundingClientRect.top ? entry : best,
+          entry.boundingClientRect.top < best.boundingClientRect.top
+            ? entry
+            : best,
         )
         setActive(`#${top.target.id}`)
       },

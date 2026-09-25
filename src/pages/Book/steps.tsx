@@ -8,7 +8,12 @@
 import { useRef, useState } from "react"
 import { bookFlow } from "../../content/bookFlow"
 import { booking } from "../../content/booking"
-import { addOns as addOnCatalogue, bookablePackages, conditions, quoteServiceChoices } from "../../content/services"
+import {
+  addOns as addOnCatalogue,
+  bookablePackages,
+  conditions,
+  quoteServiceChoices,
+} from "../../content/services"
 import type { ConditionId } from "../../content/services"
 import { addOnPrices, packagePrices, pricing } from "../../content/pricing"
 import { quoteBodyStyles, sizeLabels } from "../../content/vehicles"
@@ -27,7 +32,11 @@ export type StepProps = {
 }
 
 /** A price for a named service at the chosen size, or null while either is unknown. */
-function priceFor(table: Record<string, Record<SizeId, number | null>>, name: string, size: SizeId | null) {
+function priceFor(
+  table: Record<string, Record<SizeId, number | null>>,
+  name: string,
+  size: SizeId | null,
+) {
   if (!size) return null
   return table[name]?.[size] ?? null
 }
@@ -46,22 +55,47 @@ function dateKey(year: number, month: number, day: number): string {
   return localDateIso(new Date(year, month, day))
 }
 
-function CalendarPicker({ value, onChange }: { value: string; onChange: (date: string) => void }) {
+function CalendarPicker({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (date: string) => void
+}) {
   const today = localDateIso()
   const selected = value ? new Date(`${value}T12:00:00`) : new Date()
-  const [viewMonth, setViewMonth] = useState(() => new Date(selected.getFullYear(), selected.getMonth(), 1))
-  const currentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const [viewMonth, setViewMonth] = useState(
+    () => new Date(selected.getFullYear(), selected.getMonth(), 1),
+  )
+  const currentMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1,
+  )
   const [year, month] = [viewMonth.getFullYear(), viewMonth.getMonth()]
   const firstWeekday = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const monthOptions = Array.from({ length: 24 }, (_, index) => {
-    const option = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + index, 1)
-    return { label: option.toLocaleDateString("en-US", { month: "long", year: "numeric" }), value: monthKey(option) }
+    const option = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth() + index,
+      1,
+    )
+    return {
+      label: option.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      }),
+      value: monthKey(option),
+    }
   })
-  const dayCells = Array.from({ length: firstWeekday + daysInMonth }, (_, index) => {
-    if (index < firstWeekday) return null
-    return index - firstWeekday + 1
-  })
+  const dayCells = Array.from(
+    { length: firstWeekday + daysInMonth },
+    (_, index) => {
+      if (index < firstWeekday) return null
+      return index - firstWeekday + 1
+    },
+  )
 
   function chooseMonth(key: string) {
     const [nextYear, nextMonth] = key.split("-").map(Number)
@@ -88,28 +122,55 @@ function CalendarPicker({ value, onChange }: { value: string; onChange: (date: s
         </button>
         <label className="booking-calendar__month">
           <span>Month</span>
-          <select aria-label="Choose month" onChange={(event) => chooseMonth(event.target.value)} value={monthKey(viewMonth)}>
-            {monthOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+          <select
+            aria-label="Choose month"
+            onChange={(event) => chooseMonth(event.target.value)}
+            value={monthKey(viewMonth)}
+          >
+            {monthOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </label>
-        <button aria-label="Next month" className="booking-calendar__arrow" onClick={() => moveMonth(1)} type="button">
+        <button
+          aria-label="Next month"
+          className="booking-calendar__arrow"
+          onClick={() => moveMonth(1)}
+          type="button"
+        >
           →
         </button>
       </div>
       <div className="booking-calendar__weekdays" aria-hidden="true">
-        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => <span key={`${day}-${index}`}>{day}</span>)}
+        {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
+          <span key={`${day}-${index}`}>{day}</span>
+        ))}
       </div>
       <div className="booking-calendar__days" role="grid">
         {dayCells.map((day, index) => {
-          if (day === null) return <span aria-hidden="true" className="booking-calendar__empty" key={`empty-${index}`} />
+          if (day === null)
+            return (
+              <span
+                aria-hidden="true"
+                className="booking-calendar__empty"
+                key={`empty-${index}`}
+              />
+            )
           const date = dateKey(year, month, day)
           const isPast = date < today
           const isSelected = date === value
           return (
             <button
-              aria-label={new Date(`${date}T12:00:00`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+              aria-label={new Date(`${date}T12:00:00`).toLocaleDateString(
+                "en-US",
+                { weekday: "long", month: "long", day: "numeric" },
+              )}
               aria-selected={isSelected}
-              className={`${isSelected ? "is-selected " : ""}${date === today ? "is-today" : ""}`}
+              className={`${isSelected ? "is-selected " : ""}${
+                date === today ? "is-today" : ""
+              }`}
               disabled={isPast}
               key={date}
               onClick={() => onChange(date)}
@@ -121,7 +182,9 @@ function CalendarPicker({ value, onChange }: { value: string; onChange: (date: s
           )
         })}
       </div>
-      <p className="booking-calendar__note">Today is selected by default. You can change it anytime.</p>
+      <p className="booking-calendar__note">
+        Today is selected by default. You can change it anytime.
+      </p>
     </div>
   )
 }
@@ -141,7 +204,8 @@ export function VehicleStep({ state, patch }: StepProps) {
             <span className="booking-choice-copy">
               <b>{style.name}</b>
               <small>
-                {bookFlow.vehicle.sizeLabel} {sizeLabels[style.size].toLowerCase()}
+                {bookFlow.vehicle.sizeLabel}{" "}
+                {sizeLabels[style.size].toLowerCase()}
               </small>
             </span>
           </button>
@@ -175,10 +239,16 @@ export function ServiceStep({ state, patch }: StepProps) {
 
   return (
     <>
-      {!state.size && <p className="booking-note">{bookFlow.service.pickSizeFirst}</p>}
+      {!state.size && (
+        <p className="booking-note">{bookFlow.service.pickSizeFirst}</p>
+      )}
       <div className="booking-choice-grid booking-choice-grid--media booking-choice-grid--add-ons">
         {quoteServiceChoices.map((item) => {
-          const price = priceFor(item.addOn ? addOnPrices : packagePrices, item.name, state.size)
+          const price = priceFor(
+            item.addOn ? addOnPrices : packagePrices,
+            item.name,
+            state.size,
+          )
           return (
             <button
               className={state.service === item.name ? "selected" : ""}
@@ -190,7 +260,13 @@ export function ServiceStep({ state, patch }: StepProps) {
               <span className="booking-choice-copy">
                 <b>{item.name}</b>
                 <span>{item.description}</span>
-                <small>{price === null ? pricing.pendingTotal : <RollingPrice amount={price} />}</small>
+                <small>
+                  {price === null ? (
+                    pricing.pendingTotal
+                  ) : (
+                    <RollingPrice amount={price} />
+                  )}
+                </small>
               </span>
             </button>
           )
@@ -207,7 +283,10 @@ export function ConditionStep({ state, patch }: StepProps) {
       conditions: value
         ? [...state.conditions.filter((item) => item !== id), id]
         : state.conditions.filter((item) => item !== id),
-      conditionsAnswered: [...state.conditionsAnswered.filter((item) => item !== id), id],
+      conditionsAnswered: [
+        ...state.conditionsAnswered.filter((item) => item !== id),
+        id,
+      ],
     })
   }
 
@@ -251,7 +330,10 @@ export function ConditionStep({ state, patch }: StepProps) {
       <button
         className="booking-skip"
         onClick={() =>
-          patch({ conditions: [], conditionsAnswered: conditions.map((item) => item.id) })
+          patch({
+            conditions: [],
+            conditionsAnswered: conditions.map((item) => item.id),
+          })
         }
         type="button"
       >
@@ -260,14 +342,22 @@ export function ConditionStep({ state, patch }: StepProps) {
 
       {added.length > 0 && (
         <div className="booking-added">
-          <span className="booking-added__label">{bookFlow.condition.addedLabel}</span>
+          <span className="booking-added__label">
+            {bookFlow.condition.addedLabel}
+          </span>
           <ul>
             {added.map((name) => {
               const price = priceFor(addOnPrices, name, state.size)
               return (
                 <li key={name}>
                   <span>{name}</span>
-                  <em>{price === null ? pricing.pendingTotal : <RollingPrice amount={price} />}</em>
+                  <em>
+                    {price === null ? (
+                      pricing.pendingTotal
+                    ) : (
+                      <RollingPrice amount={price} />
+                    )}
+                  </em>
                 </li>
               )
             })}
@@ -275,14 +365,18 @@ export function ConditionStep({ state, patch }: StepProps) {
           <p>{bookFlow.condition.addedNote}</p>
         </div>
       )}
-      {added.length === 0 && <p className="booking-note">{bookFlow.condition.noneHint}</p>}
+      {added.length === 0 && (
+        <p className="booking-note">{bookFlow.condition.noneHint}</p>
+      )}
     </>
   )
 }
 
 export function PhotosStep({ state, patch }: StepProps) {
   const [error, setError] = useState<string | null>(null)
-  const inputs = useRef<Partial<Record<PhotoSlotId, HTMLInputElement | null>>>({})
+  const inputs = useRef<Partial<Record<PhotoSlotId, HTMLInputElement | null>>>(
+    {},
+  )
   const done = photoCount(state)
   const reattaching = PHOTO_SLOTS.some(
     (slot) => state.photos[slot.id] && state.photos[slot.id]?.file === null,
@@ -298,7 +392,10 @@ export function PhotosStep({ state, patch }: StepProps) {
     setError(null)
     const thumb = await preview(file)
     patch({
-      photos: { ...state.photos, [id]: { preview: thumb, name: file.name, size: file.size, file } },
+      photos: {
+        ...state.photos,
+        [id]: { preview: thumb, name: file.name, size: file.size, file },
+      },
       photosSkipped: false,
     })
   }
@@ -309,7 +406,10 @@ export function PhotosStep({ state, patch }: StepProps) {
         {PHOTO_SLOTS.map((slot) => {
           const entry = state.photos[slot.id]
           return (
-            <label className={`booking-photo-slot${entry ? " is-filled" : ""}`} key={slot.id}>
+            <label
+              className={`booking-photo-slot${entry ? " is-filled" : ""}`}
+              key={slot.id}
+            >
               <input
                 accept="image/*"
                 onChange={(event) => take(slot.id, event.target.files?.[0])}
@@ -319,7 +419,11 @@ export function PhotosStep({ state, patch }: StepProps) {
                 type="file"
               />
               {entry ? (
-                <img alt="" className="booking-photo-thumb" src={entry.preview} />
+                <img
+                  alt=""
+                  className="booking-photo-thumb"
+                  src={entry.preview}
+                />
               ) : (
                 <span className="booking-photo-icon" aria-hidden="true">
                   +
@@ -342,16 +446,26 @@ export function PhotosStep({ state, patch }: StepProps) {
       </div>
 
       {error && <p className="booking-note booking-note--warn">{error}</p>}
-      {reattaching && <p className="booking-note">{bookFlow.photos.reattachNote}</p>}
+      {reattaching && (
+        <p className="booking-note">{bookFlow.photos.reattachNote}</p>
+      )}
 
       <div className="booking-photo-foot">
         <span>{bookFlow.photos.counter(done, PHOTO_SLOTS.length)}</span>
         {state.photosSkipped ? (
-          <button className="booking-skip" onClick={() => patch({ photosSkipped: false })} type="button">
+          <button
+            className="booking-skip"
+            onClick={() => patch({ photosSkipped: false })}
+            type="button"
+          >
             {bookFlow.photos.undoSkip}
           </button>
         ) : (
-          <button className="booking-skip" onClick={() => patch({ photosSkipped: true })} type="button">
+          <button
+            className="booking-skip"
+            onClick={() => patch({ photosSkipped: true })}
+            type="button"
+          >
             {bookFlow.photos.skip}
           </button>
         )}
@@ -403,7 +517,11 @@ export function ExtrasStep({ state, patch }: StepProps) {
                   <small>{addOn.description}</small>
                 </span>
                 <span className="booking-extras__price">
-                  {price === null ? bookFlow.extras.unpricedTag : <RollingPrice amount={price} />}
+                  {price === null ? (
+                    bookFlow.extras.unpricedTag
+                  ) : (
+                    <RollingPrice amount={price} />
+                  )}
                 </span>
               </button>
             </li>
@@ -421,10 +539,15 @@ export function SlotStep({ state, patch }: StepProps) {
       <div className="booking-contact">
         <label>
           {bookFlow.slot.dateLabel}
-          <CalendarPicker onChange={(date) => patch({ date })} value={state.date} />
+          <CalendarPicker
+            onChange={(date) => patch({ date })}
+            value={state.date}
+          />
         </label>
         <div className="booking-windows">
-          <span className="booking-windows__label">{bookFlow.slot.windowLabel}</span>
+          <span className="booking-windows__label">
+            {bookFlow.slot.windowLabel}
+          </span>
           <div>
             {booking.windows.map((window) => (
               <button
@@ -505,9 +628,15 @@ export function DepositStep({ state, patch }: StepProps) {
   return (
     <>
       <div className="booking-deposit">
-        <img alt="" className="booking-deposit__image" src={bookablePackages[0].image} />
+        <img
+          alt=""
+          className="booking-deposit__image"
+          src={bookablePackages[0].image}
+        />
         <div className="booking-deposit__copy">
-          <strong><RollingPrice amount={site.deposit} /></strong>
+          <strong>
+            <RollingPrice amount={site.deposit} />
+          </strong>
           <div>
             <b>{bookFlow.deposit.amountLabel}</b>
             <p>{bookFlow.deposit.lede}</p>
@@ -517,7 +646,9 @@ export function DepositStep({ state, patch }: StepProps) {
 
       <div className="booking-methods">
         <p className="booking-methods__note">{bookFlow.deposit.methodsNote}</p>
-        <span className="booking-methods__label">{bookFlow.deposit.methodsLabel}</span>
+        <span className="booking-methods__label">
+          {bookFlow.deposit.methodsLabel}
+        </span>
         <div>
           {bookFlow.deposit.methods.map((method) => (
             <button
@@ -533,7 +664,6 @@ export function DepositStep({ state, patch }: StepProps) {
           ))}
         </div>
       </div>
-
     </>
   )
 }

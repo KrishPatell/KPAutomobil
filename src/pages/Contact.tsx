@@ -14,7 +14,13 @@ import { useState } from "react"
 import type { ChangeEvent, FormEvent } from "react"
 import PageHead from "../components/PageHead"
 import CtaBand from "../components/CtaBand"
-import { Arrow, Button, ButtonLink, Eyebrow, Reveal } from "../components/primitives"
+import {
+  Arrow,
+  Button,
+  ButtonLink,
+  Eyebrow,
+  Reveal,
+} from "../components/primitives"
 import { Link } from "../router"
 import { pageCopy } from "../content/pages"
 import { contactPage } from "../content/contact"
@@ -101,10 +107,15 @@ export default function Contact() {
     subject: "",
     message: "",
   })
-  const [photo, setPhoto] = useState<{ file: File; name: string; src: string } | null>(null)
+  const [photo, setPhoto] = useState<{
+    file: File
+    name: string
+    src: string
+  } | null>(null)
   const [photoError, setPhotoError] = useState<string | null>(null)
   const [trap, setTrap] = useState("")
-  const [errors, setErrors] = useState<Partial<Record<keyof Fields | "rate", string>>>({})
+  const [errors, setErrors] =
+    useState<Partial<Record<keyof Fields | "rate", string>>>({})
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState<"sent" | "saved" | null>(null)
 
@@ -146,7 +157,8 @@ export default function Contact() {
     const next: Partial<Record<keyof Fields | "rate", string>> = {}
     if (!fields.name.trim()) next.name = form.errorRequired
     if (!fields.email.trim()) next.email = form.errorRequired
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.trim())) next.email = form.errorEmail
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.trim()))
+      next.email = form.errorEmail
     if (!fields.subject) next.subject = form.errorRequired
     if (fields.message.trim().length < 8) next.message = form.errorMessage
     if (messageCooldown() > 0) next.rate = form.errorTooFast
@@ -155,15 +167,18 @@ export default function Contact() {
     if (Object.keys(next).length > 0) return
 
     setSending(true)
-    const delivered = await sendMessage({
-      name: fields.name.trim(),
-      email: fields.email.trim(),
-      phone: fields.phone.trim(),
-      subject: fields.subject,
-      message: fields.message.trim(),
-      photoName: photo?.name ?? null,
-      sentAt: Date.now(),
-    }, photo?.file ?? null)
+    const delivered = await sendMessage(
+      {
+        name: fields.name.trim(),
+        email: fields.email.trim(),
+        phone: fields.phone.trim(),
+        subject: fields.subject,
+        message: fields.message.trim(),
+        photoName: photo?.name ?? null,
+        sentAt: Date.now(),
+      },
+      photo?.file ?? null,
+    )
     setSending(false)
     setSent(delivered ? "sent" : "saved")
   }
@@ -300,7 +315,11 @@ export default function Contact() {
                       </div>
                     ) : (
                       <label className="contact-photo__pick">
-                        <input accept="image/*" onChange={onPhoto} type="file" />
+                        <input
+                          accept="image/*"
+                          onChange={onPhoto}
+                          type="file"
+                        />
                         <span>{form.fields.photo.empty}</span>
                       </label>
                     )}
@@ -320,7 +339,9 @@ export default function Contact() {
                     </label>
                   </div>
 
-                  {errors.rate && <p className="contact-error">{errors.rate}</p>}
+                  {errors.rate && (
+                    <p className="contact-error">{errors.rate}</p>
+                  )}
 
                   <div className="contact-actions">
                     <Button disabled={sending} type="submit" variant="dark">
@@ -354,8 +375,14 @@ export default function Contact() {
                     ) : (
                       <a
                         href={channel.href}
-                        rel={channel.href.startsWith("http") ? "noreferrer" : undefined}
-                        target={channel.href.startsWith("http") ? "_blank" : undefined}
+                        rel={
+                          channel.href.startsWith("http")
+                            ? "noreferrer"
+                            : undefined
+                        }
+                        target={
+                          channel.href.startsWith("http") ? "_blank" : undefined
+                        }
                       >
                         {body}
                       </a>

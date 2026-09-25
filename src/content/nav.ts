@@ -15,13 +15,39 @@ export type Page = {
 
 export const pages: Page[] = [
   { href: "/", label: "Home", title: "Home", inNav: false },
-  { href: "/services/", label: "Services", title: "Services & Pricing", inNav: true },
+  {
+    href: "/services/",
+    label: "Services",
+    title: "Services & Pricing",
+    inNav: true,
+  },
   { href: "/gallery/", label: "Gallery", title: "Gallery", inNav: true },
-  { href: "/service-areas/", label: "Service Areas", title: "Service Areas", inNav: true },
+  {
+    href: "/service-areas/",
+    label: "Service Areas",
+    title: "Service Areas",
+    inNav: true,
+  },
   { href: "/about/", label: "About", title: "About", inNav: true },
   { href: "/contact/", label: "Contact", title: "Contact", inNav: true },
-  { href: "/booking-terms/", label: "Booking Terms", title: "Booking Terms", inNav: false },
-  { href: "/book/", label: "Book", title: "Book & Instant Quote", inNav: false },
+  {
+    href: "/faq/",
+    label: "FAQ",
+    title: "Frequently Asked Questions",
+    inNav: false,
+  },
+  {
+    href: "/booking-terms/",
+    label: "Booking Terms",
+    title: "Booking Terms",
+    inNav: false,
+  },
+  {
+    href: "/book/",
+    label: "Book",
+    title: "Book & Instant Quote",
+    inNav: false,
+  },
 ]
 
 export const navPages = pages.filter((page) => page.inNav)
@@ -42,7 +68,9 @@ export function pageFor(path: string): Page | undefined {
   const exact = pages.find((page) => trim(page.href) === key)
   if (exact) return exact
   const root = `/${key.split("/")[1] ?? ""}`
-  return root === "/" ? undefined : pages.find((page) => trim(page.href) === root)
+  return root === "/"
+    ? undefined
+    : pages.find((page) => trim(page.href) === root)
 }
 
 /** The one CTA that every page points at. The IA is explicit that everything feeds /book/. */

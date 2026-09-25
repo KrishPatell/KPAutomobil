@@ -1,14 +1,14 @@
-import KpButton from "../../components/KpButton";
-import { bookFlow } from "../../content/bookFlow";
-import { booking } from "../../content/booking";
-import type { StepProps } from "./BookFlow";
+import KpButton from "../../components/KpButton"
+import { bookFlow } from "../../content/bookFlow"
+import { booking } from "../../content/booking"
+import type { StepProps } from "./BookFlow"
 
 /** Today, as the `min` for the date input — nobody books a detail in the past. */
 function today(): string {
-  const now = new Date();
-  const month = `${now.getMonth() + 1}`.padStart(2, "0");
-  const day = `${now.getDate()}`.padStart(2, "0");
-  return `${now.getFullYear()}-${month}-${day}`;
+  const now = new Date()
+  const month = `${now.getMonth() + 1}`.padStart(2, "0")
+  const day = `${now.getDate()}`.padStart(2, "0")
+  return `${now.getFullYear()}-${month}-${day}`
 }
 
 /**
@@ -19,7 +19,8 @@ function today(): string {
  * quoted and confirmed over the phone is a field that only loses bookings.
  */
 export default function StepContact({ state, set, next, goTo }: StepProps) {
-  const ready = state.name.trim() !== "" && state.phone.trim() !== "" && state.date !== "";
+  const ready =
+    state.name.trim() !== "" && state.phone.trim() !== "" && state.date !== ""
 
   return (
     <section className="kp-step">
@@ -29,8 +30,8 @@ export default function StepContact({ state, set, next, goTo }: StepProps) {
       <form
         className="kp-step__form"
         onSubmit={(event) => {
-          event.preventDefault();
-          if (ready) next();
+          event.preventDefault()
+          if (ready) next()
         }}
       >
         <label className="kp-field">
@@ -112,7 +113,11 @@ export default function StepContact({ state, set, next, goTo }: StepProps) {
         </label>
 
         <div className="kp-step__actions kp-step__actions--form">
-          <button className="kp-step__back" onClick={() => goTo("photos")} type="button">
+          <button
+            className="kp-step__back"
+            onClick={() => goTo("photos")}
+            type="button"
+          >
             {bookFlow.back}
           </button>
           <KpButton disabled={!ready} size="md" type="submit">
@@ -121,5 +126,5 @@ export default function StepContact({ state, set, next, goTo }: StepProps) {
         </div>
       </form>
     </section>
-  );
+  )
 }

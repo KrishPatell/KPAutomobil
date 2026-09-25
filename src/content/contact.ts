@@ -62,10 +62,12 @@ export const contactPage = {
     errorEmail: "That does not look like an email address.",
     errorMessage: "A sentence or two is enough.",
     /** Rate limit, not a bot accusation. One a minute is plenty for a real person. */
-    errorTooFast: "That went through a moment ago. Give it a minute before sending another.",
+    errorTooFast:
+      "That went through a moment ago. Give it a minute before sending another.",
 
     sentTitle: "Message sent.",
-    sentBody: "Your message and photo, if attached, have been emailed to the team.",
+    sentBody:
+      "Your message and photo, if attached, have been emailed to the team.",
     savedTitle: "Message saved here.",
     savedBody:
       "Your message is saved in this browser, but the email did not send. Check the Resend env vars before relying on this deployment.",
@@ -86,7 +88,10 @@ export const contactPage = {
     },
     phone: { label: "Phone", note: "Calls and texts reach the team." },
     email: { label: "Email", note: "Written questions, written answers." },
-    instagram: { label: "Instagram", note: "Jobs go up the day they are done." },
+    instagram: {
+      label: "Instagram",
+      note: "Jobs go up the day they are done.",
+    },
     facebook: { label: "Facebook", note: "The same posts, a different feed." },
     /** Renders only when site.replyWindow is set. Do not publish a window Kunj has not agreed to. */
     replyLabel: "Reply time",

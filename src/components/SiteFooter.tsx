@@ -2,7 +2,14 @@
 
 import { Link } from "../router"
 import { navPages, primaryCta } from "../content/nav"
-import { location, mapsUrl, mailHref, site, socials, telHref } from "../content/site"
+import {
+  location,
+  mapsUrl,
+  mailHref,
+  site,
+  socials,
+  telHref,
+} from "../content/site"
 import { Arrow, LocationPin, Mark } from "./primitives"
 
 export default function SiteFooter() {
@@ -38,17 +45,26 @@ export default function SiteFooter() {
           {telHref && <a href={telHref}>{site.phone}</a>}
           {mailHref && <a href={mailHref}>{site.email}</a>}
           {socials.map((social) => (
-            <a href={social.href} key={social.label} rel="noreferrer" target="_blank">
+            <a
+              href={social.href}
+              key={social.label}
+              rel="noreferrer"
+              target="_blank"
+            >
               {social.label}
             </a>
           ))}
-          <a className="footer-service-area" href={mapsUrl} rel="noreferrer" target="_blank">
+          <a
+            className="footer-service-area"
+            href={mapsUrl}
+            rel="noreferrer"
+            target="_blank"
+          >
             <LocationPin />
             <span>
               <b>Service area</b>
               <small>{location}</small>
             </span>
-            <Arrow />
           </a>
         </div>
 
@@ -56,11 +72,6 @@ export default function SiteFooter() {
           <span>
             © {year} {site.name}
           </span>
-          <nav aria-label="Footer navigation">
-            <Link href="/services/">Services</Link>
-            <Link href="/gallery/">Gallery</Link>
-            <Link href="/about/">About</Link>
-          </nav>
           <span>Owner-operated mobile detailing</span>
         </div>
       </div>

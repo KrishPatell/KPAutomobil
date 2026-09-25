@@ -15,4 +15,4 @@ export const hero = {
     title: "One clear price",
     detail: "2 interior + 2 exterior shots",
   },
-};
+}

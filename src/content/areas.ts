@@ -100,7 +100,8 @@ export const areasPage = {
 
   travel: {
     eyebrow: "Travel",
-    heading: "If you are outside the radius, you find out before you pay anything.",
+    heading:
+      "If you are outside the radius, you find out before you pay anything.",
     body: "A travel fee is a line on the quote like any other. It is quoted with the price, it is agreed before the deposit, and it does not appear on the bill afterwards. If it is not on your written quote, it is not owed.",
     points: [
       "Quoted with your price, not after it.",
