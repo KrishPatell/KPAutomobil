@@ -12,13 +12,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 const confirmed = {
   /** e.g. "(617) 555-0142" — renders click-to-call in the nav, contact page and footer. */
-  phone: null as string | null,
+  phone: "+1 (978) 846-5195" as string | null,
   /** General enquiries. */
-  email: null as string | null,
+  email: "kpmobileautospa@gmail.com" as string | null,
   /** Booking-specific inbox, if it differs from `email`. */
-  bookingEmail: null as string | null,
+  bookingEmail: "kpmobileautospa@gmail.com" as string | null,
   /** Instagram handle without the @, e.g. "kpautomobil". Gates the gallery's feed block. */
-  instagram: null as string | null,
+  instagram: "kp11.mobile.auto.spa" as string | null,
   facebook: null as string | null,
   /** Miles from base. Gates the service-areas radius copy and the travel-fee rule. */
   serviceRadiusMiles: null as number | null,
@@ -45,6 +45,7 @@ export type Town = {
 }
 
 import kp11Logo from "../assets/brand/kp11-mobile-auto-spa.svg"
+import { paymentConfig } from "./paymentConfig"
 
 export type Hours = {
   days: string
@@ -75,7 +76,7 @@ export const site = {
     height: 28,
   } satisfies SiteLogo,
 
-  deposit: 50,
+  deposit: paymentConfig.depositAmount,
   refundNoticeHours: 24,
 
   ...confirmed,
@@ -95,7 +96,7 @@ export const bookingMailHref = site.bookingEmail
   : mailHref
 
 export const instagramHref = site.instagram
-  ? `https://instagram.com/${site.instagram}`
+  ? "https://www.instagram.com/kp11.mobile.auto.spa?stkn=dnptbGo5NXg3cGM4"
   : null
 export const facebookHref = site.facebook
   ? `https://facebook.com/${site.facebook}`

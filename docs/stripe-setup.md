@@ -1,6 +1,6 @@
-# Stripe deposit checkout
+# Stripe Checkout
 
-Every base service and selected add-on routes through the same Stripe Checkout flow for the existing $50 refundable deposit. The selected services appear in the Checkout description and Stripe metadata.
+Every completed booking request can open Stripe Checkout for the fixed $50 refundable booking deposit. The selected service, vehicle and add-ons are included in the Checkout description and metadata. The amount is resolved on the server from the shared payment configuration; the browser cannot choose or override it.
 The browser never receives a secret Stripe key.
 
 ## Deployment setup
@@ -16,7 +16,7 @@ Create a Stripe webhook that sends `checkout.session.completed` to:
 
 `https://your-domain.example/api/stripe-webhook`
 
-The handler verifies Stripe's signature before accepting an event. The payment is also checked server-side when Stripe redirects the customer back to the booking flow.
+The handler verifies Stripe's signature before accepting an event and marks the Checkout Session metadata as paid. Stripe is the current persistent order record because this project has no application database. The success screen also retrieves the session server-side; it never trusts the redirect query alone.
 
 ## Local testing
 

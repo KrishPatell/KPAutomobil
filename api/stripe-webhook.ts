@@ -39,8 +39,16 @@ export default async function handler(
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session
-      // Add appointment fulfilment here once bookings are stored server-side.
-      console.info("Stripe deposit paid", { checkoutSessionId: session.id })
+      if (session.payment_status === "paid") {
+        await stripe.checkout.sessions.update(session.id, {
+          metadata: {
+            ...session.metadata,
+            order_status: "paid",
+            payment_confirmed_by: "stripe_webhook",
+            webhook_event_id: event.id,
+          },
+        })
+      }
     }
 
     return response.status(200).json({ received: true })

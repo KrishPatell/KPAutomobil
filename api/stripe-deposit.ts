@@ -1,10 +1,22 @@
 import Stripe from "stripe"
+import { randomUUID } from "node:crypto"
+import { paymentConfig } from "../src/content/paymentConfig"
 
-export const depositAmountCents = 5_000
+type SizeId = "sedan" | "suv" | "three-row" | "truck"
 
 const maxValueLength = 500
 const baseServices = ["Interior Refresh", "Full Detail", "Deep Restoration"]
-const availableAddOns = ["Ceramic Coating", "Hand Wax"]
+const availableAddOns = [
+  "Ceramic Coating",
+  "Machine Buffing",
+  "Pet Hair Removal",
+  "Heavy Stain Treatment",
+  "Odour Removal",
+  "Engine Bay",
+  "Headlight Restoration",
+  "Trunk Deep Clean",
+]
+const sizes: SizeId[] = ["sedan", "suv", "three-row", "truck"]
 
 export type BookingDetails = {
   addOns?: unknown
@@ -13,6 +25,7 @@ export type BookingDetails = {
   name?: unknown
   package?: unknown
   phone?: unknown
+  size?: unknown
   vehicle?: unknown
 }
 
@@ -38,7 +51,33 @@ function getSelectedAddOns(addOns: unknown) {
     .slice(0, availableAddOns.length)
 }
 
-export async function createDepositCheckoutSession({
+function isSize(value: string): value is SizeId {
+  return sizes.includes(value as SizeId)
+}
+
+export function getCheckoutLineItems(
+  service: string,
+  selectedAddOns: string[],
+  size: SizeId,
+) {
+  const selectedServices = [service, ...selectedAddOns].join(" + ")
+  return [
+    {
+      price_data: {
+        currency: paymentConfig.currency,
+        product_data: {
+          name: "KP Automobil refundable booking deposit",
+          description: `${selectedServices} · ${size} vehicle`,
+          metadata: { service_name: service, vehicle_size: size },
+        },
+        unit_amount: paymentConfig.depositAmountCents,
+      },
+      quantity: 1,
+    },
+  ]
+}
+
+export async function createCheckoutSession({
   booking,
   origin,
   secretKey,
@@ -53,15 +92,15 @@ export async function createDepositCheckoutSession({
   const service = getString(booking.package)
   const model = getString(booking.model)
   const phone = getString(booking.phone)
+  const size = getString(booking.size)
   const selectedAddOns = getSelectedAddOns(booking.addOns)
 
   if (
-    !email ||
     !name ||
     !vehicle ||
     !baseServices.includes(service) ||
-    !model ||
     !phone ||
+    !isSize(size) ||
     selectedAddOns.some((addOn) => !availableAddOns.includes(addOn))
   ) {
     throw new CheckoutValidationError("Complete your booking details first.")
@@ -70,35 +109,33 @@ export async function createDepositCheckoutSession({
   const stripe = new Stripe(secretKey)
   const addOns = selectedAddOns.join(", ")
   const selectedServices = [service, ...selectedAddOns].join(" + ")
+  const lineItems = getCheckoutLineItems(service, selectedAddOns, size)
+  const orderId = randomUUID()
 
   return stripe.checkout.sessions.create({
     mode: "payment",
-    customer_email: email,
-    submit_type: "book",
+    payment_method_types: ["card"],
+    customer_email: email || undefined,
+    submit_type: "pay",
     billing_address_collection: "auto",
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: "KP Automobil refundable booking deposit",
-            description: `For ${selectedServices}`,
-          },
-          unit_amount: depositAmountCents,
-        },
-        quantity: 1,
-      },
-    ],
+    client_reference_id: orderId,
+    line_items: lineItems,
     metadata: {
       add_ons: addOns || "None",
       customer_name: name,
+      order_id: orderId,
+      order_status: "checkout_created",
       phone,
       service,
       selected_services: selectedServices,
-      vehicle: `${vehicle} · ${model}`,
+      vehicle: model ? `${vehicle} · ${model}` : vehicle,
+      vehicle_size: size,
     },
-    success_url: `${origin}/book/deposit?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/book/deposit?payment=cancelled`,
+    payment_intent_data: {
+      metadata: { order_id: orderId, service, vehicle_size: size },
+    },
+    success_url: `${origin}/book/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${origin}/book/payment-cancelled`,
   })
 }
 
@@ -114,6 +151,20 @@ export async function getCheckoutPaymentStatus({
   }
 
   const stripe = new Stripe(secretKey)
-  const session = await stripe.checkout.sessions.retrieve(sessionId)
-  return { paid: session.payment_status === "paid" }
+  const session = await stripe.checkout.sessions.retrieve(sessionId, {
+    expand: ["line_items"],
+  })
+  return {
+    amountTotal: session.amount_total,
+    currency: session.currency,
+    orderId: session.client_reference_id,
+    paid: session.payment_status === "paid",
+    products:
+      session.line_items?.data.map((item) => ({
+        description: item.description,
+        quantity: item.quantity,
+        amountTotal: item.amount_total,
+      })) ?? [],
+    status: session.status,
+  }
 }

@@ -83,6 +83,10 @@ import bmwCleanPromiseImage from "../assets/promise-bmw-clean-v3.png"
 import bmwDirtyPromiseImage from "../assets/promise-bmw-dirty-v3.png"
 import bmwFoamPromiseImage from "../assets/promise-bmw-foam-v3.png"
 import fullDetailPorscheImage from "../assets/porsche-full-detail-user-v2.jpg"
+import photoGuideFrontImage from "../assets/photo-guides/front-three-quarter-v1.jpg"
+import photoGuideRearImage from "../assets/photo-guides/rear-three-quarter-v1.jpg"
+import photoGuideCabinImage from "../assets/photo-guides/front-cabin-v1.jpg"
+import photoGuideRearSeatsImage from "../assets/photo-guides/rear-seats-v1.jpg"
 
 export const media = {
   hero: heroImage,
@@ -130,6 +134,10 @@ export const media = {
   deepRestoration: deepRestorationImage,
   ceramicCoating: ceramicCoatingImage,
   fullDetailPorsche: fullDetailPorscheImage,
+  photoGuideFront: photoGuideFrontImage,
+  photoGuideRear: photoGuideRearImage,
+  photoGuideCabin: photoGuideCabinImage,
+  photoGuideRearSeats: photoGuideRearSeatsImage,
 
   addonCeramicCoating: addonCeramicCoatingImage,
   addonMachineBuffing: addonMachineBuffingImage,

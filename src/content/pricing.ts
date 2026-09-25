@@ -27,19 +27,12 @@
 //
 // ────────────────────────────────────────────────────────────────────────────────────────────────
 
-import type { SizeId } from "./vehicles"
 import { site } from "./site"
+import { addOnPrices, packagePrices, type SizePrices } from "./priceMatrix"
+
+export { addOnPrices, packagePrices, type SizePrices } from "./priceMatrix"
 
 /** Dollars, or null while unconfirmed. One cell per service per vehicle size. */
-export type SizePrices = Record<SizeId, number | null>
-
-const unpriced: SizePrices = {
-  sedan: null,
-  suv: null,
-  "three-row": null,
-  truck: null,
-}
-
 /**
  * Keyed by the package name in src/content/services.ts. The keys must match those names exactly —
  * the flow passes the name through as the identifier, so a typo here shows up as a missing price
@@ -49,11 +42,6 @@ const unpriced: SizePrices = {
  * Full Detail → their "MPG Refresh" ($299.99 / $374.99). Deep Restoration has no MPG equivalent;
  * it is set above Full Detail by the same step MPG puts between their interior and full tiers.
  */
-export const packagePrices: Record<string, SizePrices> = {
-  "Interior Refresh": { sedan: 250, suv: 285, "three-row": 315, truck: 305 },
-  "Full Detail": { sedan: 300, suv: 375, "three-row": 415, truck: 405 },
-  "Deep Restoration": { sedan: 475, suv: 550, "three-row": 600, truck: 585 },
-}
 
 /**
  * Add-ons are priced per vehicle size too — a truck's worth of paint is not a sedan's.
@@ -62,17 +50,6 @@ export const packagePrices: Record<string, SizePrices> = {
  * The other six have no MPG equivalent at all, so they stay
  * null and the total degrades honestly. That is deliberate — see the header.
  */
-export const addOnPrices: Record<string, SizePrices> = {
-  "Ceramic Coating": { sedan: 700, suv: 700, "three-row": 750, truck: 750 },
-  "Machine Buffing": { sedan: 115, suv: 150, "three-row": 165, truck: 165 },
-
-  "Pet Hair Removal": { ...unpriced },
-  "Heavy Stain Treatment": { ...unpriced },
-  "Odour Removal": { ...unpriced },
-  "Engine Bay": { ...unpriced },
-  "Headlight Restoration": { ...unpriced },
-  "Trunk Deep Clean": { ...unpriced },
-}
 
 /** The cheapest confirmed cell for a service, for the "From $250" line. Null if none is priced. */
 export function startingPrice(name: string): number | null {

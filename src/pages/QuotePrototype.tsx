@@ -10,7 +10,7 @@ import { addOns, conditions, quoteServiceChoices } from "../content/services"
 import type { ConditionId } from "../content/services"
 import { quoteBodyStyles, sizeLabels } from "../content/vehicles"
 import { startingPrice } from "../content/pricing"
-import { stripeBadgeUrl } from "../content/payments"
+import { media } from "../content/media"
 import { site } from "../content/site"
 import { send } from "../lib/booking"
 import { preview, validate } from "../lib/photos"
@@ -22,6 +22,19 @@ type GooglePlace = { formatted_address?: string name?: string }
 type GoogleAutocomplete = {
   addListener: (event: "place_changed", listener: () => void) => void
   getPlace: () => GooglePlace
+}
+
+type CheckoutVerification = {
+  amountTotal: number | null
+  currency: string | null
+  orderId: string | null
+  paid: boolean
+  products: Array<{
+    amountTotal: number
+    description: string
+    quantity: number | null
+  }>
+  status: string | null
 }
 
 declare global {
@@ -53,26 +66,35 @@ const steps: Array<{ id: Step label: string }> = [
   { id: "policies", label: "Review" },
 ]
 
-const photoSlots: Array<{ id: PhotoId title: string hint: string }> = [
+const photoSlots: Array<{
+  id: PhotoId
+  title: string
+  hint: string
+  reference: string
+}> = [
   {
     id: "front",
     title: "Front three-quarter",
     hint: "Show the front and one side.",
+    reference: media.photoGuideFront,
   },
   {
     id: "rear",
     title: "Rear three-quarter",
     hint: "Show the rear and the other side.",
+    reference: media.photoGuideRear,
   },
   {
     id: "cabin",
     title: "Front cabin",
     hint: "Driver’s area, seats and carpet.",
+    reference: media.photoGuideCabin,
   },
   {
     id: "seats",
     title: "Rear seats or boot",
     hint: "Show the main area that needs work.",
+    reference: media.photoGuideRearSeats,
   },
 ]
 
@@ -84,7 +106,8 @@ const emptyAnswers = (): Answers => ({
 })
 
 export default function QuotePrototype() {
-  const { params } = useRoute()
+  const { params, path } = useRoute()
+  const checkoutSessionId = params.get("session_id")
   const requestedPackage = quoteServiceChoices.find(
     (item) => item.slug === params.get("package"),
   )
@@ -114,6 +137,11 @@ export default function QuotePrototype() {
   const [sending, setSending] = useState(false)
   const [startingCheckout, setStartingCheckout] = useState(false)
   const [checkoutError, setCheckoutError] = useState("")
+  const [verification, setVerification] =
+    useState<CheckoutVerification | "loading" | "error" | null>(
+      path === "/book/payment-success" ? "loading" : null,
+    )
+  const [openPhotoMenu, setOpenPhotoMenu] = useState<PhotoId | null>(null)
   const addressRef = useRef<HTMLInputElement>(null)
   const stepNavRef = useRef<HTMLElement>(null)
 
@@ -127,6 +155,7 @@ export default function QuotePrototype() {
     (item) => item.name === bodyStyle,
   )
   const selectedAddOns = addOns.filter((item) => addOnNames.includes(item.name))
+  const checkoutTotal = site.deposit
   const conditionsComplete = conditions.every(
     (item) => answers[item.id] !== null,
   )
@@ -179,6 +208,27 @@ export default function QuotePrototype() {
       inline: "center",
     })
   }, [step])
+
+  useEffect(() => {
+    if (path !== "/book/payment-success") return
+    if (!checkoutSessionId) {
+      setVerification("error")
+      return
+    }
+    let live = true
+    fetch(
+      `/api/checkout-session?session_id=${encodeURIComponent(checkoutSessionId)}`,
+    )
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Payment verification failed.")
+        return response.json() as Promise<CheckoutVerification>
+      })
+      .then((result) => live && setVerification(result))
+      .catch(() => live && setVerification("error"))
+    return () => {
+      live = false
+    }
+  }, [checkoutSessionId, path])
 
   function advance(next: Step) {
     setStep(next)
@@ -270,10 +320,8 @@ export default function QuotePrototype() {
   }
 
   async function startCheckout() {
-    if (!selectedService || !selectedVehicle || !email || !vehicleNote) {
-      setCheckoutError(
-        "Add an email address and the vehicle year, make, and model before opening checkout.",
-      )
+    if (!selectedService || !selectedVehicle) {
+      setCheckoutError("Choose a service and vehicle before opening checkout.")
       return
     }
 
@@ -289,6 +337,7 @@ export default function QuotePrototype() {
             name,
             package: selectedService.name,
             phone,
+            size: selectedVehicle.size,
             vehicle: selectedVehicle.name,
           },
         }),
@@ -329,450 +378,559 @@ export default function QuotePrototype() {
         </div>
         <Link href="/">Back to site</Link>
       </header>
-      <nav
-        className="quote-wizard__steps"
-        aria-label="Quote steps"
-        ref={stepNavRef}
-      >
-        {steps.map((item, index) => (
-          <button
-            aria-current={item.id === step ? "step" : undefined}
-            className={
-              item.id === step
-                ? "is-current"
-                : completed.has(item.id)
-                  ? "is-complete"
-                  : ""
-            }
-            disabled={index > 0 && !completed.has(steps[index - 1].id)}
-            key={item.id}
-            onClick={() => advance(item.id)}
-            type="button"
+      {path === "/book/payment-success" ||
+      path === "/book/payment-cancelled" ? (
+        <PaymentResult
+          cancelled={path === "/book/payment-cancelled"}
+          verification={verification}
+        />
+      ) : (
+        <>
+          <nav
+            className="quote-wizard__steps"
+            aria-label="Quote steps"
+            ref={stepNavRef}
           >
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            {item.label}
-          </button>
-        ))}
-      </nav>
-      <section className="quote-wizard__stage" key={step}>
-        {step === "service" && (
-          <>
-            <Intro
-              number="01"
-              title="Start with the work you want done."
-              text="Each package is shown clearly below. Pick one to continue to your vehicle."
-            />
-            <div
-              className="quote-wizard__tabs"
-              role="tablist"
-              aria-label="Services"
-            >
-              {quoteServiceChoices.map((item) => (
-                <button
-                  aria-selected={serviceTab === item.name}
-                  className={serviceTab === item.name ? "is-selected" : ""}
-                  key={item.name}
-                  onClick={() => setServiceTab(item.name)}
-                  role="tab"
-                  type="button"
+            {steps.map((item, index) => (
+              <button
+                aria-current={item.id === step ? "step" : undefined}
+                className={
+                  item.id === step
+                    ? "is-current"
+                    : completed.has(item.id)
+                      ? "is-complete"
+                      : ""
+                }
+                disabled={index > 0 && !completed.has(steps[index - 1].id)}
+                key={item.id}
+                onClick={() => advance(item.id)}
+                type="button"
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                {item.label}
+              </button>
+            ))}
+          </nav>
+          <section className="quote-wizard__stage" key={step}>
+            {step === "service" && (
+              <>
+                <Intro
+                  number="01"
+                  title="Start with the work you want done."
+                  text="Each package is shown clearly below. Pick one to continue to your vehicle."
+                />
+                <div
+                  className="quote-wizard__tabs"
+                  role="tablist"
+                  aria-label="Services"
                 >
-                  {item.name}
-                </button>
-              ))}
-            </div>
-            <div className="quote-wizard__service-card">
-              <img
-                alt={`${viewedService.name} detailing service`}
-                src={viewedService.image}
-              />
-              <div>
-                <p>SELECTED SERVICE</p>
-                <h2>{viewedService.name}</h2>
-                <span>{viewedService.description}</span>
-                <b>
-                  {startingPrice(viewedService.name) === null
-                    ? "Priced from your photos"
-                    : `From $${startingPrice(viewedService.name)}`}
-                </b>
-                <button
-                  onClick={() => chooseService(viewedService.name)}
-                  type="button"
-                >
-                  {service === viewedService.name
-                    ? "Continue with this service"
-                    : "Choose this service"}
-                  <Arrow />
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-        {step === "vehicle" && (
-          <>
-            <Intro
-              number="02"
-              title="What are we working on?"
-              text="Choose the closest shape. Vehicle footprint sets the starting price, not the badge."
-            />
-            <div className="quote-wizard__vehicle-grid">
-              {quoteBodyStyles.map((item) => (
-                <button
-                  aria-pressed={bodyStyle === item.name}
-                  className={bodyStyle === item.name ? "is-selected" : ""}
-                  key={item.name}
-                  onClick={() => chooseVehicle(item.name)}
-                  type="button"
-                >
-                  <img alt="" src={item.image} />
-                  <b>{item.name}</b>
-                  <span>Prices as {sizeLabels[item.size]}</span>
-                </button>
-              ))}
-            </div>
-            <label className="quote-wizard__field">
-              <span>
-                Year, make and model <small>Optional</small>
-              </span>
-              <input
-                onChange={(event) => setVehicleNote(event.target.value)}
-                placeholder="Example: 2022 BMW X5"
-                value={vehicleNote}
-              />
-            </label>
-          </>
-        )}
-        {step === "addons" && (
-          <>
-            <Intro
-              number="03"
-              title="Anything else the car needs?"
-              text="Add any extras now. You can leave this blank and continue."
-            />
-            <div className="quote-wizard__addons">
-              {addOns.map((item) => (
-                <label key={item.name}>
-                  <img alt={item.imageAlt} src={item.image} />
+                  {quoteServiceChoices.map((item) => (
+                    <button
+                      aria-selected={serviceTab === item.name}
+                      className={serviceTab === item.name ? "is-selected" : ""}
+                      key={item.name}
+                      onClick={() => setServiceTab(item.name)}
+                      role="tab"
+                      type="button"
+                    >
+                      {item.name}
+                    </button>
+                  ))}
+                </div>
+                <div className="quote-wizard__service-card">
+                  <img
+                    alt={`${viewedService.name} detailing service`}
+                    src={viewedService.image}
+                  />
+                  <div>
+                    <p>SELECTED SERVICE</p>
+                    <h2>{viewedService.name}</h2>
+                    <span>{viewedService.description}</span>
+                    <b>
+                      {startingPrice(viewedService.name) === null
+                        ? "Priced from your photos"
+                        : `From $${startingPrice(viewedService.name)}`}
+                    </b>
+                    <button
+                      onClick={() => chooseService(viewedService.name)}
+                      type="button"
+                    >
+                      {service === viewedService.name
+                        ? "Continue with this service"
+                        : "Choose this service"}
+                      <Arrow />
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+            {step === "vehicle" && (
+              <>
+                <Intro
+                  number="02"
+                  title="What are we working on?"
+                  text="Choose the closest shape. Vehicle footprint sets the starting price, not the badge."
+                />
+                <div className="quote-wizard__vehicle-grid">
+                  {quoteBodyStyles.map((item) => (
+                    <button
+                      aria-pressed={bodyStyle === item.name}
+                      className={bodyStyle === item.name ? "is-selected" : ""}
+                      key={item.name}
+                      onClick={() => chooseVehicle(item.name)}
+                      type="button"
+                    >
+                      <img alt="" src={item.image} />
+                      <b>{item.name}</b>
+                      <span>Prices as {sizeLabels[item.size]}</span>
+                    </button>
+                  ))}
+                </div>
+                <label className="quote-wizard__field">
+                  <span>
+                    Year, make and model <small>Optional</small>
+                  </span>
                   <input
-                    checked={addOnNames.includes(item.name)}
-                    onChange={() => toggleAddOn(item.name)}
+                    onChange={(event) => setVehicleNote(event.target.value)}
+                    placeholder="Example: 2022 BMW X5"
+                    value={vehicleNote}
+                  />
+                </label>
+              </>
+            )}
+            {step === "addons" && (
+              <>
+                <Intro
+                  number="03"
+                  title="Anything else the car needs?"
+                  text="Add any extras now. You can leave this blank and continue."
+                />
+                <div className="quote-wizard__addons">
+                  {addOns.map((item) => (
+                    <label key={item.name}>
+                      <img alt={item.imageAlt} src={item.image} />
+                      <input
+                        checked={addOnNames.includes(item.name)}
+                        onChange={() => toggleAddOn(item.name)}
+                        type="checkbox"
+                      />
+                      <span>
+                        <b>{item.name}</b>
+                        <small>{item.description}</small>
+                        <em>
+                          {item.name === "Ceramic Coating"
+                            ? "From $700"
+                            : "Confirmed from your photos"}
+                        </em>
+                      </span>
+                      <i>{addOnNames.includes(item.name) ? "Added" : "Add"}</i>
+                    </label>
+                  ))}
+                </div>
+                <Next onClick={() => advance("location")}>
+                  Continue to where your car is
+                </Next>
+              </>
+            )}
+            {step === "location" && (
+              <>
+                <Intro
+                  number="04"
+                  title="Where will the car be?"
+                  text="Start typing the address and choose the matching result from Google. We use this only to plan the visit."
+                />
+                <div className="quote-wizard__location-types">
+                  {["Home", "Work", "Storage", "Marina", "Other"].map(
+                    (type) => (
+                      <button
+                        className={locationType === type ? "is-selected" : ""}
+                        key={type}
+                        onClick={() => setLocationType(type)}
+                        type="button"
+                      >
+                        {type}
+                      </button>
+                    ),
+                  )}
+                </div>
+                <div className="quote-wizard__fields">
+                  <label className="quote-wizard__field">
+                    <span>Find your address</span>
+                    <input
+                      onChange={(event) => setAddress(event.target.value)}
+                      placeholder="Start typing an address"
+                      ref={addressRef}
+                      value={address}
+                    />
+                  </label>
+                  <label className="quote-wizard__field">
+                    <span>
+                      Access notes <small>Optional</small>
+                    </span>
+                    <input
+                      onChange={(event) => setAccess(event.target.value)}
+                      placeholder="Parking, gate code, or where the car is"
+                      value={access}
+                    />
+                  </label>
+                </div>
+                <Next disabled={!address} onClick={() => advance("condition")}>
+                  Continue to condition
+                </Next>
+              </>
+            )}
+            {step === "condition" && (
+              <>
+                <Intro
+                  number="05"
+                  title="Tell us what we should expect."
+                  text="A straight answer helps us request the right photos and write the scope before we arrive."
+                />
+                <div className="quote-wizard__conditions">
+                  {conditions.map((item) => (
+                    <article key={item.id}>
+                      <div>
+                        <b>{item.question}</b>
+                        <span>{item.help}</span>
+                      </div>
+                      <p>
+                        <button
+                          aria-pressed={answers[item.id] === true}
+                          className={
+                            answers[item.id] === true ? "is-selected" : ""
+                          }
+                          onClick={() => setCondition(item.id, true)}
+                          type="button"
+                        >
+                          Yes
+                        </button>
+                        <button
+                          aria-pressed={answers[item.id] === false}
+                          className={
+                            answers[item.id] === false ? "is-selected" : ""
+                          }
+                          onClick={() => setCondition(item.id, false)}
+                          type="button"
+                        >
+                          No
+                        </button>
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              </>
+            )}
+            {step === "photos" && (
+              <>
+                <Intro
+                  number="06 · FOUR PHOTOS"
+                  title="Show us the car from every side."
+                  text="Two exterior and two interior photos give us the information to write the price. Use your camera or choose an existing photo for each angle."
+                />
+                <div className="quote-wizard__photos">
+                  {photoSlots.map((slot, index) => (
+                    <div
+                      className={photos[slot.id] ? "is-filled" : ""}
+                      key={slot.id}
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <div className="quote-wizard__photo-main">
+                        <div className="quote-wizard__photo-example">
+                          <img
+                            alt={
+                              photoPreviews[slot.id]
+                                ? `Your ${slot.title} photo`
+                                : `Example ${slot.title} angle`
+                            }
+                            src={photoPreviews[slot.id] ?? slot.reference}
+                          />
+                        </div>
+                        <div>
+                          <b>{slot.title}</b>
+                          <small>{photos[slot.id]?.name ?? slot.hint}</small>
+                        </div>
+                      </div>
+                      <div className="quote-wizard__photo-actions">
+                        <button
+                          aria-expanded={openPhotoMenu === slot.id}
+                          onClick={() =>
+                            setOpenPhotoMenu((current) =>
+                              current === slot.id ? null : slot.id,
+                            )
+                          }
+                          type="button"
+                        >
+                          {photos[slot.id] ? "Replace photo" : "Add photo"}
+                          <svg
+                            aria-hidden="true"
+                            fill="none"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="m4 6 4 4 4-4" />
+                          </svg>
+                        </button>
+                        {openPhotoMenu === slot.id && (
+                          <div className="quote-wizard__photo-menu">
+                            {bookFlow.photos.actions.map((action) => {
+                              const inputId = `quote-photo-${slot.id}-${action.id}`
+                              return (
+                                <label htmlFor={inputId} key={action.id}>
+                                  {action.label}
+                                  <input
+                                    accept={action.accept}
+                                    capture={action.capture}
+                                    id={inputId}
+                                    onChange={(event) => {
+                                      void addPhoto(
+                                        slot.id,
+                                        event.target.files?.[0],
+                                      )
+                                      setOpenPhotoMenu(null)
+                                      event.currentTarget.value = ""
+                                    }}
+                                    type="file"
+                                  />
+                                </label>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                      {photoErrors[slot.id] && (
+                        <em className="quote-wizard__photo-error">
+                          {photoErrors[slot.id]}
+                        </em>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <Next
+                  disabled={photoCount !== photoSlots.length}
+                  onClick={() => advance("contact")}
+                >
+                  Continue to contact
+                </Next>
+              </>
+            )}
+            {step === "contact" && (
+              <>
+                <Intro
+                  number="07"
+                  title="Where should we send the written price?"
+                  text="A phone number is required. Email is optional, but useful for a copy of the scope."
+                />
+                <div className="quote-wizard__fields quote-wizard__fields--three">
+                  <label className="quote-wizard__field">
+                    <span>Name</span>
+                    <input
+                      onChange={(event) => setName(event.target.value)}
+                      placeholder="First and last"
+                      value={name}
+                    />
+                  </label>
+                  <label className="quote-wizard__field">
+                    <span>Phone</span>
+                    <input
+                      onChange={(event) => setPhone(event.target.value)}
+                      placeholder="(000) 000-0000"
+                      type="tel"
+                      value={phone}
+                    />
+                  </label>
+                  <label className="quote-wizard__field">
+                    <span>
+                      Email <small>Optional</small>
+                    </span>
+                    <input
+                      onChange={(event) => setEmail(event.target.value)}
+                      placeholder="you@example.com"
+                      type="email"
+                      value={email}
+                    />
+                  </label>
+                </div>
+                <Next
+                  disabled={!name || !phone}
+                  onClick={() => advance("policies")}
+                >
+                  Review request
+                </Next>
+              </>
+            )}
+            {step === "policies" && (
+              <>
+                <Intro
+                  number="08 · REVIEW"
+                  title={`Pay the $${site.deposit} deposit.`}
+                  text={`Review the scope, then pay the refundable $${site.deposit} deposit to hold your booking request. It comes off the final bill.`}
+                />
+                <dl className="quote-wizard__review">
+                  <div>
+                    <dt>Service</dt>
+                    <dd>{selectedService?.name}</dd>
+                  </div>
+                  <div>
+                    <dt>Vehicle</dt>
+                    <dd>
+                      {selectedVehicle?.name}
+                      {vehicleNote ? ` · ${vehicleNote}` : ""}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Add-ons</dt>
+                    <dd>
+                      {selectedAddOns.length
+                        ? selectedAddOns.map((item) => item.name).join(", ")
+                        : "None"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Location</dt>
+                    <dd>
+                      {locationType} · {address}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Photos</dt>
+                    <dd>{photoCount} of 4 attached</dd>
+                  </div>
+                </dl>
+                <label className="quote-wizard__consent">
+                  <input
+                    checked={consent}
+                    onChange={(event) => setConsent(event.target.checked)}
                     type="checkbox"
                   />
                   <span>
-                    <b>{item.name}</b>
-                    <small>{item.description}</small>
-                    <em>
-                      {item.name === "Ceramic Coating"
-                        ? "From $700"
-                        : "Confirmed from your photos"}
-                    </em>
+                    I agree to the{" "}
+                    <Link href="/booking-terms">Booking Terms</Link> and
+                    understand that the ${site.deposit} deposit is refundable
+                    with {site.refundNoticeHours}+ hours notice.
                   </span>
-                  <i>{addOnNames.includes(item.name) ? "Added" : "Add"}</i>
                 </label>
-              ))}
-            </div>
-            <Next onClick={() => advance("location")}>
-              Continue to where your car is
-            </Next>
-          </>
-        )}
-        {step === "location" && (
-          <>
-            <Intro
-              number="04"
-              title="Where will the car be?"
-              text="Start typing the address and choose the matching result from Google. We use this only to plan the visit."
-            />
-            <div className="quote-wizard__location-types">
-              {["Home", "Work", "Storage", "Marina", "Other"].map((type) => (
-                <button
-                  className={locationType === type ? "is-selected" : ""}
-                  key={type}
-                  onClick={() => setLocationType(type)}
-                  type="button"
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-            <div className="quote-wizard__fields">
-              <label className="quote-wizard__field">
-                <span>Find your address</span>
-                <input
-                  onChange={(event) => setAddress(event.target.value)}
-                  placeholder="Start typing an address"
-                  ref={addressRef}
-                  value={address}
-                />
-              </label>
-              <label className="quote-wizard__field">
-                <span>
-                  Access notes <small>Optional</small>
-                </span>
-                <input
-                  onChange={(event) => setAccess(event.target.value)}
-                  placeholder="Parking, gate code, or where the car is"
-                  value={access}
-                />
-              </label>
-            </div>
-            <Next disabled={!address} onClick={() => advance("condition")}>
-              Continue to condition
-            </Next>
-          </>
-        )}
-        {step === "condition" && (
-          <>
-            <Intro
-              number="05"
-              title="Tell us what we should expect."
-              text="A straight answer helps us request the right photos and write the scope before we arrive."
-            />
-            <div className="quote-wizard__conditions">
-              {conditions.map((item) => (
-                <article key={item.id}>
+                <div className="quote-wizard__payment">
                   <div>
-                    <b>{item.question}</b>
-                    <span>{item.help}</span>
+                    <p>SECURE CARD PAYMENT</p>
+                    <b>${site.deposit} refundable deposit</b>
+                    <span>
+                      Pay now with Visa or Mastercard. Your service, vehicle,
+                      and add-ons stay attached to the payment.
+                    </span>
                   </div>
-                  <p>
-                    <button
-                      aria-pressed={answers[item.id] === true}
-                      className={answers[item.id] === true ? "is-selected" : ""}
-                      onClick={() => setCondition(item.id, true)}
-                      type="button"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      aria-pressed={answers[item.id] === false}
-                      className={
-                        answers[item.id] === false ? "is-selected" : ""
-                      }
-                      onClick={() => setCondition(item.id, false)}
-                      type="button"
-                    >
-                      No
-                    </button>
-                  </p>
-                </article>
-              ))}
-            </div>
-          </>
-        )}
-        {step === "photos" && (
-          <>
-            <Intro
-              number="06 · FOUR PHOTOS"
-              title="Show us the car from every side."
-              text="Two exterior and two interior photos give us the information to write the price. Use your camera, gallery, or files for each angle."
-            />
-            <div className="quote-wizard__photos">
-              {photoSlots.map((slot, index) => (
-                <div
-                  className={photos[slot.id] ? "is-filled" : ""}
-                  key={slot.id}
-                >
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <div className="quote-wizard__photo-main">
-                    {photoPreviews[slot.id] ? (
-                      <img
-                        alt={`Preview: ${slot.title}`}
-                        src={photoPreviews[slot.id]}
-                      />
-                    ) : (
-                      <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
-                        <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2L9 5h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-9Z" />
-                        <circle cx="12" cy="13" r="3.2" />
-                      </svg>
-                    )}
-                    <div>
-                      <b>{slot.title}</b>
-                      <small>{photos[slot.id]?.name ?? slot.hint}</small>
-                    </div>
-                  </div>
-                  <div className="quote-wizard__photo-actions">
-                    {bookFlow.photos.actions.map((action) => {
-                      const inputId = `quote-photo-${slot.id}-${action.id}`
-                      return (
-                        <label htmlFor={inputId} key={action.id}>
-                          {action.label}
-                          <input
-                            accept={action.accept}
-                            capture={action.capture}
-                            id={inputId}
-                            onChange={(event) => {
-                              void addPhoto(slot.id, event.target.files?.[0])
-                              event.currentTarget.value = ""
-                            }}
-                            type="file"
-                          />
-                        </label>
-                      )
-                    })}
-                  </div>
-                  {photoErrors[slot.id] && (
-                    <em className="quote-wizard__photo-error">
-                      {photoErrors[slot.id]}
-                    </em>
-                  )}
+                  <button
+                    disabled={!consent || startingCheckout}
+                    onClick={() => void startCheckout()}
+                    type="button"
+                  >
+                    {startingCheckout
+                      ? "Opening secure checkout…"
+                      : `Pay $${checkoutTotal} deposit`}
+                    <Arrow />
+                  </button>
+                  <PaymentMarks />
+                  {checkoutError && <em role="alert">{checkoutError}</em>}
                 </div>
-              ))}
-            </div>
-            <Next
-              disabled={photoCount !== photoSlots.length}
-              onClick={() => advance("contact")}
-            >
-              Continue to contact
-            </Next>
-          </>
-        )}
-        {step === "contact" && (
-          <>
-            <Intro
-              number="07"
-              title="Where should we send the written price?"
-              text="A phone number is required. Email is optional, but useful for a copy of the scope."
-            />
-            <div className="quote-wizard__fields quote-wizard__fields--three">
-              <label className="quote-wizard__field">
-                <span>Name</span>
-                <input
-                  onChange={(event) => setName(event.target.value)}
-                  placeholder="First and last"
-                  value={name}
-                />
-              </label>
-              <label className="quote-wizard__field">
-                <span>Phone</span>
-                <input
-                  onChange={(event) => setPhone(event.target.value)}
-                  placeholder="(000) 000-0000"
-                  type="tel"
-                  value={phone}
-                />
-              </label>
-              <label className="quote-wizard__field">
-                <span>
-                  Email <small>Optional</small>
-                </span>
-                <input
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="you@example.com"
-                  type="email"
-                  value={email}
-                />
-              </label>
-            </div>
-            <Next
-              disabled={!name || !phone}
-              onClick={() => advance("policies")}
-            >
-              Review request
-            </Next>
-          </>
-        )}
-        {step === "policies" && (
-          <>
-            <Intro
-              number="08 · REVIEW"
-              title="Ready for your written price."
-              text="Review the scope below. No deposit is taken until the written price is agreed."
-            />
-            <dl className="quote-wizard__review">
-              <div>
-                <dt>Service</dt>
-                <dd>{selectedService?.name}</dd>
-              </div>
-              <div>
-                <dt>Vehicle</dt>
-                <dd>
-                  {selectedVehicle?.name}
-                  {vehicleNote ? ` · ${vehicleNote}` : ""}
-                </dd>
-              </div>
-              <div>
-                <dt>Add-ons</dt>
-                <dd>
-                  {selectedAddOns.length
-                    ? selectedAddOns.map((item) => item.name).join(", ")
-                    : "None"}
-                </dd>
-              </div>
-              <div>
-                <dt>Location</dt>
-                <dd>
-                  {locationType} · {address}
-                </dd>
-              </div>
-              <div>
-                <dt>Photos</dt>
-                <dd>{photoCount} of 4 attached</dd>
-              </div>
-            </dl>
-            <label className="quote-wizard__consent">
-              <input
-                checked={consent}
-                onChange={(event) => setConsent(event.target.checked)}
-                type="checkbox"
-              />
-              <span>
-                I agree to the <Link href="/booking-terms">Booking Terms</Link>{" "}
-                and understand that the written price follows the photo and
-                scope review.
-              </span>
-            </label>
-            {outcome ? (
-              <>
-                <div className="quote-wizard__outcome">
-                  <b>
-                    {outcome === "sent"
-                      ? "Request sent."
-                      : "Request saved in this browser."}
-                  </b>
-                  <span>
-                    {outcome === "sent"
-                      ? "We received the scope and photos. The written price comes before any deposit."
-                      : "We could not reach the inbox. Try again when you are online."}
-                  </span>
-                </div>
-                {outcome === "sent" && (
-                  <div className="quote-wizard__payment">
-                    <div>
-                      <p>SECURE CHECKOUT</p>
-                      <b>${site.deposit} refundable deposit</b>
-                      <span>
-                        Once you have agreed to the written price, use Stripe
-                        Checkout to hold the slot. The deposit comes off the
-                        final bill.
-                      </span>
-                    </div>
-                    <button
-                      disabled={startingCheckout}
-                      onClick={() => void startCheckout()}
-                      type="button"
-                    >
-                      {startingCheckout
-                        ? "Opening Stripe…"
-                        : `Pay agreed $${site.deposit} deposit`}
-                      <Arrow />
-                    </button>
-                    <img alt="Powered by Stripe" src={stripeBadgeUrl} />
-                    {checkoutError && <em role="alert">{checkoutError}</em>}
+                {outcome ? (
+                  <div className="quote-wizard__outcome">
+                    <b>
+                      {outcome === "sent"
+                        ? "Request copy sent."
+                        : "Request copy saved in this browser."}
+                    </b>
+                    <span>
+                      {outcome === "sent"
+                        ? "The scope and photos were also sent to the team."
+                        : "Email delivery is unavailable locally, but this does not block payment."}
+                    </span>
                   </div>
+                ) : (
+                  <Next
+                    disabled={!consent || sending}
+                    onClick={() => void requestPrice()}
+                  >
+                    {sending
+                      ? "Sending copy…"
+                      : "Send request copy to the team"}
+                  </Next>
                 )}
               </>
-            ) : (
-              <Next
-                disabled={!consent || sending}
-                onClick={() => void requestPrice()}
-              >
-                {sending ? "Sending request…" : "Request written price"}
-              </Next>
             )}
-          </>
-        )}
-      </section>
+          </section>
+        </>
+      )}
     </main>
+  )
+}
+
+function PaymentMarks() {
+  return (
+    <div
+      className="quote-wizard__payment-marks"
+      aria-label="Visa and Mastercard accepted"
+    >
+      <span className="quote-wizard__visa" aria-label="Visa">
+        VISA
+      </span>
+      <span className="quote-wizard__mastercard" aria-label="Mastercard">
+        <i />
+        <i />
+      </span>
+    </div>
+  )
+}
+
+function PaymentResult({
+  cancelled,
+  verification,
+}: {
+  cancelled: boolean
+  verification: CheckoutVerification | "loading" | "error" | null
+}) {
+  const verified = typeof verification === "object" && verification?.paid
+  return (
+    <section className="quote-wizard__payment-result">
+      <p>{cancelled ? "PAYMENT CANCELLED" : "PAYMENT STATUS"}</p>
+      <h1>
+        {cancelled
+          ? "Nothing was charged."
+          : verification === "loading"
+            ? "Verifying your payment…"
+            : verified
+              ? "Payment confirmed."
+              : "We could not confirm that payment."}
+      </h1>
+      <span>
+        {cancelled
+          ? "Your quote is unchanged. Return to the booking flow whenever you are ready."
+          : verified
+            ? "Stripe confirmed the payment on the server. Keep the order reference below."
+            : verification === "error"
+              ? "Please contact us before trying again so we can check the Checkout session."
+              : "Please wait while the server checks the Checkout session."}
+      </span>
+      {verified && (
+        <dl>
+          <div>
+            <dt>Order</dt>
+            <dd>{verification.orderId}</dd>
+          </div>
+          <div>
+            <dt>Total paid</dt>
+            <dd>
+              ${((verification.amountTotal ?? 0) / 100).toFixed(2)}{" "}
+              {verification.currency?.toUpperCase()}
+            </dd>
+          </div>
+        </dl>
+      )}
+      <Link
+        className="quote-wizard__result-link"
+        href={cancelled ? "/book" : "/"}
+      >
+        {cancelled ? "Return to booking" : "Back to site"}
+        <Arrow />
+      </Link>
+    </section>
   )
 }
 

@@ -70,13 +70,8 @@ export const bookFlow = {
         capture: "environment",
       },
       {
-        id: "gallery",
-        label: "Choose from gallery",
-        accept: "image/*",
-      },
-      {
-        id: "files",
-        label: "Upload a file",
+        id: "folder",
+        label: "Choose from folder",
         accept: "image/jpeg,image/png,image/webp,image/heic,image/heif",
       },
     ] as const,

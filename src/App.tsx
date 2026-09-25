@@ -18,6 +18,7 @@ import ServiceAreas from "./pages/ServiceAreas"
 import Contact from "./pages/Contact"
 import Faq from "./pages/Faq"
 import BookingTerms from "./pages/BookingTerms"
+import PrivacyPolicy from "./pages/PrivacyPolicy"
 import NotFound from "./pages/NotFound"
 import QuotePrototype from "./pages/QuotePrototype"
 
@@ -31,6 +32,7 @@ const routes: Record<string, () => ReactElement> = {
   "/contact": Contact,
   "/faq": Faq,
   "/booking-terms": BookingTerms,
+  "/privacy-policy": PrivacyPolicy,
 }
 
 function useDocumentTitle(path: string) {

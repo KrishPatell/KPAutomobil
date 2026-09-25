@@ -43,6 +43,12 @@ export const pages: Page[] = [
     inNav: false,
   },
   {
+    href: "/privacy-policy/",
+    label: "Privacy Policy",
+    title: "Privacy Policy",
+    inNav: false,
+  },
+  {
     href: "/book/",
     label: "Book",
     title: "Book & Instant Quote",

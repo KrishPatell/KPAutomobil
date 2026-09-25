@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
 import {
   CheckoutValidationError,
-  createDepositCheckoutSession,
+  createCheckoutSession,
   getBookingDetails,
 } from "./stripe-deposit"
 
@@ -38,7 +38,7 @@ export default async function handler(
   }
 
   try {
-    const session = await createDepositCheckoutSession({
+    const session = await createCheckoutSession({
       booking: getBookingDetails(request.body),
       origin,
       secretKey,

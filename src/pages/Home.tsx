@@ -13,10 +13,8 @@ import {
   Eyebrow,
   Mark,
   Reveal,
-  SlotDeposit,
 } from "../components/primitives"
 import Comparison from "../components/Comparison"
-import { about } from "../content/about"
 import { rows as compareRows } from "../content/compare"
 import { faqs } from "../content/faqs"
 import { media } from "../content/media"
@@ -74,49 +72,6 @@ export default function Home() {
             <small>2 interior + 2 exterior shots</small>
           </p>
         </Reveal>
-      </section>
-      <section className="section about" id="about">
-        <div className="section-head">
-          <Reveal>
-            <Eyebrow>About KP Automobil</Eyebrow>
-          </Reveal>
-          <Reveal className="delay-1">
-            <h2>
-              Our team, one mobile setup, and a price you agree to before we
-              arrive.
-            </h2>
-          </Reveal>
-        </div>
-        <div className="about-grid">
-          <Reveal className="about-image image-tall">
-            <img src={media.about} alt="Detailer polishing a black car" />
-          </Reveal>
-          <Reveal className="about-image">
-            <img
-              src={media.foam}
-              alt="Car covered in snow foam during a wash"
-            />
-          </Reveal>
-          <Reveal className="about-card delay-2">
-            <div>
-              {about.body.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-            <dl>
-              <div>
-                <dt>
-                  <SlotDeposit />
-                </dt>
-                <dd>Refundable deposit</dd>
-              </div>
-              <div>
-                <dt>0%</dt>
-                <dd>Card fee</dd>
-              </div>
-            </dl>
-          </Reveal>
-        </div>
       </section>
       <section className="section services" id="services">
         <div className="section-head section-head--center">

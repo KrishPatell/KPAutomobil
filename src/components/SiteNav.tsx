@@ -66,7 +66,7 @@ export default function SiteNav() {
       <div className="nav-actions">
         {telHref && (
           <a className="nav-phone" href={telHref}>
-            {site.phone}
+            <span>{site.phone}</span>
           </a>
         )}
         <Link className="button button--light nav-cta" href={primaryCta.href}>

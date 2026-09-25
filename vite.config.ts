@@ -9,7 +9,7 @@ import tailwindcss from "@tailwindcss/vite"
 import path from "node:path"
 import {
   CheckoutValidationError,
-  createDepositCheckoutSession,
+  createCheckoutSession,
   getBookingDetails,
   getCheckoutPaymentStatus,
 } from "./api/stripe-deposit"
@@ -101,7 +101,7 @@ function stripeLocalCheckout(secretKey: string | undefined): Plugin {
           try {
             const body = await readBody(request)
             const origin = `http://${request.headers.host ?? "localhost:8443"}`
-            const session = await createDepositCheckoutSession({
+            const session = await createCheckoutSession({
               booking: getBookingDetails(body),
               origin,
               secretKey,
