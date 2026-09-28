@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node"
 import {
   CheckoutValidationError,
   getCheckoutPaymentStatus,
-} from "./stripe-deposit"
+} from "./stripe-deposit.js"
 
 export default async function handler(
   request: VercelRequest,

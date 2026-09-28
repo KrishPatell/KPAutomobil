@@ -1,6 +1,6 @@
 import Stripe from "stripe"
 import { randomUUID } from "node:crypto"
-import { paymentConfig } from "../src/content/paymentConfig"
+import { paymentConfig } from "../src/content/paymentConfig.js"
 
 type SizeId = "sedan" | "suv" | "three-row" | "truck"
 

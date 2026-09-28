@@ -3,7 +3,7 @@ import {
   CheckoutValidationError,
   createCheckoutSession,
   getBookingDetails,
-} from "./stripe-deposit"
+} from "./stripe-deposit.js"
 
 function getAppOrigin() {
   const configuredUrl = process.env.APP_URL
