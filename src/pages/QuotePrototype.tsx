@@ -12,8 +12,10 @@ import { quoteBodyStyles, sizeLabels } from "../content/vehicles"
 import { startingPrice } from "../content/pricing"
 import { media } from "../content/media"
 import { site } from "../content/site"
-import { send } from "../lib/booking"
+import { submitBooking } from "../lib/booking"
 import { preview, validate } from "../lib/photos"
+import visaLogo from "../assets/payment/visa.svg"
+import mastercardLogo from "../assets/payment/mastercard.svg"
 
 type Answers = Record<ConditionId, boolean | null>
 type Step = "service" | "vehicle" | "addons" | "location" | "condition" | "photos" | "contact" | "policies"
@@ -35,6 +37,11 @@ type CheckoutVerification = {
     quantity: number | null
   }>
   status: string | null
+  customerName?: string
+  email?: string
+  phone?: string
+  selectedServices?: string
+  vehicle?: string
 }
 
 declare global {
@@ -105,6 +112,9 @@ const emptyAnswers = (): Answers => ({
   "long-gap": null,
 })
 
+const isEmailAddress = (value: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+
 export default function QuotePrototype() {
   const { params, path } = useRoute()
   const checkoutSessionId = params.get("session_id")
@@ -133,10 +143,10 @@ export default function QuotePrototype() {
   const [email, setEmail] = useState("")
   const [vehicleNote, setVehicleNote] = useState("")
   const [consent, setConsent] = useState(false)
-  const [outcome, setOutcome] = useState<"sent" | "saved" | null>(null)
-  const [sending, setSending] = useState(false)
   const [startingCheckout, setStartingCheckout] = useState(false)
   const [checkoutError, setCheckoutError] = useState("")
+  const [localTestBooking, setLocalTestBooking] = useState(false)
+  const localTestToolsEnabled = import.meta.env.DEV
   const [verification, setVerification] =
     useState<CheckoutVerification | "loading" | "error" | null>(
       path === "/book/payment-success" ? "loading" : null,
@@ -154,7 +164,9 @@ export default function QuotePrototype() {
   const selectedVehicle = quoteBodyStyles.find(
     (item) => item.name === bodyStyle,
   )
-  const selectedAddOns = addOns.filter((item) => addOnNames.includes(item.name))
+  const selectedAddOns = addOns
+    .filter((item) => addOnNames.includes(item.name))
+    .filter((item) => item.name !== service)
   const checkoutTotal = site.deposit
   const conditionsComplete = conditions.every(
     (item) => answers[item.id] !== null,
@@ -230,6 +242,34 @@ export default function QuotePrototype() {
     }
   }, [checkoutSessionId, path])
 
+  useEffect(() => {
+    if (!localTestToolsEnabled || path !== "/book") return
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.repeat) return
+      const fillShortcut =
+        event.key === "?" ||
+        (event.code === "Slash" && event.shiftKey) ||
+        (event.altKey && event.shiftKey && event.code === "KeyT")
+      const checkoutShortcut =
+        event.key === "F9" ||
+        (event.altKey && event.shiftKey && event.code === "KeyC")
+      if (fillShortcut) {
+        event.preventDefault()
+        void fillLocalTestBooking()
+      }
+      if (checkoutShortcut) {
+        event.preventDefault()
+        void fillAndOpenLocalTestCheckout()
+      }
+    }
+
+    // Capture the shortcut before browser/page controls can consume it. On
+    // many keyboard layouts, `?` is reported as Shift + Slash instead of `?`.
+    document.addEventListener("keydown", onKeyDown, true)
+    return () => document.removeEventListener("keydown", onKeyDown, true)
+  }, [localTestBooking, localTestToolsEnabled, path])
+
   function advance(next: Step) {
     setStep(next)
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -237,6 +277,7 @@ export default function QuotePrototype() {
   function chooseService(next: string) {
     setServiceTab(next)
     setService(next)
+    setAddOnNames((current) => current.filter((item) => item !== next))
     window.setTimeout(() => advance("vehicle"), 350)
   }
   function chooseVehicle(next: string) {
@@ -276,62 +317,131 @@ export default function QuotePrototype() {
     }
   }
 
-  async function requestPrice() {
-    if (
-      !service ||
-      !selectedVehicle ||
-      !address ||
-      !name ||
-      !phone ||
-      photoCount !== photoSlots.length ||
-      !consent ||
-      sending
+  async function fillLocalTestBooking() {
+    const testImages = await Promise.all(
+      photoSlots.map(async (slot, index) => {
+        const canvas = document.createElement("canvas")
+        canvas.width = 960
+        canvas.height = 640
+        const context = canvas.getContext("2d")
+        if (context) {
+          context.fillStyle = "#171717"
+          context.fillRect(0, 0, canvas.width, canvas.height)
+          context.fillStyle = "#ff5a1f"
+          context.fillRect(48, 48, 12, 44)
+          context.fillStyle = "#f4f3ef"
+          context.font = "600 34px sans-serif"
+          context.fillText(`LOCAL TEST PHOTO 0${index + 1}`, 82, 82)
+          context.fillStyle = "#b9b8b4"
+          context.font = "28px sans-serif"
+          context.fillText(slot.title, 82, 138)
+          context.strokeStyle = "#444"
+          context.lineWidth = 3
+          context.strokeRect(48, 178, 864, 414)
+          context.fillStyle = "#777"
+          context.font = "24px sans-serif"
+          context.fillText("Sample only · not a customer vehicle", 82, 230)
+        }
+        const blob = await new Promise<Blob | null>((resolve) =>
+          canvas.toBlob(resolve, "image/jpeg", 0.78),
+        )
+        if (!blob) throw new Error("Could not create local test photos.")
+        return {
+          id: slot.id,
+          file: new File([blob], `local-test-${slot.id}.jpg`, {
+            type: "image/jpeg",
+          }),
+          thumbnail: canvas.toDataURL("image/jpeg", 0.72),
+        }
+      }),
     )
-      return
-    setSending(true)
-    const files = photoSlots
-      .map((slot) => photos[slot.id])
-      .filter((file): file is File => file instanceof File)
-    const delivered = await send(
-      {
-        name,
-        phone,
-        email,
-        address: `${locationType}: ${address}`,
-        size: selectedVehicle.size,
-        bodyStyle: selectedVehicle.name,
-        vehicleNote,
-        service,
-        conditions: conditions
-          .filter((item) => answers[item.id])
-          .map((item) => item.question.replace(/[?]$/, "")),
-        addOns: selectedAddOns.map((item) => item.name),
-        photoCount,
-        photosSkipped: false,
-        date: "",
-        window: "",
-        total: null,
-        notes: access,
-      },
-      files,
+
+    setService("Interior Refresh")
+    setServiceTab("Interior Refresh")
+    setBodyStyle("Sedan")
+    setAddOnNames([])
+    setAnswers({
+      "pet-hair": false,
+      stains: false,
+      odour: false,
+      "long-gap": false,
+    })
+    setLocationType("Home")
+    setAddress("Local test address — not submitted")
+    setAccess("")
+    setPhotos(Object.fromEntries(testImages.map(({ id, file }) => [id, file])))
+    setPhotoPreviews(
+      Object.fromEntries(
+        testImages.map(({ id, thumbnail }) => [id, thumbnail]),
+      ),
     )
-    setSending(false)
-    setOutcome(delivered ? "sent" : "saved")
+    setName("KP Automobil Local Test")
+    setPhone("(978) 555-0100")
+    setEmail("local-test@example.com")
+    setVehicleNote("Local test vehicle")
+    setConsent(true)
+    setCheckoutError("")
+    setLocalTestBooking(true)
+    setStep("policies")
+    window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
-  async function startCheckout() {
-    if (!selectedService || !selectedVehicle) {
-      setCheckoutError("Choose a service and vehicle before opening checkout.")
+  async function fillAndOpenLocalTestCheckout() {
+    if (!localTestBooking) await fillLocalTestBooking()
+    window.setTimeout(() => void startCheckout(true), 150)
+  }
+
+  async function startCheckout(skipInboxForLocalTest = false) {
+    if (!selectedService || !selectedVehicle || !isEmailAddress(email)) {
+      setCheckoutError(
+        "Choose a service and vehicle, then enter a valid email address for the receipt.",
+      )
       return
     }
 
     setStartingCheckout(true)
     setCheckoutError("")
     try {
+      const files = photoSlots
+        .map((slot) => photos[slot.id])
+        .filter((file): file is File => file instanceof File)
+      const submission =
+        skipInboxForLocalTest && localTestToolsEnabled
+          ? { success: true as const }
+          : await submitBooking(
+              {
+                name,
+                phone,
+                email,
+                address: `${locationType}: ${address}`,
+                size: selectedVehicle.size,
+                bodyStyle: selectedVehicle.name,
+                vehicleNote,
+                service: selectedService.name,
+                conditions: conditions
+                  .filter((item) => answers[item.id])
+                  .map((item) => item.question.replace(/[?]$/, "")),
+                addOns: selectedAddOns.map((item) => item.name),
+                photoCount,
+                photosSkipped: false,
+                date: "",
+                window: "",
+                total: null,
+                notes: access,
+              },
+              files,
+            )
+      if (!submission.success) {
+        throw new Error(
+          submission.error ??
+            "We could not submit the booking request to the inbox.",
+        )
+      }
       const response = await fetch("/api/create-checkout-session", {
         body: JSON.stringify({
           booking: {
             addOns: selectedAddOns.map((item) => item.name),
+            address: `${locationType}: ${address}`,
             email,
             model: vehicleNote,
             name,
@@ -344,7 +454,17 @@ export default function QuotePrototype() {
         headers: { "Content-Type": "application/json" },
         method: "POST",
       })
-      const result = (await response.json()) as { error?: string url?: string }
+      const rawResponse = await response.text()
+      let result: { error?: string url?: string }
+      try {
+        result = (JSON.parse(rawResponse) as { error?: string url?: string })
+      } catch {
+        result = {
+          error: response.ok
+            ? "The payment server returned an invalid response."
+            : "Secure payment is temporarily unavailable. Please try again shortly.",
+        }
+      }
       if (!response.ok || !result.url) {
         throw new Error(result.error ?? "Unable to start secure checkout.")
       }
@@ -506,26 +626,30 @@ export default function QuotePrototype() {
                   text="Add any extras now. You can leave this blank and continue."
                 />
                 <div className="quote-wizard__addons">
-                  {addOns.map((item) => (
-                    <label key={item.name}>
-                      <img alt={item.imageAlt} src={item.image} />
-                      <input
-                        checked={addOnNames.includes(item.name)}
-                        onChange={() => toggleAddOn(item.name)}
-                        type="checkbox"
-                      />
-                      <span>
-                        <b>{item.name}</b>
-                        <small>{item.description}</small>
-                        <em>
-                          {item.name === "Ceramic Coating"
-                            ? "From $700"
-                            : "Confirmed from your photos"}
-                        </em>
-                      </span>
-                      <i>{addOnNames.includes(item.name) ? "Added" : "Add"}</i>
-                    </label>
-                  ))}
+                  {addOns
+                    .filter((item) => item.name !== service)
+                    .map((item) => (
+                      <label key={item.name}>
+                        <img alt={item.imageAlt} src={item.image} />
+                        <input
+                          checked={addOnNames.includes(item.name)}
+                          onChange={() => toggleAddOn(item.name)}
+                          type="checkbox"
+                        />
+                        <span>
+                          <b>{item.name}</b>
+                          <small>{item.description}</small>
+                          <em>
+                            {item.name === "Ceramic Coating"
+                              ? "From $700"
+                              : "Confirmed from your photos"}
+                          </em>
+                        </span>
+                        <i>
+                          {addOnNames.includes(item.name) ? "Added" : "Add"}
+                        </i>
+                      </label>
+                    ))}
                 </div>
                 <Next onClick={() => advance("location")}>
                   Continue to where your car is
@@ -717,7 +841,7 @@ export default function QuotePrototype() {
                 <Intro
                   number="07"
                   title="Where should we send the written price?"
-                  text="A phone number is required. Email is optional, but useful for a copy of the scope."
+                  text="Add a phone number and email so we can send the scope and Stripe receipt."
                 />
                 <div className="quote-wizard__fields quote-wizard__fields--three">
                   <label className="quote-wizard__field">
@@ -739,7 +863,7 @@ export default function QuotePrototype() {
                   </label>
                   <label className="quote-wizard__field">
                     <span>
-                      Email <small>Optional</small>
+                      Email <small>Required for receipt</small>
                     </span>
                     <input
                       onChange={(event) => setEmail(event.target.value)}
@@ -750,7 +874,7 @@ export default function QuotePrototype() {
                   </label>
                 </div>
                 <Next
-                  disabled={!name || !phone}
+                  disabled={!name || !phone || !isEmailAddress(email)}
                   onClick={() => advance("policies")}
                 >
                   Review request
@@ -819,7 +943,7 @@ export default function QuotePrototype() {
                   </div>
                   <button
                     disabled={!consent || startingCheckout}
-                    onClick={() => void startCheckout()}
+                    onClick={() => void startCheckout(localTestBooking)}
                     type="button"
                   >
                     {startingCheckout
@@ -830,28 +954,33 @@ export default function QuotePrototype() {
                   <PaymentMarks />
                   {checkoutError && <em role="alert">{checkoutError}</em>}
                 </div>
-                {outcome ? (
-                  <div className="quote-wizard__outcome">
-                    <b>
-                      {outcome === "sent"
-                        ? "Request copy sent."
-                        : "Request copy saved in this browser."}
-                    </b>
-                    <span>
-                      {outcome === "sent"
-                        ? "The scope and photos were also sent to the team."
-                        : "Email delivery is unavailable locally, but this does not block payment."}
-                    </span>
-                  </div>
-                ) : (
-                  <Next
-                    disabled={!consent || sending}
-                    onClick={() => void requestPrice()}
+                {localTestToolsEnabled && (
+                  <aside
+                    className="quote-wizard__local-test"
+                    aria-label="Local test tools"
                   >
-                    {sending
-                      ? "Sending copy…"
-                      : "Send request copy to the team"}
-                  </Next>
+                    <b>Local test tools</b>
+                    <span>
+                      ? fills a sample booking. F9 opens Stripe Checkout in test
+                      mode without sending it to the inbox. Alt + Shift + T / C
+                      also work.
+                    </span>
+                    <button
+                      onClick={() => void fillLocalTestBooking()}
+                      type="button"
+                    >
+                      Fill sample booking
+                    </button>
+                    <button
+                      onClick={() => void fillAndOpenLocalTestCheckout()}
+                      type="button"
+                    >
+                      Open Stripe test checkout
+                    </button>
+                    {localTestBooking && (
+                      <small>Sample data only. No booking email is sent.</small>
+                    )}
+                  </aside>
                 )}
               </>
             )}
@@ -868,13 +997,8 @@ function PaymentMarks() {
       className="quote-wizard__payment-marks"
       aria-label="Visa and Mastercard accepted"
     >
-      <span className="quote-wizard__visa" aria-label="Visa">
-        VISA
-      </span>
-      <span className="quote-wizard__mastercard" aria-label="Mastercard">
-        <i />
-        <i />
-      </span>
+      <img alt="Visa" src={visaLogo} />
+      <img alt="Mastercard" src={mastercardLogo} />
     </div>
   )
 }
@@ -903,7 +1027,7 @@ function PaymentResult({
         {cancelled
           ? "Your quote is unchanged. Return to the booking flow whenever you are ready."
           : verified
-            ? "Stripe confirmed the payment on the server. Keep the order reference below."
+            ? "Stripe confirmed the payment on the server. A receipt is sent to the email used at Checkout."
             : verification === "error"
               ? "Please contact us before trying again so we can check the Checkout session."
               : "Please wait while the server checks the Checkout session."}
@@ -921,7 +1045,36 @@ function PaymentResult({
               {verification.currency?.toUpperCase()}
             </dd>
           </div>
+          <div>
+            <dt>Customer</dt>
+            <dd>{verification.customerName}</dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd>{verification.email}</dd>
+          </div>
+          <div>
+            <dt>Phone</dt>
+            <dd>{verification.phone}</dd>
+          </div>
+          <div>
+            <dt>Booking</dt>
+            <dd>{verification.selectedServices}</dd>
+          </div>
+          <div>
+            <dt>Vehicle</dt>
+            <dd>{verification.vehicle}</dd>
+          </div>
         </dl>
+      )}
+      {verified && (
+        <button
+          className="quote-wizard__print-receipt"
+          onClick={() => window.print()}
+          type="button"
+        >
+          Print / Save as PDF
+        </button>
       )}
       <Link
         className="quote-wizard__result-link"

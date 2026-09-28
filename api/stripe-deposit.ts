@@ -5,7 +5,13 @@ import { paymentConfig } from "../src/content/paymentConfig"
 type SizeId = "sedan" | "suv" | "three-row" | "truck"
 
 const maxValueLength = 500
-const baseServices = ["Interior Refresh", "Full Detail", "Deep Restoration"]
+export const bookableServices = [
+  "Interior Refresh",
+  "Full Detail",
+  "Deep Restoration",
+  "Ceramic Coating",
+  "Machine Buffing",
+] as const
 const availableAddOns = [
   "Ceramic Coating",
   "Machine Buffing",
@@ -20,6 +26,7 @@ const sizes: SizeId[] = ["sedan", "suv", "three-row", "truck"]
 
 export type BookingDetails = {
   addOns?: unknown
+  address?: unknown
   email?: unknown
   model?: unknown
   name?: unknown
@@ -66,7 +73,7 @@ export function getCheckoutLineItems(
       price_data: {
         currency: paymentConfig.currency,
         product_data: {
-          name: "KP Automobil refundable booking deposit",
+          name: `${service} — refundable booking deposit`,
           description: `${selectedServices} · ${size} vehicle`,
           metadata: { service_name: service, vehicle_size: size },
         },
@@ -81,12 +88,15 @@ export async function createCheckoutSession({
   booking,
   origin,
   secretKey,
+  stripeClient,
 }: {
   booking: BookingDetails
   origin: string
   secretKey: string
+  stripeClient?: Pick<Stripe, "checkout">
 }) {
   const email = getString(booking.email, 254)
+  const address = getString(booking.address)
   const name = getString(booking.name)
   const vehicle = getString(booking.vehicle)
   const service = getString(booking.package)
@@ -96,17 +106,20 @@ export async function createCheckoutSession({
   const selectedAddOns = getSelectedAddOns(booking.addOns)
 
   if (
+    !email ||
     !name ||
     !vehicle ||
-    !baseServices.includes(service) ||
+    !bookableServices.includes(service as typeof bookableServices[number]) ||
     !phone ||
     !isSize(size) ||
-    selectedAddOns.some((addOn) => !availableAddOns.includes(addOn))
+    selectedAddOns.some(
+      (addOn) => !availableAddOns.includes(addOn) || addOn === service,
+    )
   ) {
     throw new CheckoutValidationError("Complete your booking details first.")
   }
 
-  const stripe = new Stripe(secretKey)
+  const stripe = stripeClient ?? new Stripe(secretKey)
   const addOns = selectedAddOns.join(", ")
   const selectedServices = [service, ...selectedAddOns].join(" + ")
   const lineItems = getCheckoutLineItems(service, selectedAddOns, size)
@@ -122,6 +135,8 @@ export async function createCheckoutSession({
     line_items: lineItems,
     metadata: {
       add_ons: addOns || "None",
+      address,
+      customer_email: email,
       customer_name: name,
       order_id: orderId,
       order_status: "checkout_created",
@@ -133,6 +148,7 @@ export async function createCheckoutSession({
     },
     payment_intent_data: {
       metadata: { order_id: orderId, service, vehicle_size: size },
+      receipt_email: email,
     },
     success_url: `${origin}/book/payment-success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/book/payment-cancelled`,
@@ -142,15 +158,17 @@ export async function createCheckoutSession({
 export async function getCheckoutPaymentStatus({
   secretKey,
   sessionId,
+  stripeClient,
 }: {
   secretKey: string
   sessionId: string
+  stripeClient?: Pick<Stripe, "checkout">
 }) {
   if (!sessionId.startsWith("cs_")) {
     throw new CheckoutValidationError("Invalid checkout session.")
   }
 
-  const stripe = new Stripe(secretKey)
+  const stripe = stripeClient ?? new Stripe(secretKey)
   const session = await stripe.checkout.sessions.retrieve(sessionId, {
     expand: ["line_items"],
   })
@@ -159,12 +177,17 @@ export async function getCheckoutPaymentStatus({
     currency: session.currency,
     orderId: session.client_reference_id,
     paid: session.payment_status === "paid",
+    customerName: session.metadata?.customer_name,
+    email: session.customer_details?.email ?? session.metadata?.customer_email,
+    phone: session.metadata?.phone,
     products:
       session.line_items?.data.map((item) => ({
         description: item.description,
         quantity: item.quantity,
         amountTotal: item.amount_total,
       })) ?? [],
+    selectedServices: session.metadata?.selected_services,
     status: session.status,
+    vehicle: session.metadata?.vehicle,
   }
 }

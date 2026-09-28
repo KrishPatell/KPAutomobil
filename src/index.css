@@ -1569,8 +1569,12 @@ a { color: inherit; }
 .quote-wizard__payment button { align-items:center; background:var(--wizard-orange); border:1px solid var(--wizard-orange); color:#fff; display:inline-flex; font-weight:600; gap:14px; justify-content:space-between; min-height:54px; padding:0 18px; }
 .quote-wizard__payment button:disabled { cursor:wait; opacity:.55; }
 .quote-wizard__payment button svg { height:18px; width:18px; }
-.quote-wizard__payment-marks { align-items:center; display:flex; gap:9px; grid-column:2; justify-self:center; }
-.quote-wizard__payment-marks > span { align-items:center; background:#fff; border-radius:4px; display:inline-flex; height:28px; justify-content:center; width:46px; }
+.quote-wizard__payment > .quote-wizard__payment-marks { align-items:center; display:flex; gap:9px; grid-column:2; justify-self:center; }
+.quote-wizard__payment-marks > img { display:block; height:28px; width:auto; }
+.quote-wizard__local-test { align-items:flex-start; border:1px dashed #71513f; color:#d8d4ce; display:flex; flex-wrap:wrap; gap:10px 14px; margin-top:20px; padding:16px; }
+.quote-wizard__local-test > b { color:#ff5a1f; font:600 12px/1.4 var(--font-mono, monospace); letter-spacing:.12em; text-transform:uppercase; width:100%; }
+.quote-wizard__local-test > span, .quote-wizard__local-test > small { color:#aaa7a1; font-size:13px; line-height:1.5; width:100%; }
+.quote-wizard__local-test > button { background:transparent; border:1px solid #555; color:#f4f3ef; cursor:pointer; font-size:13px; min-height:40px; padding:8px 12px; }
 .quote-wizard__visa { color:#172b85; font:italic 800 14px Arial,sans-serif; letter-spacing:-.06em; }
 .quote-wizard__mastercard { overflow:hidden; position:relative; }
 .quote-wizard__mastercard i { background:#eb001b; border-radius:50%; height:17px; position:absolute; width:17px; }
@@ -1585,6 +1589,14 @@ a { color: inherit; }
 .quote-wizard__payment-result dt { color:var(--wizard-muted); font:10px "Geist Mono",monospace; letter-spacing:.08em; text-transform:uppercase; }
 .quote-wizard__payment-result dd { margin:0; overflow-wrap:anywhere; text-align:right; }
 .quote-wizard__result-link { align-items:center; background:var(--wizard-orange); color:#fff; display:inline-flex; gap:16px; justify-self:center; min-height:54px; padding:0 20px; text-decoration:none; }
+.quote-wizard__print-receipt { background:transparent; border:1px solid var(--wizard-line); color:var(--wizard-copy); justify-self:center; min-height:48px; padding:0 18px; }
+@media print {
+  .quote-wizard__header, .quote-wizard__result-link, .quote-wizard__print-receipt { display:none !important; }
+  .quote-wizard, .quote-wizard__payment-result { background:#fff !important; color:#000 !important; }
+  .quote-wizard__payment-result { min-height:0; padding:30px; }
+  .quote-wizard__payment-result > span, .quote-wizard__payment-result dt { color:#444 !important; }
+  .quote-wizard__payment-result dl { border-color:#bbb; max-width:none; }
+}
 .quote-wizard__payment > em { color:#ff8d62; font-size:12px; font-style:normal; grid-column:1 / -1; }
 @media (max-width:800px) {
   .quote-wizard__payment { align-items:stretch; grid-template-columns:1fr; }

@@ -10,24 +10,31 @@ export default async function handler(
 ) {
   if (request.method !== "GET") {
     response.setHeader("Allow", "GET")
-    return response.status(405).json({ error: "Method not allowed." })
+    return response
+      .status(405)
+      .json({ success: false, error: "Method not allowed." })
   }
 
   const secretKey = process.env.STRIPE_SECRET_KEY
   const sessionId = request.query.session_id
   if (!secretKey || typeof sessionId !== "string") {
-    return response.status(400).json({ error: "Invalid checkout session." })
+    return response
+      .status(400)
+      .json({ success: false, error: "Invalid checkout session." })
   }
 
   try {
-    return response
-      .status(200)
-      .json(await getCheckoutPaymentStatus({ secretKey, sessionId }))
+    return response.status(200).json({
+      success: true,
+      ...(await getCheckoutPaymentStatus({ secretKey, sessionId })),
+    })
   } catch (error) {
     if (error instanceof CheckoutValidationError) {
-      return response.status(400).json({ error: error.message })
+      return response.status(400).json({ success: false, error: error.message })
     }
     console.error("Unable to retrieve Stripe Checkout session", error)
-    return response.status(502).json({ error: "Unable to verify payment." })
+    return response
+      .status(502)
+      .json({ success: false, error: "Unable to verify payment." })
   }
 }

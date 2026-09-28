@@ -42,6 +42,13 @@ export async function send(
   request: BookingRequest,
   photos: File[] = [],
 ): Promise<boolean> {
+  return (await submitBooking(request, photos)).success
+}
+
+export async function submitBooking(
+  request: BookingRequest,
+  photos: File[] = [],
+): Promise<{ error?: string success: boolean }> {
   try {
     sessionStorage.setItem(KEY, JSON.stringify(request))
   } catch {
@@ -50,7 +57,7 @@ export async function send(
   const data = new FormData()
   data.append("payload", JSON.stringify(request))
   for (const photo of photos) data.append("photos", photo, photo.name)
-  return postForm("/api/booking", data)
+  return postFormResult("/api/booking", data)
 }
 
 // ── /contact/ ───────────────────────────────────────────────────────────────────────────────────
@@ -111,15 +118,36 @@ export async function sendMessage(
 }
 
 async function postForm(path: string, data: FormData): Promise<boolean> {
+  return (await postFormResult(path, data)).success
+}
+
+async function postFormResult(
+  path: string,
+  data: FormData,
+): Promise<{ error?: string success: boolean }> {
   try {
     const response = await fetch(path, {
       body: data,
       method: "POST",
     })
-    if (!response.ok) return false
-    const result = (await response.json()) as { ok?: boolean }
-    return result.ok === true
+    const raw = await response.text()
+    let result: { error?: string ok?: boolean success?: boolean }
+    try {
+      result = (JSON.parse(raw) as {
+        error?: string
+        ok?: boolean
+        success?: boolean
+      })
+    } catch {
+      return {
+        error: "The server returned an invalid response.",
+        success: false,
+      }
+    }
+    const success =
+      response.ok && (result.ok === true || result.success === true)
+    return { error: success ? undefined : result.error, success }
   } catch {
-    return false
+    return { error: "The server could not be reached.", success: false }
   }
 }

@@ -13,6 +13,8 @@ import {
   getBookingDetails,
   getCheckoutPaymentStatus,
 } from "./api/stripe-deposit"
+import bookingHandler from "./api/booking.js"
+import contactHandler from "./api/contact.js"
 
 import siteConfiguration from "./.figma/make/site.json"
 
@@ -21,6 +23,14 @@ export default defineConfig(({ mode }) => {
   // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
   const emitSourcemaps = mode === "development"
   const serverEnvironment = loadEnv(mode, process.cwd(), "")
+  for (const key of [
+    "RESEND_API_KEY",
+    "RESEND_FROM_EMAIL",
+    "RESEND_FROM",
+    "KP_FORM_TO_EMAIL",
+  ]) {
+    if (serverEnvironment[key]) process.env[key] = serverEnvironment[key]
+  }
 
   return {
     base: process.env.FIGMA_PUBLIC_URL
@@ -34,6 +44,7 @@ export default defineConfig(({ mode }) => {
       react(),
       tailwindcss(),
       stripeLocalCheckout(serverEnvironment.STRIPE_SECRET_KEY),
+      localFormEndpoints(),
       figmaSiteConfiguration(siteConfiguration),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
@@ -56,6 +67,20 @@ export default defineConfig(({ mode }) => {
     },
   }
 })
+
+function localFormEndpoints(): Plugin {
+  return {
+    name: "local-form-endpoints",
+    configureServer(server) {
+      server.middlewares.use("/api/booking", (request, response) => {
+        void bookingHandler(request, response)
+      })
+      server.middlewares.use("/api/contact", (request, response) => {
+        void contactHandler(request, response)
+      })
+    },
+  }
+}
 
 function stripeLocalCheckout(secretKey: string | undefined): Plugin {
   const sendJson = (
@@ -90,11 +115,18 @@ function stripeLocalCheckout(secretKey: string | undefined): Plugin {
       server.middlewares.use(
         "/api/create-checkout-session",
         async (request, response, next) => {
-          if (request.method !== "POST") return next()
-          if (!secretKey) {
+          if (request.method !== "POST") {
+            response.setHeader("Allow", "POST")
+            return sendJson(response, 405, {
+              success: false,
+              error: "Method not allowed.",
+            })
+          }
+          if (!secretKey || !secretKey.startsWith("sk_test_")) {
             return sendJson(response, 503, {
+              success: false,
               error:
-                "Payments are not configured. Add a test key to .env.local and restart the local server.",
+                "Local test checkout requires a Stripe test secret key (sk_test_...) in .env.local. Live keys are blocked here.",
             })
           }
 
@@ -108,16 +140,20 @@ function stripeLocalCheckout(secretKey: string | undefined): Plugin {
             })
             if (!session.url)
               throw new Error("Stripe did not return a checkout URL.")
-            return sendJson(response, 200, { url: session.url })
+            return sendJson(response, 200, { success: true, url: session.url })
           } catch (error) {
             if (error instanceof CheckoutValidationError) {
-              return sendJson(response, 400, { error: error.message })
+              return sendJson(response, 400, {
+                success: false,
+                error: error.message,
+              })
             }
             console.error(
               "Unable to create local Stripe Checkout session",
               error,
             )
             return sendJson(response, 502, {
+              success: false,
               error: "Unable to start secure checkout.",
             })
           }
@@ -127,11 +163,18 @@ function stripeLocalCheckout(secretKey: string | undefined): Plugin {
       server.middlewares.use(
         "/api/checkout-session",
         async (request, response, next) => {
-          if (request.method !== "GET") return next()
-          if (!secretKey) {
+          if (request.method !== "GET") {
+            response.setHeader("Allow", "GET")
+            return sendJson(response, 405, {
+              success: false,
+              error: "Method not allowed.",
+            })
+          }
+          if (!secretKey || !secretKey.startsWith("sk_test_")) {
             return sendJson(response, 503, {
+              success: false,
               error:
-                "Payments are not configured. Add a test key to .env.local and restart the local server.",
+                "Local payment verification requires a Stripe test secret key (sk_test_...) in .env.local. Live keys are blocked here.",
             })
           }
 
@@ -144,17 +187,20 @@ function stripeLocalCheckout(secretKey: string | undefined): Plugin {
             if (!sessionId) {
               throw new CheckoutValidationError("Invalid checkout session.")
             }
-            return sendJson(
-              response,
-              200,
-              await getCheckoutPaymentStatus({ secretKey, sessionId }),
-            )
+            return sendJson(response, 200, {
+              success: true,
+              ...(await getCheckoutPaymentStatus({ secretKey, sessionId })),
+            })
           } catch (error) {
             if (error instanceof CheckoutValidationError) {
-              return sendJson(response, 400, { error: error.message })
+              return sendJson(response, 400, {
+                success: false,
+                error: error.message,
+              })
             }
             console.error("Unable to verify local Stripe payment", error)
             return sendJson(response, 502, {
+              success: false,
               error: "Unable to verify payment.",
             })
           }

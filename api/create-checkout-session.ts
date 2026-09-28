@@ -24,17 +24,23 @@ export default async function handler(
 ) {
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST")
-    return response.status(405).json({ error: "Method not allowed." })
+    return response
+      .status(405)
+      .json({ success: false, error: "Method not allowed." })
   }
 
   const secretKey = process.env.STRIPE_SECRET_KEY
   if (!secretKey) {
-    return response.status(503).json({ error: "Payments are not configured." })
+    return response
+      .status(503)
+      .json({ success: false, error: "Payments are not configured." })
   }
 
   const origin = getAppOrigin()
   if (!origin) {
-    return response.status(503).json({ error: "Payments are not configured." })
+    return response
+      .status(503)
+      .json({ success: false, error: "Payments are not configured." })
   }
 
   try {
@@ -48,14 +54,14 @@ export default async function handler(
       throw new Error("Stripe did not return a checkout URL.")
     }
 
-    return response.status(200).json({ url: session.url })
+    return response.status(200).json({ success: true, url: session.url })
   } catch (error) {
     if (error instanceof CheckoutValidationError) {
-      return response.status(400).json({ error: error.message })
+      return response.status(400).json({ success: false, error: error.message })
     }
     console.error("Unable to create Stripe Checkout session", error)
     return response
       .status(502)
-      .json({ error: "Unable to start secure checkout." })
+      .json({ success: false, error: "Unable to start secure checkout." })
   }
 }

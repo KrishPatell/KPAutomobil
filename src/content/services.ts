@@ -210,9 +210,7 @@ export const conditions: { id: ConditionId question: string help: string }[] = [
 export const bookablePackages = packages.filter((item) => !item.addOn)
 
 /** Services that can be selected as the main booking choice in the quote flow. */
-export const quoteServiceChoices = packages.filter(
-  (item) => !item.addOn || item.name === "Ceramic Coating",
-)
+export const quoteServiceChoices = packages
 
 export function packageBySlug(slug: string): Package | undefined {
   return packages.find((item) => item.slug === slug)
