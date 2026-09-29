@@ -28,15 +28,15 @@ function row(label, value, { link = false } = {}) {
       ? `<a href="mailto:${encodeURIComponent(String(value).trim())}" style="color:#e85b20;text-decoration:none;">${content}</a>`
       : content
   return `<tr>
-    <td style="padding:11px 0;border-bottom:1px solid #e8e5df;color:#73716d;font:12px/1.4 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;width:39%;vertical-align:top;">${escapeHtml(label)}</td>
-    <td style="padding:11px 0;border-bottom:1px solid #e8e5df;color:#181817;font:15px/1.45 Arial,sans-serif;vertical-align:top;">${body}</td>
+    <td width="42%" style="width:42%;padding:11px 18px 11px 0;border-bottom:1px solid #e8e5df;color:#73716d;font:12px/1.4 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;vertical-align:top;overflow-wrap:anywhere;">${escapeHtml(label)}</td>
+    <td width="58%" style="width:58%;padding:11px 0;border-bottom:1px solid #e8e5df;color:#181817;font:15px/1.45 Arial,sans-serif;vertical-align:top;overflow-wrap:anywhere;">${body}</td>
   </tr>`
 }
 
 function section(title, rows) {
   return `<tr><td style="padding:0 28px 24px;">
     <p style="margin:0 0 8px;color:#e85b20;font:700 11px/1.4 Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase;">${escapeHtml(title)}</p>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">${rows.join("")}</table>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;table-layout:fixed;">${rows.join("")}</table>
   </td></tr>`
 }
 
@@ -77,17 +77,63 @@ export function bookingEmailHtml(payload) {
       section("Vehicle & service", [
         row("Service", payload.service),
         row("Vehicle", vehicle),
-        row("Location", payload.address),
+        row("Vehicle size", payload.size),
         row("Add-ons", payload.addOns),
         row("Conditions", payload.conditions),
+      ]),
+      section("Visit", [
+        row("Location type", payload.locationType),
+        row("Address", payload.address),
+        row("Access notes", payload.notes),
+        row("Photo attachments", `${payload.photoCount || 0} of 4 attached`),
+        row("Photo views", payload.photoLabels),
       ]),
       section("Booking notes", [
         row("Preferred date", payload.date),
         row("Time window", payload.window),
-        row("Customer notes", payload.notes),
+        row(
+          "Booking terms",
+          payload.termsAccepted ? "Accepted" : "Not accepted",
+        ),
+      ]),
+      section("Payment", [
+        row("Deposit", payload.payment?.deposit),
+        row("Method", payload.payment?.method),
+        row("Provider", payload.payment?.provider),
+        row("Mode", payload.payment?.mode),
+        row("Status", payload.payment?.status),
       ]),
     ],
   })
+}
+
+export function bookingEmailFields(payload) {
+  const vehicle = [payload.bodyStyle, payload.vehicleNote]
+    .filter(Boolean)
+    .join(" · ")
+  return [
+    ["Name", payload.name],
+    ["Phone", payload.phone],
+    ["Email", payload.email],
+    ["Service", payload.service],
+    ["Vehicle", vehicle],
+    ["Vehicle size", payload.size],
+    ["Add-ons", displayValue(payload.addOns)],
+    ["Conditions", displayValue(payload.conditions)],
+    ["Location type", payload.locationType],
+    ["Address", payload.address],
+    ["Access notes", payload.notes],
+    ["Photo attachments", `${payload.photoCount || 0} of 4 attached`],
+    ["Photo views", displayValue(payload.photoLabels)],
+    ["Preferred date", payload.date],
+    ["Time window", payload.window],
+    ["Booking terms", payload.termsAccepted ? "Accepted" : "Not accepted"],
+    ["Deposit", payload.payment?.deposit],
+    ["Payment method", payload.payment?.method],
+    ["Payment provider", payload.payment?.provider],
+    ["Payment mode", payload.payment?.mode],
+    ["Payment status", payload.payment?.status],
+  ]
 }
 
 export function contactEmailHtml({ email, message, name, phone, subject }) {

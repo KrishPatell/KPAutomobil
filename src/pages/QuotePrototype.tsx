@@ -402,9 +402,10 @@ export default function QuotePrototype() {
     setStartingCheckout(true)
     setCheckoutError("")
     try {
-      const files = photoSlots
-        .map((slot) => photos[slot.id])
-        .filter((file): file is File => file instanceof File)
+      const files = photoSlots.flatMap((slot) => {
+        const file = photos[slot.id]
+        return file instanceof File ? [{ file, label: slot.title }] : []
+      })
       const submission =
         skipInboxForLocalTest && localTestToolsEnabled
           ? { success: true as const }
@@ -413,21 +414,27 @@ export default function QuotePrototype() {
                 name,
                 phone,
                 email,
-                address: `${locationType}: ${address}`,
+                address,
+                locationType,
                 size: selectedVehicle.size,
                 bodyStyle: selectedVehicle.name,
                 vehicleNote,
                 service: selectedService.name,
-                conditions: conditions
-                  .filter((item) => answers[item.id])
-                  .map((item) => item.question.replace(/[?]$/, "")),
+                conditions: conditions.map(
+                  (item) =>
+                    `${item.question.replace(/[?]$/, "")}: ${
+                      answers[item.id] ? "Yes" : "No"
+                    }`,
+                ),
                 addOns: selectedAddOns.map((item) => item.name),
                 photoCount,
+                photoLabels: photoSlots.map((slot) => slot.title),
                 photosSkipped: false,
                 date: "",
                 window: "",
                 total: null,
                 notes: access,
+                termsAccepted: consent,
               },
               files,
             )

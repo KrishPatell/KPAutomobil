@@ -8,6 +8,7 @@ export type BookingRequest = {
   phone: string
   email: string
   address?: string
+  locationType?: string
   size: string
   bodyStyle?: string
   vehicleNote?: string
@@ -16,6 +17,7 @@ export type BookingRequest = {
   addOns?: string[]
   /** How many of the four photo slots were filled. The files themselves are not in here. */
   photoCount?: number
+  photoLabels?: string[]
   photosSkipped?: boolean
   date: string
   window: string
@@ -24,7 +26,10 @@ export type BookingRequest = {
   /** Dollars, or null when any line in the quote is still unpriced. */
   total?: number | null
   notes: string
+  termsAccepted?: boolean
 }
+
+export type BookingPhoto = { file: File label: string }
 
 const KEY = "kp-booking-draft"
 
@@ -47,7 +52,7 @@ export async function send(
 
 export async function submitBooking(
   request: BookingRequest,
-  photos: File[] = [],
+  photos: Array<File | BookingPhoto> = [],
 ): Promise<{ error?: string success: boolean }> {
   try {
     sessionStorage.setItem(KEY, JSON.stringify(request))
@@ -56,7 +61,16 @@ export async function submitBooking(
   }
   const data = new FormData()
   data.append("payload", JSON.stringify(request))
-  for (const photo of photos) data.append("photos", photo, photo.name)
+  for (const photoEntry of photos) {
+    const photo = photoEntry instanceof File ? photoEntry : photoEntry.file
+    const label =
+      photoEntry instanceof File ? "booking-photo" : photoEntry.label
+    const extension = photo.name.includes(".")
+      ? photo.name.slice(photo.name.lastIndexOf("."))
+      : ""
+    const filename = `${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}${extension}`
+    data.append("photos", photo, filename)
+  }
   return postFormResult("/api/booking", data)
 }
 

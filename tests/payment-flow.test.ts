@@ -10,7 +10,11 @@ import {
 import createCheckoutHandler from "../api/create-checkout-session"
 import checkoutStatusHandler from "../api/checkout-session"
 import webhookHandler, { processStripeEvent } from "../api/stripe-webhook"
-import { bookingEmailHtml, sendEmail } from "../api/_email.js"
+import {
+  bookingEmailFields,
+  bookingEmailHtml,
+  sendEmail,
+} from "../api/_email.js"
 
 const validBooking = {
   addOns: ["Pet Hair Removal"],
@@ -25,17 +29,44 @@ const validBooking = {
 }
 
 test("booking email reflects the booking flow rather than the old quote flow", () => {
-  const html = bookingEmailHtml({
+  const payload = {
     ...validBooking,
     bodyStyle: validBooking.vehicle,
+    conditions: ["Pet in car: No", "Set-in stains: Yes"],
+    locationType: "Home",
+    notes: "Park beside the garage",
+    photoCount: 4,
+    photoLabels: [
+      "Front three-quarter",
+      "Rear three-quarter",
+      "Front cabin",
+      "Rear seats or boot",
+    ],
+    payment: {
+      deposit: "$50 refundable deposit",
+      method: "Card (Visa or Mastercard)",
+      mode: "Test mode",
+      provider: "Stripe Checkout",
+      status: "Awaiting checkout completion",
+    },
     service: validBooking.package,
-  })
+    termsAccepted: true,
+  }
+  const html = bookingEmailHtml(payload)
+  const fields = Object.fromEntries(bookingEmailFields(payload))
 
   assert.match(html, /Booking request/)
   assert.match(html, /New booking request received\./)
   assert.match(html, /Customer, vehicle, and service details are below\./)
   assert.doesNotMatch(html, /A customer submitted/i)
   assert.doesNotMatch(html, /ready for a written price/i)
+  assert.match(html, /table-layout:fixed/)
+  assert.match(html, /4 of 4 attached/)
+  assert.match(html, /Card \(Visa or Mastercard\)/)
+  assert.match(html, /Awaiting checkout completion/)
+  assert.equal(fields["Location type"], "Home")
+  assert.equal(fields["Booking terms"], "Accepted")
+  assert.equal(fields["Photo attachments"], "4 of 4 attached")
 })
 
 function responseRecorder() {

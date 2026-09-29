@@ -1,5 +1,6 @@
 import {
   attachmentsFor,
+  bookingEmailFields,
   bookingEmailHtml,
   errorMessage,
   field,
@@ -9,6 +10,7 @@ import {
   parseForm,
   sendEmail,
 } from "./_email.js"
+import { paymentConfig } from "../src/content/paymentConfig.js"
 
 export const config = { api: { bodyParser: false } }
 
@@ -29,6 +31,7 @@ export default async function handler(request, response) {
       !payload.address ||
       !payload.service ||
       !payload.bodyStyle ||
+      payload.termsAccepted !== true ||
       filesFor(files, "photos").length !== 4
     )
       return json(response, 400, {
@@ -46,13 +49,26 @@ export default async function handler(request, response) {
       filesFor(files, "photos"),
       "booking-photo",
     )
+    const stripeKey = process.env.STRIPE_SECRET_KEY || ""
+    const paymentMode = stripeKey.includes("_test_")
+      ? "Test mode"
+      : stripeKey.includes("_live_")
+        ? "Live mode"
+        : "Not configured"
+    const emailPayload = {
+      ...payload,
+      payment: {
+        deposit: `$${paymentConfig.depositAmount} refundable deposit`,
+        method: "Card (Visa or Mastercard)",
+        mode: paymentMode,
+        provider: "Stripe Checkout",
+        status: "Awaiting checkout completion",
+      },
+    }
     const id = await sendEmail({
       attachments,
-      fields: Object.entries(payload).map(([key, value]) => [
-        key,
-        Array.isArray(value) ? value.join(", ") : String(value ?? ""),
-      ]),
-      html: bookingEmailHtml(payload),
+      fields: bookingEmailFields(emailPayload),
+      html: bookingEmailHtml(emailPayload),
       replyTo: payload.email,
       subject: `KP Automobil booking request: ${payload.name}`,
     })
