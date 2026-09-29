@@ -31,8 +31,10 @@ test("booking email reflects the booking flow rather than the old quote flow", (
     service: validBooking.package,
   })
 
-  assert.match(html, /New booking request/)
-  assert.match(html, /A customer submitted a booking request\./)
+  assert.match(html, /Booking request/)
+  assert.match(html, /New booking request received\./)
+  assert.match(html, /Customer, vehicle, and service details are below\./)
+  assert.doesNotMatch(html, /A customer submitted/i)
   assert.doesNotMatch(html, /ready for a written price/i)
 })
 

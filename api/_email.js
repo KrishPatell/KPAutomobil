@@ -65,9 +65,9 @@ export function bookingEmailHtml(payload) {
     .filter(Boolean)
     .join(" · ")
   return emailLayout({
-    eyebrow: "New booking request",
-    heading: "A customer submitted a booking request.",
-    intro: "Review the customer's service details and photos below.",
+    eyebrow: "Booking request",
+    heading: "New booking request received.",
+    intro: "Customer, vehicle, and service details are below.",
     sections: [
       section("Customer", [
         row("Name", payload.name),
