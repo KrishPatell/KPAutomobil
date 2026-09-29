@@ -10,7 +10,7 @@ import {
 import createCheckoutHandler from "../api/create-checkout-session"
 import checkoutStatusHandler from "../api/checkout-session"
 import webhookHandler, { processStripeEvent } from "../api/stripe-webhook"
-import { sendEmail } from "../api/_email.js"
+import { bookingEmailHtml, sendEmail } from "../api/_email.js"
 
 const validBooking = {
   addOns: ["Pet Hair Removal"],
@@ -23,6 +23,18 @@ const validBooking = {
   size: "suv",
   vehicle: "Electric",
 }
+
+test("booking email reflects the booking flow rather than the old quote flow", () => {
+  const html = bookingEmailHtml({
+    ...validBooking,
+    bodyStyle: validBooking.vehicle,
+    service: validBooking.package,
+  })
+
+  assert.match(html, /New booking request/)
+  assert.match(html, /A customer submitted a booking request\./)
+  assert.doesNotMatch(html, /ready for a written price/i)
+})
 
 function responseRecorder() {
   const result: {

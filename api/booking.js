@@ -54,7 +54,7 @@ export default async function handler(request, response) {
       ]),
       html: bookingEmailHtml(payload),
       replyTo: payload.email,
-      subject: `KP Automobil quote request: ${payload.name}`,
+      subject: `KP Automobil booking request: ${payload.name}`,
     })
     return json(response, 200, { success: true, ok: true, id })
   } catch (error) {
