@@ -19,6 +19,10 @@ export default function PrivacyPolicy() {
             {` ${site.name}`}.
           </p>
           <p>
+            Pages load one Google tag, G-JS7JV557GL, to measure visits. Google
+            receives that measurement under its own terms.
+          </p>
+          <p>
             To request access, correction, or deletion of your information,
             email <a href={`mailto:${site.email}`}>{site.email}</a>.
           </p>
