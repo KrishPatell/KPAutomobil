@@ -21,7 +21,7 @@ function displayValue(value, fallback = "Not provided") {
   return text || fallback
 }
 
-function row(label, value, { link = false } = {}) {
+export function row(label, value, { link = false } = {}) {
   const content = escapeHtml(displayValue(value))
   const body =
     link && isEmailAddress(String(value).trim())
@@ -33,14 +33,14 @@ function row(label, value, { link = false } = {}) {
   </tr>`
 }
 
-function section(title, rows) {
+export function section(title, rows) {
   return `<tr><td style="padding:0 28px 24px;">
     <p style="margin:0 0 8px;color:#e85b20;font:700 11px/1.4 Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase;">${escapeHtml(title)}</p>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;table-layout:fixed;">${rows.join("")}</table>
   </td></tr>`
 }
 
-function emailLayout({ eyebrow, heading, intro, sections }) {
+export function emailLayout({ eyebrow, heading, intro, sections }) {
   return `<!doctype html>
 <html lang="en"><body style="margin:0;padding:24px 12px;background:#f4f3ef;color:#181817;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:620px;margin:0 auto;background:#ffffff;">

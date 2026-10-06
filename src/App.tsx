@@ -21,6 +21,7 @@ import BookingTerms from "./pages/BookingTerms"
 import PrivacyPolicy from "./pages/PrivacyPolicy"
 import NotFound from "./pages/NotFound"
 import QuotePrototype from "./pages/QuotePrototype"
+import Portal from "./pages/Portal"
 
 /** Every page that renders inside the site shell, keyed by its normalised path. */
 const routes: Record<string, () => ReactElement> = {
@@ -58,6 +59,10 @@ export default function App() {
   // Retained as a convenient local review URL.
   if (path === "/quote-prototype") {
     return <QuotePrototype />
+  }
+
+  if (path === "/portal") {
+    return <Portal />
   }
 
   const Page = routes[path] ?? NotFound
