@@ -12,6 +12,8 @@ const unpriced: SizePrices = {
 
 export const packagePrices: Record<string, SizePrices> = {
   "Interior Refresh": { sedan: 250, suv: 285, "three-row": 315, truck: 305 },
+  // No confirmed exterior price yet. Null stays null — see pricing.ts.
+  "Exterior Refresh": { ...unpriced },
   "Full Detail": { sedan: 300, suv: 375, "three-row": 415, truck: 405 },
   "Deep Restoration": { sedan: 475, suv: 550, "three-row": 600, truck: 585 },
 }

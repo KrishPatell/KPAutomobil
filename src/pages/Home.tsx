@@ -79,7 +79,7 @@ export default function Home() {
             <Eyebrow>Services</Eyebrow>
           </Reveal>
           <Reveal className="delay-1">
-            <h2>Three packages and two add-ons. That is the whole menu.</h2>
+            <h2>Four packages and two add-ons. That is the whole menu.</h2>
           </Reveal>
           <Reveal className="delay-2">
             <p>

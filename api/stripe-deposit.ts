@@ -7,6 +7,7 @@ type SizeId = "sedan" | "suv" | "three-row" | "truck"
 const maxValueLength = 500
 export const bookableServices = [
   "Interior Refresh",
+  "Exterior Refresh",
   "Full Detail",
   "Deep Restoration",
   "Ceramic Coating",
