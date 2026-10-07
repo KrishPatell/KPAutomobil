@@ -41,6 +41,7 @@ export { addOnPrices, packagePrices, type SizePrices } from "./priceMatrix"
  * MPG equivalents: Interior Refresh → their "Interior Refresh" ($249.99 / $284.99).
  * Full Detail → their "MPG Refresh" ($299.99 / $374.99). Deep Restoration has no MPG equivalent;
  * it is set above Full Detail by the same step MPG puts between their interior and full tiers.
+ * Exterior Refresh has no equivalent on that list, so its cells stay null.
  */
 
 /**

@@ -18,7 +18,7 @@ export const pageCopy = {
     eyebrow: "Services & pricing",
     heading: "Every price, before anyone touches the car.",
     standfirst:
-      "Three packages, a short list of extras, and what each one costs at every vehicle size. Nothing on this page is a range you have to call about.",
+      "Four packages, a short list of extras, and the price for each size that is already confirmed. A missing number stays open until the photos set it.",
   },
   gallery: {
     eyebrow: "Gallery",

@@ -114,7 +114,7 @@ export const aboutPage = {
       },
       {
         title: "Which package the car needs",
-        body: "Interior Refresh, Full Detail or Deep Restoration. Every price for every size is published, so the package you pick is a decision you make with the numbers in front of you.",
+        body: "Interior Refresh, Exterior Refresh, Full Detail or Deep Restoration. The prices that are confirmed are on the services page. Where a number is still open, the quote says so instead of guessing.",
       },
       {
         title: "What the photos show",

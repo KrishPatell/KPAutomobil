@@ -2,7 +2,11 @@
   "title": "KP Automobil — Mobile car detailing in Boston, Massachusetts",
   "description": "Mobile car detailing in Boston with a real price upfront. Send four photos, choose a package, and book with confidence.",
   "robots": {
-    "index": false
+    "index": true
+  },
+  "openGraph": {
+    "url": "https://www.kpautomobil.com/",
+    "image": "https://www.kpautomobil.com/og-image.jpg"
   },
   "accessibility": {
     "addBypassLinks": false,

@@ -1,4 +1,4 @@
-// The three packages, plus the two add-ons that are big enough to have their own panel.
+// The four packages, plus the two add-ons that are big enough to have their own panel.
 //
 // Prices are not in here — they live in pricing.ts, keyed by package name and size tier, because
 // the same package costs four different amounts. `priceNote` is what shows wherever a number is
@@ -33,6 +33,21 @@ export const packages: Package[] = [
       "Interior glass",
       "Cup holders & storage",
       "Floor mats",
+    ],
+  },
+  {
+    name: "Exterior Refresh",
+    slug: "exterior-refresh",
+    description: "Outside only, for a car that is already fine inside.",
+    showcaseNote: "Hand wash, wheels, and glass. Nothing inside.",
+    image: media.porscheClean,
+    items: [
+      "Hand wash & dry",
+      "Wheel & tire clean",
+      "Exterior glass",
+      "Door jamb wipe down",
+      "Tire dressing",
+      "Bug & tar wipe",
     ],
   },
   {
@@ -220,7 +235,7 @@ export const services = {
   eyebrow: "Services",
   heading: "Services designed around your vehicle.",
   intro:
-    "Three packages and a short list of extras. Pick the one that matches the state the car is actually in — the quote tool prices it against your size and your photos.",
+    "Four packages and a short list of extras. Pick the one that matches the state the car is actually in — the quote tool prices it against your size and your photos.",
   includedLabel: "What is included",
   priceNote: "Priced from your photos, before you book",
 }
@@ -241,7 +256,7 @@ export const servicesPage = {
   ],
 
   packages: {
-    eyebrow: "The three packages",
+    eyebrow: "The four packages",
     heading: "Pick the one that matches the state the car is in.",
     intro:
       "Each package is priced by vehicle size. Choose the size that best fits your car. Your written price is confirmed from photos before the deposit and does not change later.",

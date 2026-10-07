@@ -15,6 +15,8 @@ import {
 } from "./api/stripe-deposit"
 import bookingHandler from "./api/booking.js"
 import contactHandler from "./api/contact.js"
+import portalSessionHandler from "./api/portal-session.js"
+import portalUploadHandler from "./api/portal-upload.js"
 
 import siteConfiguration from "./.figma/make/site.json"
 
@@ -77,6 +79,12 @@ function localFormEndpoints(): Plugin {
       })
       server.middlewares.use("/api/contact", (request, response) => {
         void contactHandler(request, response)
+      })
+      server.middlewares.use("/api/portal-session", (request, response) => {
+        void portalSessionHandler(request, response)
+      })
+      server.middlewares.use("/api/portal-upload", (request, response) => {
+        void portalUploadHandler(request, response)
       })
     },
   }
@@ -222,6 +230,7 @@ type FigmaSiteConfiguration = {
   }
   openGraph?: {
     image?: string
+    url?: string
   }
   analytics?: {
     googleAnalyticsId?: string
@@ -260,6 +269,7 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
   const description = config.description ?? ""
   const favicon = config.icons?.icon ?? ""
   const socialImage = config.openGraph?.image ?? ""
+  const socialUrl = config.openGraph?.url ?? ""
   const language = sanitizeHtmlValue(config.language) || "en"
   const googleAnalyticsId = sanitizeHtmlValue(
     config.analytics?.googleAnalyticsId,
@@ -328,17 +338,50 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
             injectTo: "head",
           })
         }
-        if (title) {
+        if (socialUrl) {
           tags.push({
-            tag: "meta",
-            attrs: { property: "og:title", content: title },
+            tag: "link",
+            attrs: { rel: "canonical", href: socialUrl },
             injectTo: "head",
           })
         }
+        if (title) {
+          tags.push(
+            {
+              tag: "meta",
+              attrs: { property: "og:title", content: title },
+              injectTo: "head",
+            },
+            {
+              tag: "meta",
+              attrs: { name: "twitter:title", content: title },
+              injectTo: "head",
+            },
+          )
+        }
         if (description) {
+          tags.push(
+            {
+              tag: "meta",
+              attrs: { property: "og:description", content: description },
+              injectTo: "head",
+            },
+            {
+              tag: "meta",
+              attrs: { name: "twitter:description", content: description },
+              injectTo: "head",
+            },
+          )
+        }
+        tags.push({
+          tag: "meta",
+          attrs: { property: "og:type", content: "website" },
+          injectTo: "head",
+        })
+        if (socialUrl) {
           tags.push({
             tag: "meta",
-            attrs: { property: "og:description", content: description },
+            attrs: { property: "og:url", content: socialUrl },
             injectTo: "head",
           })
         }
@@ -347,6 +390,16 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
             {
               tag: "meta",
               attrs: { property: "og:image", content: socialImage },
+              injectTo: "head",
+            },
+            {
+              tag: "meta",
+              attrs: { property: "og:image:width", content: "1200" },
+              injectTo: "head",
+            },
+            {
+              tag: "meta",
+              attrs: { property: "og:image:height", content: "630" },
               injectTo: "head",
             },
             {
